@@ -1,58 +1,97 @@
 ﻿using System.Collections;
+using System.Threading;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
     {
+
+
     public Camera cam;
     public NavMeshAgent agent;
 
-    private List<Vector3> actionList; // poczatkowo tylko wektor pozycji
 
-    // Start is called before the first frame update
+
+    private Queue<Vector3> actionQueue; // poczatkowo tylko wektor pozycji
+    private bool doActionPressed = false;
+
+
+
+    // before the first frame update
     void Start()
     {
-        actionList = new List<Vector3>();
+        actionQueue = new Queue<Vector3>();
+        agent.speed = 6f; // test
     }
 
-    // Update is called once per frame
+    // once per frame
     void Update()
+    {
+        addPointedAction();
+
+
+        if (doActionPressed)
+        {
+            doAction();
+        }
+
+    }
+
+
+    private void addPointedAction()
     {
         if (Input.GetMouseButtonDown(0))
         {
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            if(Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out hit))
             {
-                //agent.SetDestination(hit.point);
-                actionList.Add(hit.point);
+                actionQueue.Enqueue(hit.point);
             }
+        }
+    }
+
+    private void doAction()
+    {
+        if (isPathFinished())
+        {
+            if(actionQueue.Count > 0)
+                agent.SetDestination(actionQueue.Dequeue());
+        }
+
+        if (actionQueue.Count == 0)
+        {
+            doActionPressed = false;
         }
     }
 
 
     public void StartActionQueue()
     {
-        //TODO: Tutaj zaczac zabawe z kolejkowaniem :) Generalnie obecnie to nie dziala dobrze w ogole wiec feel free wywalic calosc
-        for(int i = 0 ; i < actionList.Count;  )
-        {
-     
-            if ( agent.speed == 0 )
-                agent.SetDestination(actionList[i]);
 
-            float dist = agent.remainingDistance;
-            if (agent.pathStatus == NavMeshPathStatus.PathComplete)
+        doActionPressed = true;
+
+    }
+
+    private bool isPathFinished()
+    {
+        if (!agent.pathPending)
+        {
+            if (agent.remainingDistance <= agent.stoppingDistance)
             {
-                print(actionList[i]);
-                // doszedl ziomek na miejsce
-                i++;
-                //actionList.Dequeue();
+                if (!agent.hasPath || agent.velocity.sqrMagnitude == 0f)
+                {
+                    return true;
+                }
             }
         }
 
-        actionList.Clear();
-
+        return false;
     }
+
 }
+
+
+
