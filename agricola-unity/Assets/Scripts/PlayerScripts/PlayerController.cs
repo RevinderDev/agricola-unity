@@ -3,6 +3,7 @@ using System.Threading;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
     {
@@ -10,8 +11,8 @@ public class PlayerController : MonoBehaviour
 
     public Camera cam;
     public NavMeshAgent agent;
-
-
+    public int health;
+    public int maxHealth;
 
     private Queue<Vector3> actionQueue; // poczatkowo tylko wektor pozycji
     private bool doActionPressed = false;
@@ -23,6 +24,15 @@ public class PlayerController : MonoBehaviour
     {
         actionQueue = new Queue<Vector3>();
         agent.speed = 6f; // test
+        health = 100;
+        maxHealth = 100;
+        actualizeHealthBar();
+    }
+
+    void actualizeHealthBar()
+    {
+        Image bar = GameObject.Find("Bar").GetComponent<Image>();
+        bar.rectTransform.localScale = new Vector2(health / maxHealth, 1f);
     }
 
     // once per frame
