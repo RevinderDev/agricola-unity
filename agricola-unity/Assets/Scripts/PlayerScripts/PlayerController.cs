@@ -5,9 +5,101 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 
-public class PlayerController : MonoBehaviour
-    {
+public class PlayerActionList
+{
+    public int quequeVisualPosition;
+    public int queueVisualInterspace;
+    public Vector2 queueVisualElementSize;
 
+    private int count;
+    private List<Button> visualElementsList;
+    private List<Vector3> actionList;
+
+    GameObject mCanvas;
+
+    public PlayerActionList()
+    {
+        quequeVisualPosition = 7;
+        queueVisualInterspace = 14;
+        queueVisualElementSize = new Vector2(20, 20);
+        mCanvas = GameObject.Find("Canvas");
+        count = 0;
+        actionList = new List<Vector3>();
+        visualElementsList = new List<Button>();
+    }
+
+    public void Add(Vector3 action)
+    {
+        actionList.Add(action);
+        visualElementsList.Add(CreateButton());
+        count++;
+    }
+
+    public Button Remove(int i)
+    {
+        Button buttonToBeDestroyed = visualElementsList[i];
+        visualElementsList.RemoveAt(i);
+        actionList.RemoveAt(i);
+        for (int j = i; j < visualElementsList.Count; j++)
+        {
+            int move = queueVisualInterspace / 2 + (int)queueVisualElementSize.x;
+            RectTransform rectTransform = visualElementsList[j].GetComponent<RectTransform>();
+            rectTransform.localPosition = new Vector3(rectTransform.localPosition.x - move, rectTransform.localPosition.y, 0);
+        }
+        count--;
+        return buttonToBeDestroyed;
+    }
+
+    public Button Remove(Button button)
+    {
+        int i = visualElementsList.IndexOf(button);
+        return Remove(i);
+    }
+
+    public Vector3 GetDestination()
+    {
+        return actionList[0];
+    }
+
+    public Button CreateButton()
+    {
+        GameObject gameObject = new GameObject();
+        gameObject.AddComponent<CanvasRenderer>();
+        gameObject.AddComponent<RectTransform>();
+        gameObject.layer = 5;
+
+        Button button = gameObject.AddComponent<Button>();
+        Image image = gameObject.AddComponent<Image>();
+        button.targetGraphic = image;
+        gameObject.transform.SetParent(mCanvas.transform);
+        //Random color test only
+        Color newColor = new Color(Random.value, Random.value, Random.value, 1.0f);
+        button.GetComponent<Image>().color = newColor;
+
+        RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
+        rectTransform.localPosition = new Vector3(quequeVisualPosition + queueVisualInterspace / 2, -queueVisualInterspace, 0);
+        rectTransform.sizeDelta = queueVisualElementSize;
+        rectTransform.anchorMin = new Vector2(0, 1);
+        rectTransform.anchorMax = new Vector2(0, 1);
+
+        quequeVisualPosition += queueVisualInterspace / 2 + (int)queueVisualElementSize.x;
+
+        button.onClick.AddListener(delegate {
+            Remove(button);
+            PlayerController.RemoveGameObject(button.gameObject);
+        });
+        return button;
+    }
+
+    public int Count()
+    {
+        return count;
+    }
+}
+
+
+public class PlayerController : MonoBehaviour
+{
 
     public Camera cam;
     public NavMeshAgent agent;
@@ -15,41 +107,32 @@ public class PlayerController : MonoBehaviour
     public int maxHealth;
     public int hunger;
     public int maxHunger;
-    public int quequeVisualPosition;
-    public int queueVisualInterspace;
-    public Vector2 queueVisualElementSize;
-    public List<Button> listVisualElements;
-
-    private Queue<Vector3> actionQueue; // poczatkowo tylko wektor pozycji
+    public PlayerActionList actionList;
     private bool doActionPressed = false;
-
-
 
     // before the first frame update
     void Start()
     {
-        actionQueue = new Queue<Vector3>();
         agent.speed = 6f; // test
         health = 100;
         maxHealth = 100;
         hunger = 50;
         maxHunger = 50;
-        quequeVisualPosition = 7;
-        queueVisualInterspace = 14;
-        queueVisualElementSize = new Vector2(20, 20);
-        actualizeHealthBar();
-        actualizeHungerBar();
+        ActualizeHealthBar();
+        ActualizeHungerBar();
+        actionList = new PlayerActionList();
     }
 
-    void actualizeHealthBar()
+    void ActualizeHealthBar()
     {
         Image bar = GameObject.Find("HealthBar").GetComponent<Image>();
         bar.rectTransform.localScale = new Vector2(health / maxHealth, 1f);
         Text value = GameObject.Find("HealthValue").GetComponent<Text>();
-        value.text =  health.ToString() + "/" + maxHealth.ToString();
+        value.text = health.ToString() + "/" + maxHealth.ToString();
+        //if lower than... do...
     }
 
-    void actualizeHungerBar()
+    void ActualizeHungerBar()
     {
         Image bar = GameObject.Find("HungerBar").GetComponent<Image>();
         bar.rectTransform.localScale = new Vector2(hunger / maxHunger, 1f);
@@ -63,16 +146,16 @@ public class PlayerController : MonoBehaviour
     {
         if (doActionPressed)
         {
-            doAction();
+            DoAction();
         }
         else
         {
-            addPointedAction();
+            AddPointedAction();
         }
     }
 
 
-    private void addPointedAction()
+    private void AddPointedAction()
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -81,40 +164,43 @@ public class PlayerController : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit))
             {
-                actionQueue.Enqueue(hit.point);
-                addQuequeElement();
+                actionList.Add(hit.point);
             }
         }
     }
 
-    private void doAction()
+    public static void RemoveGameObject(GameObject gameObject)
     {
-        if (isPathFinished())
+        Destroy(gameObject);
+    }
+
+    private void DoAction()
+    {
+        if (IsPathFinished())
         {
-            if (actionQueue.Count > 0) { 
-                agent.SetDestination(actionQueue.Dequeue());
-                removeQuequeElement(0);
+            if (actionList.Count() > 0)
+            {
+                agent.SetDestination(actionList.GetDestination());
+                RemoveGameObject(actionList.Remove(0).gameObject);
             }
             else
             {
                 doActionPressed = false;
                 Button playButton = GameObject.Find("PlayButton").GetComponent<Button>();
                 playButton.interactable = true;
-                quequeVisualPosition = 7;
+                actionList.quequeVisualPosition = 7;
             }
         }
     }
-
 
     public void StartActionQueue()
     {
         Button playButton = GameObject.Find("PlayButton").GetComponent<Button>();
         playButton.interactable = false;
         doActionPressed = true;
-
     }
 
-    private bool isPathFinished()
+    private bool IsPathFinished()
     {
         if (!agent.pathPending)
         {
@@ -128,44 +214,6 @@ public class PlayerController : MonoBehaviour
         }
 
         return false;
-    }
-
-    public void addQuequeElement()
-    {
-        GameObject mCanvas = GameObject.Find("Canvas");
-        GameObject button = new GameObject();
-
-        button.AddComponent<CanvasRenderer>();
-        button.AddComponent<RectTransform>();
-        button.layer = 5;
-        Button mButton = button.AddComponent<Button>();
-        Image mImage = button.AddComponent<Image>();
-        mButton.targetGraphic = mImage;
-        button.transform.SetParent(mCanvas.transform);
-
-
-        RectTransform rectTransform = button.GetComponent<RectTransform>();
-        rectTransform.localPosition = new Vector3(quequeVisualPosition + queueVisualInterspace/2, -queueVisualInterspace, 0);
-        rectTransform.sizeDelta = queueVisualElementSize;
-        rectTransform.anchorMin = new Vector2(0, 1);
-        rectTransform.anchorMax = new Vector2(0, 1);
-
-        quequeVisualPosition += queueVisualInterspace/2 + (int)queueVisualElementSize.x;
-
-        listVisualElements.Add(mButton);
-    }
-
-    public void removeQuequeElement(int i)
-    {
-        Destroy(listVisualElements[i].gameObject);
-        listVisualElements.RemoveAt(i);
-        for(int j = i; j< listVisualElements.Count; j++)
-        {
-            int move = queueVisualInterspace / 2 + (int)queueVisualElementSize.x;
-            RectTransform rectTransform = listVisualElements[j].GetComponent<RectTransform>();
-            rectTransform.localPosition = new Vector3(rectTransform.localPosition.x - move,rectTransform.localPosition.y, 0);
-        }
-        
     }
 }
 
