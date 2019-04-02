@@ -4,115 +4,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
-
-public class PlayerActionList
-{
-    public int quequeVisualPosition;
-    public int queueVisualInterspace;
-    public Vector2 queueVisualElementSize;
-
-    private int count;
-    private List<Button> visualElementsList;
-    private List<Vector3> actionList;
-
-    GameObject mCanvas;
-
-    public PlayerActionList()
-    {
-        quequeVisualPosition = 7;
-        queueVisualInterspace = 14;
-        queueVisualElementSize = new Vector2(20, 20);
-        mCanvas = GameObject.Find("Canvas");
-        count = 0;
-        actionList = new List<Vector3>();
-        visualElementsList = new List<Button>();
-    }
-
-    public void Add(Vector3 action)
-    {
-        actionList.Add(action);
-        visualElementsList.Add(CreateButton());
-        count++;
-    }
-
-    public Button Remove(int i)
-    {
-        Button buttonToBeDestroyed = visualElementsList[i];
-        visualElementsList.RemoveAt(i);
-        actionList.RemoveAt(i);
-        for (int j = i; j < visualElementsList.Count; j++)
-        {
-            int move = queueVisualInterspace / 2 + (int)queueVisualElementSize.x;
-            RectTransform rectTransform = visualElementsList[j].GetComponent<RectTransform>();
-            rectTransform.localPosition = new Vector3(rectTransform.localPosition.x - move, rectTransform.localPosition.y, 0);
-        }
-        count--;
-        return buttonToBeDestroyed;
-    }
-
-    public Button Remove(Button button)
-    {
-        int i = visualElementsList.IndexOf(button);
-        return Remove(i);
-    }
-
-    public Vector3 GetDestination()
-    {
-        return actionList[0];
-    }
-
-    public Button CreateButton()
-    {
-        GameObject gameObject = new GameObject();
-        gameObject.AddComponent<CanvasRenderer>();
-        gameObject.AddComponent<RectTransform>();
-        gameObject.layer = 5;
-
-        Button button = gameObject.AddComponent<Button>();
-        Image image = gameObject.AddComponent<Image>();
-        button.targetGraphic = image;
-        gameObject.transform.SetParent(mCanvas.transform);
-        //Random color test only
-        Color newColor = new Color(Random.value, Random.value, Random.value, 1.0f);
-        button.GetComponent<Image>().color = newColor;
-
-        RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
-        rectTransform.localPosition = new Vector3(quequeVisualPosition + queueVisualInterspace / 2, -queueVisualInterspace, 0);
-        rectTransform.sizeDelta = queueVisualElementSize;
-        rectTransform.anchorMin = new Vector2(0, 1);
-        rectTransform.anchorMax = new Vector2(0, 1);
-
-        quequeVisualPosition += queueVisualInterspace / 2 + (int)queueVisualElementSize.x;
-
-        button.onClick.AddListener(delegate {
-            Remove(button);
-            PlayerController.RemoveGameObject(button.gameObject);
-        });
-        return button;
-    }
-
-    public int Count()
-    {
-        return count;
-    }
-}
-
+using System;
+using System.Diagnostics;
 
 public class PlayerController : MonoBehaviour
 {
-
-    public Camera cam;
     public NavMeshAgent agent;
     public int health;
     public int maxHealth;
     public int hunger;
     public int maxHunger;
-    public PlayerActionList actionList;
-    private bool doActionPressed = false;
+
+    public Stopwatch actionStopwatch;
+    public int currentActionLengh;
 
     // before the first frame update
-    void Start()
-    {
+    void Start() { 
         agent.speed = 6f; // test
         health = 100;
         maxHealth = 100;
@@ -120,7 +27,9 @@ public class PlayerController : MonoBehaviour
         maxHunger = 50;
         ActualizeHealthBar();
         ActualizeHungerBar();
-        actionList = new PlayerActionList();
+        currentActionLengh = 0;
+        actionStopwatch = Stopwatch.StartNew();
+        actionStopwatch.Stop();
     }
 
     void ActualizeHealthBar()
@@ -141,66 +50,12 @@ public class PlayerController : MonoBehaviour
         //if lower than... do...
     }
 
-    // once per frame
-    void Update()
+    public void SetDestination(Vector3 target)
     {
-        if (doActionPressed)
-        {
-            DoAction();
-        }
-        else
-        {
-            AddPointedAction();
-        }
+        agent.SetDestination(target);
     }
 
-
-    private void AddPointedAction()
-    {
-        if (Input.GetMouseButtonDown(0))
-        {
-            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit))
-            {
-                actionList.Add(hit.point);
-            }
-        }
-    }
-
-    public static void RemoveGameObject(GameObject gameObject)
-    {
-        Destroy(gameObject);
-    }
-
-    private void DoAction()
-    {
-        if (IsPathFinished())
-        {
-            if (actionList.Count() > 0)
-            {
-                agent.SetDestination(actionList.GetDestination());
-                RemoveGameObject(actionList.Remove(0).gameObject);
-            }
-            else
-            {
-                doActionPressed = false;
-                Button playButton = GameObject.Find("PlayButton").GetComponent<Button>();
-                playButton.interactable = true;
-                actionList.quequeVisualPosition = 7;
-            }
-        }
-    }
-
-    public void StartActionQueue()
-    {
-        Button playButton = GameObject.Find("PlayButton").GetComponent<Button>();
-        playButton.interactable = false;
-        doActionPressed = true;
-    }
-
-    private bool IsPathFinished()
+    public bool IsPathFinished()
     {
         if (!agent.pathPending)
         {
@@ -213,6 +68,24 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        return false;
+    }
+
+    public void SetAction(int actionLength)
+    {
+        currentActionLengh = actionLength;
+        actionStopwatch.Start();
+    }
+
+    public bool IsActionFinished()
+    {
+        UnityEngine.Debug.Log(actionStopwatch.ElapsedMilliseconds);
+        if (!actionStopwatch.IsRunning || actionStopwatch.ElapsedMilliseconds >= currentActionLengh)
+        {
+            actionStopwatch.Stop();
+            actionStopwatch.Reset();
+            return true;
+        }
         return false;
     }
 }
