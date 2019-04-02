@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
 
     public Stopwatch actionStopwatch;
     public int currentActionLengh;
+    GameController gameController;
 
     // before the first frame update
     void Start() { 
@@ -30,6 +31,7 @@ public class PlayerController : MonoBehaviour
         currentActionLengh = 0;
         actionStopwatch = Stopwatch.StartNew();
         actionStopwatch.Stop();
+        gameController = GameObject.Find("GameController").GetComponent<GameController>();
     }
 
     void ActualizeHealthBar()
@@ -71,7 +73,7 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    public void SetAction(int actionLength)
+    public void SetAction(int actionLength) //Should contain parameter actionType (see ActionList)
     {
         currentActionLengh = actionLength;
         actionStopwatch.Start();
@@ -79,11 +81,13 @@ public class PlayerController : MonoBehaviour
 
     public bool IsActionFinished()
     {
-        UnityEngine.Debug.Log(actionStopwatch.ElapsedMilliseconds);
-        if (!actionStopwatch.IsRunning || actionStopwatch.ElapsedMilliseconds >= currentActionLengh)
+        if (!actionStopwatch.IsRunning)
+            return true;
+        if (actionStopwatch.ElapsedMilliseconds >= currentActionLengh)
         {
             actionStopwatch.Stop();
             actionStopwatch.Reset();
+            gameController.PerformAction(agent.transform.position);
             return true;
         }
         return false;

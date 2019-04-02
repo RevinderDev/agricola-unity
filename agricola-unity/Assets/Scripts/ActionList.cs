@@ -3,16 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+* Stores positions (where actions should be performed), lengths of those actions
+* (how long player stays there) and buttons (they represent actions and creates queque) 
+*/
 public class PlayerActionList
 {
+    /* 
+     * There is probably no point in creating "Action" class
+     * it would cause some problems e.g. removing by button.
+     */
+
+    private int count;
+    private List<Button> buttons;
+    private List<Vector3> positions;
+    private List<int> lengths;
+    // Add e.g enum with actionType (to know which action shuould by performed)
+
     public int quequeCurrentPosition;
     public int queueInterspace;
     public Vector2 queueElementSize;
-
-    private int count;
-    private List<Button> elementsList;
-    private List<Vector3> actionPositionsList;
-    private List<int> actionLenghtsList;
 
     GameObject mCanvas;
 
@@ -23,29 +33,29 @@ public class PlayerActionList
         queueElementSize = new Vector2(20, 20);
         mCanvas = GameObject.Find("Canvas");
         count = 0;
-        actionPositionsList = new List<Vector3>();
-        elementsList = new List<Button>();
-        actionLenghtsList = new List<int>();
+        positions = new List<Vector3>();
+        buttons = new List<Button>();
+        lengths = new List<int>();
     }
 
-    public void Add(Vector3 actionPosition, int actionLength)
+    public void Add(Vector3 actionPosition, int actionLength, Color color)
     {
-        actionPositionsList.Add(actionPosition);
-        elementsList.Add(CreateButton());
-        actionLenghtsList.Add(actionLength);
+        positions.Add(actionPosition);
+        buttons.Add(CreateButton(color));
+        lengths.Add(actionLength);
         count++;
     }
 
     public Button Remove(int i)
     {
-        Button buttonToBeDestroyed = elementsList[i];
-        elementsList.RemoveAt(i);
-        actionPositionsList.RemoveAt(i);
-        actionLenghtsList.RemoveAt(i);
-        for (int j = i; j < elementsList.Count; j++)
+        Button buttonToBeDestroyed = buttons[i];
+        buttons.RemoveAt(i);
+        positions.RemoveAt(i);
+        lengths.RemoveAt(i);
+        for (int j = i; j < buttons.Count; j++)
         {
             int move = queueInterspace / 2 + (int)queueElementSize.x;
-            RectTransform rectTransform = elementsList[j].GetComponent<RectTransform>();
+            RectTransform rectTransform = buttons[j].GetComponent<RectTransform>();
             rectTransform.localPosition = new Vector3(rectTransform.localPosition.x - move, rectTransform.localPosition.y, 0);
         }
         count--;
@@ -54,21 +64,21 @@ public class PlayerActionList
 
     public Button Remove(Button button)
     {
-        int i = elementsList.IndexOf(button);
+        int i = buttons.IndexOf(button);
         return Remove(i);
     }
 
     public Vector3 GetDestination()
     {
-        return actionPositionsList[0];
+        return positions[0];
     }
 
     public int GetActionLength()
     {
-        return actionLenghtsList[0];
+        return lengths[0];
     }
 
-    public Button CreateButton()
+    public Button CreateButton(Color color)
     {
         GameObject gameObject = new GameObject();
         gameObject.AddComponent<CanvasRenderer>();
@@ -80,8 +90,8 @@ public class PlayerActionList
         button.targetGraphic = image;
         gameObject.transform.SetParent(mCanvas.transform);
         //Random color test only
-        Color newColor = new Color(Random.value, Random.value, Random.value, 1.0f);
-        button.GetComponent<Image>().color = newColor;
+        //Color newColor = new Color(Random.value, Random.value, Random.value, 1.0f);
+        button.GetComponent<Image>().color = color;
 
         RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
         rectTransform.localPosition = new Vector3(quequeCurrentPosition + queueInterspace / 2, -queueInterspace, 0);

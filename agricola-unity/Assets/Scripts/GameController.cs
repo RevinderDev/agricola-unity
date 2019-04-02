@@ -25,10 +25,19 @@ public class GameController : MonoBehaviour
         {
             DoAction();
         }
-        else
-        {
-            AddPointedAction();
-        }
+        // Old version
+        //else
+        //{
+            //AddPointedAction();
+        //}
+    }
+
+    public void PerformAction(Vector3 position) 
+    {
+        // Should use parameter actionType (see ActionList) -> GetActionType() 
+        // Swith (actionCode)
+        farmland.AddPlant(position);
+        RemoveGameObject(actionList.Remove(0).gameObject);
     }
 
     public static void RemoveGameObject(GameObject gameObject)
@@ -41,6 +50,7 @@ public class GameController : MonoBehaviour
         Button playButton = GameObject.Find("PlayButton").GetComponent<Button>();
         playButton.interactable = false;
         doActionPressed = true;
+        AddAction(new Vector3(0, 1.5f, 0), 0, new Color(0, 0, 0, 0));
     }
 
     public void DoAction()
@@ -61,15 +71,19 @@ public class GameController : MonoBehaviour
             }
             if (player.IsPathFinished())
             {
-
                 if (actionList.Count() > 0)
                 {
                     //at the destination, perform actions
                     player.SetAction(actionList.GetActionLength());
-                    RemoveGameObject(actionList.Remove(0).gameObject);
+                    //RemoveGameObject(actionList.Remove(0).gameObject);
                 }
             }
         }
+    }
+
+    public GameObject InstantiatePrefab(Object prefab, Vector3 vector, Quaternion identity)
+    {
+        return Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
     }
 
     public void OnClickPlayButton()
@@ -77,6 +91,13 @@ public class GameController : MonoBehaviour
         StartActionQueue();
     }
 
+    public void AddAction(Vector3 position, int actionLength, Color actionColor)
+    {
+        actionList.Add(position, actionLength, actionColor);
+    }
+
+    /*
+    // Old vwerion for moving around
     private void AddPointedAction()
     {
         if (Input.GetMouseButtonDown(0))
@@ -90,5 +111,6 @@ public class GameController : MonoBehaviour
             }
         }
     }
+    */
 
 }
