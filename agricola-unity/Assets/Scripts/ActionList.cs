@@ -9,6 +9,15 @@ using UnityEngine.UI;
 */
 public class PlayerActionList
 {
+    public enum ActionType
+    {
+        /* New action should be added in PerformAction (GameController), OnMouseDown (ActionController
+         * and eventually in Farmland or other classes created (custom method)
+         * */
+        walk = 0,
+        plant = 1,
+        collectPlant = 2
+    }
     /* 
      * There is probably no point in creating "Action" class
      * it would cause some problems e.g. removing by button.
@@ -16,8 +25,9 @@ public class PlayerActionList
 
     private int count;
     private List<Button> buttons;
-    private List<Vector3> positions;
+    private List<GameObject> gameObjects;
     private List<int> lengths;
+    private List<ActionType> types;
     // Add e.g enum with actionType (to know which action shuould by performed)
 
     public int quequeCurrentPosition;
@@ -33,16 +43,19 @@ public class PlayerActionList
         queueElementSize = new Vector2(20, 20);
         mCanvas = GameObject.Find("Canvas");
         count = 0;
-        positions = new List<Vector3>();
+        gameObjects = new List<GameObject>();
         buttons = new List<Button>();
         lengths = new List<int>();
+        types = new List<ActionType>();
     }
 
-    public void Add(Vector3 actionPosition, int actionLength, Color color)
+    public void Add(GameObject gameObject, ActionType type, int actionLength, Color color)
     {
-        positions.Add(actionPosition);
+        gameObjects.Add(gameObject);
         buttons.Add(CreateButton(color));
         lengths.Add(actionLength);
+        types.Add(type);
+        quequeCurrentPosition += queueInterspace / 2 + (int)queueElementSize.x;
         count++;
     }
 
@@ -50,8 +63,9 @@ public class PlayerActionList
     {
         Button buttonToBeDestroyed = buttons[i];
         buttons.RemoveAt(i);
-        positions.RemoveAt(i);
+        gameObjects.RemoveAt(i);
         lengths.RemoveAt(i);
+        types.RemoveAt(i);
         for (int j = i; j < buttons.Count; j++)
         {
             int move = queueInterspace / 2 + (int)queueElementSize.x;
@@ -59,6 +73,7 @@ public class PlayerActionList
             rectTransform.localPosition = new Vector3(rectTransform.localPosition.x - move, rectTransform.localPosition.y, 0);
         }
         count--;
+        quequeCurrentPosition -= queueInterspace / 2 + (int)queueElementSize.x;
         return buttonToBeDestroyed;
     }
 
@@ -70,12 +85,22 @@ public class PlayerActionList
 
     public Vector3 GetDestination()
     {
-        return positions[0];
+        return gameObjects[0].transform.position;
+    }
+
+    public GameObject GetGameObject()
+    {
+        return gameObjects[0];
     }
 
     public int GetActionLength()
     {
         return lengths[0];
+    }
+
+    public ActionType GetActionType()
+    {
+        return types[0];
     }
 
     public Button CreateButton(Color color)
@@ -99,13 +124,24 @@ public class PlayerActionList
         rectTransform.anchorMin = new Vector2(0, 1);
         rectTransform.anchorMax = new Vector2(0, 1);
 
-        quequeCurrentPosition += queueInterspace / 2 + (int)queueElementSize.x;
-
         button.onClick.AddListener(delegate {
             Remove(button);
             GameController.RemoveGameObject(button.gameObject);
         });
         return button;
+    }
+
+    public bool IsActionInQueque(GameObject gameObject, PlayerActionList.ActionType type)
+    {
+        for(int i = 0; i<gameObjects.Count; i++)
+        {
+            if (gameObjects[i].Equals(gameObject))
+            {
+                if (types[i].Equals(type))
+                    return true;
+            }
+        }
+        return false;
     }
 
     public int Count()

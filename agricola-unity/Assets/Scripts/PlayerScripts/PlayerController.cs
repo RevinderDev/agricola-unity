@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using System;
 using System.Diagnostics;
 
+// TODO block clicking when "play"
 public class PlayerController : MonoBehaviour
 {
     public NavMeshAgent agent;
@@ -73,12 +74,13 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    public void SetAction(int actionLength) //Should contain parameter actionType (see ActionList)
+    public void SetAction(int actionLength) //Should probably contain parameter actionType (see ActionList) for animations etc.
     {
         currentActionLengh = actionLength;
-        actionStopwatch.Start();
+        actionStopwatch.Restart();
     }
 
+    // Checks if player spend enough time performing action
     public bool IsActionFinished()
     {
         if (!actionStopwatch.IsRunning)
@@ -86,7 +88,6 @@ public class PlayerController : MonoBehaviour
         if (actionStopwatch.ElapsedMilliseconds >= currentActionLengh)
         {
             actionStopwatch.Stop();
-            actionStopwatch.Reset();
             gameController.PerformAction(agent.transform.position);
             return true;
         }

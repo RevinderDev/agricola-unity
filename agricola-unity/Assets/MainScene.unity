@@ -1513,16 +1513,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b0c6f1640fb913b4a828c78407ea0f75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 906444439}
   agent: {fileID: 1112826214}
   health: 0
   maxHealth: 0
   hunger: 0
   maxHunger: 0
-  quequeVisualPosition: 0
-  queueVisualInterspace: 0
-  queueVisualElementSize: {x: 0, y: 0}
-  listVisualElements: []
+  currentActionLengh: 0
 --- !u!195 &1112826214
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1900,7 +1896,7 @@ GameObject:
   - component: {fileID: 1447636387}
   m_Layer: 0
   m_Name: GameController
-  m_TagString: Untagged
+  m_TagString: GameController
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

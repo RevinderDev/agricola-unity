@@ -6,9 +6,11 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     PlayerController player;
-    public PlayerActionList actionList;
-    private bool doActionPressed = false;
     private Farmland farmland;
+    public PlayerActionList actionList;
+
+    private bool isPlayButtonPressed;
+    Button playButton;
 
     // Start is called before the first frame update
     void Start()
@@ -16,43 +18,46 @@ public class GameController : MonoBehaviour
         farmland = new Farmland();
         actionList = new PlayerActionList();
         player = SceneManager.Instance.player;
+        isPlayButtonPressed = false;
+        playButton = GameObject.Find("PlayButton").GetComponent<Button>();
     }
 
     // once per frame
     void Update()
     {
-        if (doActionPressed)
+        if (isPlayButtonPressed)
         {
             DoAction();
         }
-        // Old version
-        //else
-        //{
-            //AddPointedAction();
-        //}
     }
 
+    // Specifies actions related to the execution of a given action 
     public void PerformAction(Vector3 position) 
     {
-        // Should use parameter actionType (see ActionList) -> GetActionType() 
-        // Swith (actionCode)
-        farmland.AddPlant(position);
+        // Custom reaction
+        switch(actionList.GetActionType()){
+            case PlayerActionList.ActionType.walk:
+                break;
+            case PlayerActionList.ActionType.plant:
+                farmland.AddPlant(actionList.GetGameObject(), farmland.carrot);
+                break;
+            case PlayerActionList.ActionType.collectPlant:
+                farmland.CollectPlant(actionList.GetGameObject());
+                break;
+        }
+        // Delete action from queque
         RemoveGameObject(actionList.Remove(0).gameObject);
-    }
-
-    public static void RemoveGameObject(GameObject gameObject)
-    {
-        Destroy(gameObject);
     }
 
     public void StartActionQueue()
     {
-        Button playButton = GameObject.Find("PlayButton").GetComponent<Button>();
         playButton.interactable = false;
-        doActionPressed = true;
-        AddAction(new Vector3(0, 1.5f, 0), 0, new Color(0, 0, 0, 0));
+        isPlayButtonPressed = true;
+        // Add final action (walk back home) - transparent
+        actionList.Add(null, PlayerActionList.ActionType.walk, 0, new Color(0, 0, 0, 0));
     }
 
+    // Manages the execution of the action queue. 
     public void DoAction()
     {
         if (player.IsActionFinished())
@@ -60,14 +65,14 @@ public class GameController : MonoBehaviour
             //action finished, check for next
             if (actionList.Count() > 0)
             {
-                player.SetDestination(actionList.GetDestination());
+                if (actionList.GetGameObject() == null) // Last action, just walk home
+                    player.SetDestination(new Vector3(0, 1.5f, 0));
+                else
+                 player.SetDestination(actionList.GetDestination());
             }
             else
             {
-                doActionPressed = false;
-                Button playButton = GameObject.Find("PlayButton").GetComponent<Button>();
-                playButton.interactable = true;
-                actionList.quequeCurrentPosition = 7;
+                NextDay();
             }
             if (player.IsPathFinished())
             {
@@ -75,42 +80,64 @@ public class GameController : MonoBehaviour
                 {
                     //at the destination, perform actions
                     player.SetAction(actionList.GetActionLength());
-                    //RemoveGameObject(actionList.Remove(0).gameObject);
                 }
             }
         }
-    }
-
-    public GameObject InstantiatePrefab(Object prefab, Vector3 vector, Quaternion identity)
-    {
-        return Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
     }
 
     public void OnClickPlayButton()
     {
         StartActionQueue();
     }
-
-    public void AddAction(Vector3 position, int actionLength, Color actionColor)
+    // Applies some changes to the game view
+    public void NextDay()
     {
-        actionList.Add(position, actionLength, actionColor);
+        isPlayButtonPressed = false;
+        playButton.interactable = true;
+        actionList.quequeCurrentPosition = 7;
+        farmland.GrowPlants();
     }
 
-    /*
-    // Old vwerion for moving around
-    private void AddPointedAction()
+    /* Action is not allowed: 
+     * 1) if there the same action in queque (same type, same object)
+     * 2) planting area is already taken
+     * 3) plant can not be collected yet (baby or spoiled plant)
+     */
+    public bool IsAcctionAllowed(GameObject gameObject, PlayerActionList.ActionType type)
     {
-        if (Input.GetMouseButtonDown(0))
+        if (actionList.IsActionInQueque(gameObject, type))
+            return false;
+        switch (type)
         {
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-
-            if (Physics.Raycast(ray, out hit))
-            {
-                actionList.Add(hit.point, 1000);
-            }
+            case PlayerActionList.ActionType.plant:
+                return !farmland.IsAreaTaken(gameObject);
+            case PlayerActionList.ActionType.collectPlant:
+                return farmland.CanPlantBeCollected(gameObject);
+            default:
+                return true;
         }
     }
-    */
 
+    // Add action only if animation is NOT in progress
+    public void AddAction(GameObject gameObject, PlayerActionList.ActionType type, int actionLength, Color actionColor)
+    {
+        if (!isPlayButtonPressed)
+        {
+            if (IsAcctionAllowed(gameObject, type))
+                actionList.Add(gameObject, type, actionLength, actionColor);
+            else
+                Debug.Log("Not allowed!");
+        }
+    }
+
+    // Providing Instantiate method for other classes (context problem)
+    public GameObject InstantiatePrefab(Object prefab, Vector3 vector, Quaternion identity)
+    {
+        return Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+    }
+    // Providing Destroy method for other classes (context problem)
+    public static void RemoveGameObject(GameObject gameObject)
+    {
+        Destroy(gameObject);
+    }
 }
