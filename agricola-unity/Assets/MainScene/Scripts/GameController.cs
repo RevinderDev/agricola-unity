@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour
     PlayerController player;
     private Farmland farmland;
     public PlayerActionList actionList;
+    public Inventory inventory;
 
     private bool isPlayButtonPressed;
     Button playButton;
@@ -20,6 +21,7 @@ public class GameController : MonoBehaviour
         player = SceneManager.Instance.player;
         isPlayButtonPressed = false;
         playButton = GameObject.Find("PlayButton").GetComponent<Button>();
+        inventory = FindObjectOfType<Inventory>();
     }
 
     // once per frame

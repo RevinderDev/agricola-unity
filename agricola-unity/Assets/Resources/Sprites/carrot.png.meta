@@ -1,0 +1,195 @@
+fileFormatVersion: 2
+guid: 0449915b15135884dbeda715cfeca4be
+TextureImporter:
+  fileIDToRecycleName:
+    21300000: carrot_0
+    21300002: carrot_1
+    21300004: carrot_2
+    21300006: carrot_3
+    21300008: carrot_4
+    21300010: carrot_5
+    21300012: carrot_6
+    21300014: carrot_7
+    21300016: carrot_8
+    21300018: carrot_9
+    21300020: carrot_10
+    21300022: carrot_11
+    21300024: carrot_12
+    21300026: carrot_13
+    21300028: carrot_14
+    21300030: carrot_15
+    21300032: carrot_16
+    21300034: carrot_17
+    21300036: carrot_18
+    21300038: carrot_19
+    21300040: carrot_20
+    21300042: carrot_21
+    21300044: carrot_22
+    21300046: carrot_23
+    21300048: carrot_24
+    21300050: carrot_25
+    21300052: carrot_26
+    21300054: carrot_27
+    21300056: carrot_28
+    21300058: carrot_29
+    21300060: carrot_30
+    21300062: carrot_31
+    21300064: carrot_32
+    21300066: carrot_33
+    21300068: carrot_34
+    21300070: carrot_35
+    21300072: carrot_36
+    21300074: carrot_37
+    21300076: carrot_38
+    21300078: carrot_39
+    21300080: carrot_40
+    21300082: carrot_41
+    21300084: carrot_42
+    21300086: carrot_43
+    21300088: carrot_44
+    21300090: carrot_45
+    21300092: carrot_46
+    21300094: carrot_47
+    21300096: carrot_48
+    21300098: carrot_49
+    21300100: carrot_50
+    21300102: carrot_51
+    21300104: carrot_52
+    21300106: carrot_53
+    21300108: carrot_54
+    21300110: carrot_55
+    21300112: carrot_56
+    21300114: carrot_57
+    21300116: carrot_58
+    21300118: carrot_59
+    21300120: carrot_60
+    21300122: carrot_61
+    21300124: carrot_62
+    21300126: carrot_63
+    21300128: carrot_64
+    21300130: carrot_65
+    21300132: carrot_66
+    21300134: carrot_67
+    21300136: carrot_68
+    21300138: carrot_69
+    21300140: carrot_70
+    21300142: carrot_71
+    21300144: carrot_72
+    21300146: carrot_73
+    21300148: carrot_74
+    21300150: carrot_75
+  externalObjects: {}
+  serializedVersion: 9
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 2
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: -1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 1
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  platformSettings:
+  - serializedVersion: 2
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  - serializedVersion: 2
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: carrot_0
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 39
+        width: 912
+        height: 936
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7dbaa00dc9792ba4a90e628f7487a944
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 9e97315805c131e4b889d99cdf61413f
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

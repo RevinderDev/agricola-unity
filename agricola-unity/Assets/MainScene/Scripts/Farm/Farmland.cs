@@ -10,15 +10,17 @@ public class PlantType
     public readonly int daysToCollect;
     public readonly int daysToBeSpoiled;
     public readonly string prefabDirectory;
+    public readonly string spriteDirectory;
     
 
-    public PlantType(string name, float growthPerDay, int daysToCollect, int daysToBeSpoiled, string prefabDirectory)
+    public PlantType(string name, float growthPerDay, int daysToCollect, int daysToBeSpoiled, string prefabDirectory, string spriteDirectory)
     {
         this.name = name;
         this.growthPerDay = growthPerDay;
         this.daysToBeSpoiled = daysToBeSpoiled;
         this.daysToCollect = daysToCollect;
         this.prefabDirectory = prefabDirectory;
+        this.spriteDirectory = spriteDirectory;
     }
 }
 
@@ -83,7 +85,8 @@ public class Farmland
     GameController gameController;
 
     // Name of PlantType must exist in project tags!
-    public readonly PlantType carrot = new PlantType("Carrot", 0.1f, 2, 4, "Assets/simple_low_poly_village_buildings/models/carrot2.prefab");
+    public readonly PlantType carrot = new PlantType("Carrot", 0.1f, 2, 4, 
+        "Assets/simple_low_poly_village_buildings/models/carrot2.prefab", "Sprites/carrot");
 
     public Farmland()
     {
@@ -149,14 +152,17 @@ public class Farmland
 
     public void CollectPlant(GameObject plantObject)
     {
-        for (int i = 0; i < 0; i++)
+        for (int i = 0; i < plants.Count; i++)
         {
             if (plants[i].GetGameObject().Equals(plantObject))
             {
+                gameController.inventory.AddItem(plants[i].GetPlantType().spriteDirectory);
                 plants.RemoveAt(i);
+                
                 break;
             }
         }
+       
         GameController.RemoveGameObject(plantObject);
         // Free the area
         plantsToAreaMap.Remove(plantObject);
