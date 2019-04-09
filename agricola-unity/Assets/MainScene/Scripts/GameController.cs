@@ -7,6 +7,7 @@ public class GameController : MonoBehaviour
 {
     PlayerController player;
     private Farmland farmland;
+    private AnimalFarm animalFarm;
     public PlayerActionList actionList;
     public Inventory inventory;
 
@@ -17,6 +18,7 @@ public class GameController : MonoBehaviour
     void Start()
     {
         farmland = new Farmland();
+        animalFarm = new AnimalFarm();
         actionList = new PlayerActionList();
         player = SceneManager.Instance.player;
         isPlayButtonPressed = false;
