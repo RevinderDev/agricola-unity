@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class GameController : MonoBehaviour
 {
     PlayerController player;
+    private Information info;
     private Farmland farmland;
     private AnimalFarm animalFarm;
     public PlayerActionList actionList;
@@ -24,6 +25,9 @@ public class GameController : MonoBehaviour
         isPlayButtonPressed = false;
         playButton = GameObject.Find("PlayButton").GetComponent<Button>();
         inventory = FindObjectOfType<Inventory>();
+        info = new Information(GameObject.Find("InformationObject"),
+            GameObject.Find("InformationText").GetComponent<Text>());
+        info.Hide();
     }
 
     // once per frame
@@ -32,6 +36,10 @@ public class GameController : MonoBehaviour
         if (isPlayButtonPressed)
         {
             DoAction();
+        }
+        if(info.hide == true)
+        {
+            info.Hide();
         }
     }
 
@@ -129,8 +137,10 @@ public class GameController : MonoBehaviour
             if (IsAcctionAllowed(gameObject, type))
                 actionList.Add(gameObject, type, actionLength, actionColor);
             else
-                Debug.Log("Not allowed!");
+                info.Display("Not allowed. Action already in queque.");
         }
+        else
+            info.Display("Not allowed. Animation is in progress.");
     }
 
 
@@ -142,8 +152,10 @@ public class GameController : MonoBehaviour
             if (IsAcctionAllowed(gameObject, type))
                 actionList.Add(gameObject, type, actionLength, imageDirectory);
             else
-                Debug.Log("Not allowed!");
+                info.Display("Not allowed! Action already in queque.");
         }
+        else
+            info.Display("Not allowed. Animation is in progress.");
     }
 
     // Providing Instantiate method for other classes (context problem)
