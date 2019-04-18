@@ -7,6 +7,7 @@ public class GameController : MonoBehaviour
 {
     PlayerController player;
     private Information info;
+    private QuestionWindow questionWindow;
     private Farmland farmland;
     private AnimalFarm animalFarm;
     public PlayerActionList actionList;
@@ -28,15 +29,38 @@ public class GameController : MonoBehaviour
         info = new Information(GameObject.Find("InformationObject"),
             GameObject.Find("InformationText").GetComponent<Text>());
         info.Hide();
+        questionWindow = new QuestionWindow(GameObject.Find("WindowObject"), 
+            GameObject.Find("WindowQuestion").GetComponent<Text>(),
+            GameObject.Find("ButtonYes").GetComponent<Button>(), 
+            GameObject.Find("ButtonNo").GetComponent<Button>());
+        questionWindow.Hide();
     }
 
     // once per frame
     void Update()
     {
+        if (questionWindow.WasQuestionAsked() && questionWindow.GetQuestionTag() == "Play")
+        {
+            if (questionWindow.WasQuestionAnswered())
+            {
+                if (questionWindow.GetAnswer() == true)
+                {
+                     isPlayButtonPressed = true;
+                    // Add final action (walk back home) - transparent
+                    actionList.Add(null, PlayerActionList.ActionType.walk, 0, new Color(0, 0, 0, 0));
+                }
+                else
+                {
+                    playButton.interactable = true;
+                }
+            }
+        }
+
         if (isPlayButtonPressed)
         {
             DoAction();
         }
+     
         if(info.hide == true)
         {
             info.Hide();
@@ -64,9 +88,18 @@ public class GameController : MonoBehaviour
     public void StartActionQueue()
     {
         playButton.interactable = false;
-        isPlayButtonPressed = true;
-        // Add final action (walk back home) - transparent
-        actionList.Add(null, PlayerActionList.ActionType.walk, 0, new Color(0, 0, 0, 0));
+        if(actionList.Count() < 4)
+        {
+            questionWindow.DisplayQuestion("You added less than 4 action. " +
+                "I am disappointed with your laziness. Are you sure you want to continue?", "Play");
+            isPlayButtonPressed = false;
+        }
+        else
+        {
+            isPlayButtonPressed = true;
+            // Add final action (walk back home) - transparent
+            actionList.Add(null, PlayerActionList.ActionType.walk, 0, new Color(0, 0, 0, 0));
+        }
     }
 
     // Manages the execution of the action queue. 

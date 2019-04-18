@@ -10,6 +10,7 @@ public class ActionController : MonoBehaviour
     private Color materialBasicColor;
     private Color lastColor;
     GameController gameController;
+    public static bool isActive = true;
     
     // Start is called before the first frame update
     void Start()
@@ -26,16 +27,22 @@ public class ActionController : MonoBehaviour
 
     void OnMouseEnter()
     {
+        if (!isActive)
+            return;
         lastColor = GetComponent<Renderer>().material.color;
         GetComponent<Renderer>().material.color = Color.gray;
     }
     void OnMouseExit()
     {
+        if (!isActive)
+            return;
         GetComponent<Renderer>().material.color = lastColor;
     }
 
     private void OnMouseDown()
     {
+        if (!isActive)
+            return;
         switch (tag)
         {
             case "PlantingArea":
