@@ -39,12 +39,12 @@ public class AnimalFarm
     private void initFarms()
     {
         // TODO: Is broken, find a way to get reference to farm objects.
-        //farmsGameObjects.Add("CowFarm", GameObject.Find("CowFarm").GetComponent<GameObject>());
-        //farmsGameObjects.Add("SheepFarm", GameObject.Find("SheepFarm").GetComponent<GameObject>());
+        //farmsGameObjects.Add("CowFarm", GameObject.FindGameObjectWithTag("CowFarm"));
+        //farmsGameObjects.Add("SheepFarm", GameObject.Find("SheepFarm"));
         //farmsGameObjects.Add("PigFarm", GameObject.Find("PigFarm").GetComponent<GameObject>());
         //foreach (KeyValuePair<string, GameObject> entry in farmsGameObjects)
         //{
-        //    entry.Value.AddComponent<ActionController>();
+            //entry.Value.AddComponent<ActionController>();
         //}
     }
 

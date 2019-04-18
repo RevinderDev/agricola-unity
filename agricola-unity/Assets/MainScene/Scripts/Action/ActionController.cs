@@ -39,10 +39,11 @@ public class ActionController : MonoBehaviour
         switch (tag)
         {
             case "PlantingArea":
-                gameController.AddAction(gameObject, PlayerActionList.ActionType.plant, 500, materialBasicColor);
+                //gameController.AddAction(gameObject, PlayerActionList.ActionType.plant, 500, materialBasicColor);
+                gameController.AddAction(gameObject, PlayerActionList.ActionType.plant, 500, "Sprites/planting");
                 break;
             case "Carrot":
-                gameController.AddAction(gameObject, PlayerActionList.ActionType.collectPlant, 1000, materialBasicColor);
+                gameController.AddAction(gameObject, PlayerActionList.ActionType.collectPlant, 1000, "Sprites/carrot");
                 break;
         }
     }

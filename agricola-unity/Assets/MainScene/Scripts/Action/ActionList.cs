@@ -38,15 +38,26 @@ public class PlayerActionList
 
     public PlayerActionList()
     {
-        quequeCurrentPosition = 7;
-        queueInterspace = 14;
-        queueElementSize = new Vector2(20, 20);
+        queueInterspace = 5;
+        quequeCurrentPosition = queueInterspace*4;
+        queueElementSize = new Vector2(35, 35);
         mCanvas = GameObject.Find("Canvas");
         count = 0;
         gameObjects = new List<GameObject>();
         buttons = new List<Button>();
         lengths = new List<int>();
         types = new List<ActionType>();
+    }
+
+    public void Add(GameObject gameObject, ActionType type, int actionLength, string imageDirectory)
+    {
+        Sprite sprite = Resources.Load<Sprite>(imageDirectory);
+        gameObjects.Add(gameObject);
+        buttons.Add(CreateButton(sprite));
+        lengths.Add(actionLength);
+        types.Add(type);
+        quequeCurrentPosition += queueInterspace / 2 + (int)queueElementSize.x;
+        count++;
     }
 
     public void Add(GameObject gameObject, ActionType type, int actionLength, Color color)
@@ -119,11 +130,54 @@ public class PlayerActionList
         button.GetComponent<Image>().color = color;
 
         RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
-        rectTransform.localPosition = new Vector3(quequeCurrentPosition + queueInterspace / 2, -queueInterspace, 0);
+        rectTransform.localPosition = new Vector3(quequeCurrentPosition + queueInterspace / 2, -queueInterspace*4, 0);
         rectTransform.sizeDelta = queueElementSize;
         rectTransform.anchorMin = new Vector2(0, 1);
         rectTransform.anchorMax = new Vector2(0, 1);
 
+        button.onClick.AddListener(delegate {
+            Remove(button);
+            GameController.RemoveGameObject(button.gameObject);
+        });
+        return button;
+    }
+
+    public Button CreateButton(Sprite sprite)
+    {
+        
+        GameObject gameObject = new GameObject();
+        gameObject.AddComponent<CanvasRenderer>();
+        gameObject.AddComponent<RectTransform>();
+        gameObject.layer = 5;
+        gameObject.transform.SetParent(mCanvas.transform);
+
+        //Background
+        GameObject gameObjectBackground = new GameObject();
+        gameObjectBackground.AddComponent<CanvasRenderer>();
+        gameObjectBackground.AddComponent<RectTransform>();
+        gameObjectBackground.transform.SetParent(gameObject.transform);
+        Image imageBackground = gameObjectBackground.AddComponent<Image>();
+        imageBackground.sprite = UnityEditor.AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
+        gameObjectBackground.GetComponent<RectTransform>().sizeDelta = queueElementSize;
+        //Icon
+        GameObject gameObjectIcon = new GameObject();
+        gameObjectIcon.AddComponent<CanvasRenderer>();
+        gameObjectIcon.AddComponent<RectTransform>();
+        gameObjectIcon.transform.SetParent(gameObject.transform);
+        Image image = gameObjectIcon.AddComponent<Image>();
+        image.sprite = sprite;
+        gameObjectIcon.GetComponent<RectTransform>().sizeDelta = new Vector2(queueElementSize.x - 5, queueElementSize.y - 5);
+
+
+        RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
+        rectTransform.localPosition = new Vector3(quequeCurrentPosition + queueInterspace / 2, -queueInterspace*4, 0);
+        rectTransform.sizeDelta = queueElementSize;
+        rectTransform.anchorMin = new Vector2(0, 1);
+        rectTransform.anchorMax = new Vector2(0, 1);
+
+        //Button
+        Button button = gameObject.AddComponent<Button>();
+        button.targetGraphic = image;
         button.onClick.AddListener(delegate {
             Remove(button);
             GameController.RemoveGameObject(button.gameObject);

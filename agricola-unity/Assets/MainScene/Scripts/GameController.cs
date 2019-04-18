@@ -98,7 +98,6 @@ public class GameController : MonoBehaviour
     {
         isPlayButtonPressed = false;
         playButton.interactable = true;
-        actionList.quequeCurrentPosition = 7;
         farmland.GrowPlants();
     }
 
@@ -129,6 +128,19 @@ public class GameController : MonoBehaviour
         {
             if (IsAcctionAllowed(gameObject, type))
                 actionList.Add(gameObject, type, actionLength, actionColor);
+            else
+                Debug.Log("Not allowed!");
+        }
+    }
+
+
+    // Add action only if animation is NOT in progress
+    public void AddAction(GameObject gameObject, PlayerActionList.ActionType type, int actionLength, string imageDirectory)
+    {
+        if (!isPlayButtonPressed)
+        {
+            if (IsAcctionAllowed(gameObject, type))
+                actionList.Add(gameObject, type, actionLength, imageDirectory);
             else
                 Debug.Log("Not allowed!");
         }
