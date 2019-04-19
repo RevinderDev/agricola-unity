@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Linq;
 
 /*
 * Stores positions (where actions should be performed), lengths of those actions
@@ -9,32 +10,37 @@ using UnityEngine.UI;
 */
 public class PlayerActionList
 {
-    public enum ActionType
-    {
-        /* New action should be added in PerformAction (GameController), OnMouseDown (ActionController
+    /* New action should be added in PerformAction (GameController), OnMouseDown (ActionController
          * and eventually in Farmland or other classes created (custom method)
          * */
-        walk = 0,
-        plant = 1,
-        collectPlant = 2
+    public class ActionType
+    {
+        public readonly string name;
+        public readonly string spriteDirectory;
+        public readonly int length;
+
+        public ActionType(string name, string spriteDirectory, int length)
+        {
+            this.name = name;
+            this.spriteDirectory = spriteDirectory;
+            this.length = length;
+        }
     }
-    /* 
-     * There is probably no point in creating "Action" class
-     * it would cause some problems e.g. removing by button.
-     */
 
     private int count;
     private List<Button> buttons;
     private List<GameObject> gameObjects;
-    private List<int> lengths;
     private List<ActionType> types;
-    // Add e.g enum with actionType (to know which action shuould by performed)
 
     public int quequeCurrentPosition;
     public int queueInterspace;
     public Vector2 queueElementSize;
 
     GameObject mCanvas;
+
+    public static readonly ActionType walk = new ActionType("walk", null, 0);
+    public static readonly ActionType plant = new ActionType("plant", "Sprites/planting", 500);
+    public static readonly ActionType collectPlant = new ActionType("collect plant", "Sprites/carrot", 1000);
 
     public PlayerActionList()
     {
@@ -45,26 +51,13 @@ public class PlayerActionList
         count = 0;
         gameObjects = new List<GameObject>();
         buttons = new List<Button>();
-        lengths = new List<int>();
         types = new List<ActionType>();
     }
 
-    public void Add(GameObject gameObject, ActionType type, int actionLength, string imageDirectory)
-    {
-        Sprite sprite = Resources.Load<Sprite>(imageDirectory);
-        gameObjects.Add(gameObject);
-        buttons.Add(CreateButton(sprite));
-        lengths.Add(actionLength);
-        types.Add(type);
-        quequeCurrentPosition += queueInterspace / 2 + (int)queueElementSize.x;
-        count++;
-    }
-
-    public void Add(GameObject gameObject, ActionType type, int actionLength, Color color)
+    public void Add(GameObject gameObject, ActionType type)
     {
         gameObjects.Add(gameObject);
-        buttons.Add(CreateButton(color));
-        lengths.Add(actionLength);
+        buttons.Add(CreateButton(type.spriteDirectory));
         types.Add(type);
         quequeCurrentPosition += queueInterspace / 2 + (int)queueElementSize.x;
         count++;
@@ -75,7 +68,6 @@ public class PlayerActionList
         Button buttonToBeDestroyed = buttons[i];
         buttons.RemoveAt(i);
         gameObjects.RemoveAt(i);
-        lengths.RemoveAt(i);
         types.RemoveAt(i);
         for (int j = i; j < buttons.Count; j++)
         {
@@ -106,7 +98,7 @@ public class PlayerActionList
 
     public int GetActionLength()
     {
-        return lengths[0];
+        return types[0].length;
     }
 
     public ActionType GetActionType()
@@ -114,37 +106,10 @@ public class PlayerActionList
         return types[0];
     }
 
-    public Button CreateButton(Color color)
+    public Button CreateButton(string spriteDirectory)
     {
-        GameObject gameObject = new GameObject();
-        gameObject.AddComponent<CanvasRenderer>();
-        gameObject.AddComponent<RectTransform>();
-        gameObject.layer = 5;
+        Sprite sprite = Resources.Load<Sprite>(spriteDirectory);
 
-        Button button = gameObject.AddComponent<Button>();
-        Image image = gameObject.AddComponent<Image>();
-        button.targetGraphic = image;
-        gameObject.transform.SetParent(mCanvas.transform);
-        //Random color test only
-        //Color newColor = new Color(Random.value, Random.value, Random.value, 1.0f);
-        button.GetComponent<Image>().color = color;
-
-        RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
-        rectTransform.localPosition = new Vector3(quequeCurrentPosition + queueInterspace / 2, -queueInterspace*4, 0);
-        rectTransform.sizeDelta = queueElementSize;
-        rectTransform.anchorMin = new Vector2(0, 1);
-        rectTransform.anchorMax = new Vector2(0, 1);
-
-        button.onClick.AddListener(delegate {
-            Remove(button);
-            GameController.RemoveGameObject(button.gameObject);
-        });
-        return button;
-    }
-
-    public Button CreateButton(Sprite sprite)
-    {
-        
         GameObject gameObject = new GameObject();
         gameObject.AddComponent<CanvasRenderer>();
         gameObject.AddComponent<RectTransform>();
@@ -182,6 +147,9 @@ public class PlayerActionList
             Remove(button);
             GameController.RemoveGameObject(button.gameObject);
         });
+        if (spriteDirectory == null)
+            button.gameObject.SetActive(false);
+
         return button;
     }
 
@@ -201,5 +169,10 @@ public class PlayerActionList
     public int Count()
     {
         return count;
+    }
+
+    public int ActionTimeSum()
+    {
+        return types.Sum(item => item.length);
     }
 }

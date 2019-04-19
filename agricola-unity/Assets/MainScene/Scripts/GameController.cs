@@ -12,6 +12,8 @@ public class GameController : MonoBehaviour
     private AnimalFarm animalFarm;
     public PlayerActionList actionList;
     public Inventory inventory;
+    public int money;
+    private readonly int dayLength = 12000;
 
     private bool isPlayButtonPressed;
     Button playButton;
@@ -34,6 +36,14 @@ public class GameController : MonoBehaviour
             GameObject.Find("ButtonYes").GetComponent<Button>(), 
             GameObject.Find("ButtonNo").GetComponent<Button>());
         questionWindow.Hide();
+        money = 0;
+        MoneyTransaction(0);
+    }
+
+    public void MoneyTransaction(int transactionAmount)
+    {
+        money += transactionAmount;
+        GameObject.Find("MoneyValue").GetComponent<Text>().text = money.ToString();
     }
 
     // once per frame
@@ -47,7 +57,7 @@ public class GameController : MonoBehaviour
                 {
                      isPlayButtonPressed = true;
                     // Add final action (walk back home) - transparent
-                    actionList.Add(null, PlayerActionList.ActionType.walk, 0, new Color(0, 0, 0, 0));
+                    actionList.Add(null, PlayerActionList.walk);
                 }
                 else
                 {
@@ -71,16 +81,12 @@ public class GameController : MonoBehaviour
     public void PerformAction(Vector3 position) 
     {
         // Custom reaction
-        switch(actionList.GetActionType()){
-            case PlayerActionList.ActionType.walk:
-                break;
-            case PlayerActionList.ActionType.plant:
-                farmland.AddPlant(actionList.GetGameObject(), farmland.carrot);
-                break;
-            case PlayerActionList.ActionType.collectPlant:
-                farmland.CollectPlant(actionList.GetGameObject());
-                break;
-        }
+        if(actionList.GetActionType() == PlayerActionList.walk)
+            ;
+        else if(actionList.GetActionType() == PlayerActionList.plant)
+            farmland.AddPlant(actionList.GetGameObject(), farmland.carrot);
+        else if(actionList.GetActionType() == PlayerActionList.collectPlant)
+            farmland.CollectPlant(actionList.GetGameObject());
         // Delete action from queque
         RemoveGameObject(actionList.Remove(0).gameObject);
     }
@@ -88,17 +94,20 @@ public class GameController : MonoBehaviour
     public void StartActionQueue()
     {
         playButton.interactable = false;
-        if(actionList.Count() < 4)
+        if(actionList.ActionTimeSum() < dayLength)
         {
-            questionWindow.DisplayQuestion("You added less than 4 action. " +
-                "I am disappointed with your laziness. Are you sure you want to continue?", "Play");
+            double timeUsed = (double)actionList.ActionTimeSum() / 1000;
+            double timeLeft = ((double)dayLength / 1000 - timeUsed);
+            questionWindow.DisplayQuestion("You used " + timeUsed + "h of your day time, " + 
+                "but you still have " + timeLeft +  "h. " +
+                "Are you sure you want to continue?", "Play");
             isPlayButtonPressed = false;
         }
         else
         {
             isPlayButtonPressed = true;
             // Add final action (walk back home) - transparent
-            actionList.Add(null, PlayerActionList.ActionType.walk, 0, new Color(0, 0, 0, 0));
+            actionList.Add(null, PlayerActionList.walk);
         }
     }
 
@@ -147,48 +156,32 @@ public class GameController : MonoBehaviour
      * 2) planting area is already taken
      * 3) plant can not be collected yet (baby or spoiled plant)
      */
-    public bool IsAcctionAllowed(GameObject gameObject, PlayerActionList.ActionType type)
+    public string IsAcctionAllowed(GameObject gameObject, PlayerActionList.ActionType type)
     {
+        if (isPlayButtonPressed)
+            return "Animation is in progress.";
         if (actionList.IsActionInQueque(gameObject, type))
-            return false;
-        switch (type)
-        {
-            case PlayerActionList.ActionType.plant:
-                return !farmland.IsAreaTaken(gameObject);
-            case PlayerActionList.ActionType.collectPlant:
-                return farmland.CanPlantBeCollected(gameObject);
-            default:
-                return true;
-        }
+            return "Action already in queque.";
+        if (actionList.ActionTimeSum() >= dayLength + type.length)
+            return "Action too long. " + ((double)(dayLength - actionList.ActionTimeSum()) / 1000) + "h left.";
+        if (type == PlayerActionList.plant)
+            if(farmland.IsAreaTaken(gameObject))
+                return "Action already in queque.";
+        if (type == PlayerActionList.collectPlant)
+            if (!farmland.CanPlantBeCollected(gameObject))
+                return "Plant can not be collected.";
+        return null;
     }
 
     // Add action only if animation is NOT in progress
-    public void AddAction(GameObject gameObject, PlayerActionList.ActionType type, int actionLength, Color actionColor)
+    public void AddAction(GameObject gameObject, PlayerActionList.ActionType type)
     {
-        if (!isPlayButtonPressed)
-        {
-            if (IsAcctionAllowed(gameObject, type))
-                actionList.Add(gameObject, type, actionLength, actionColor);
-            else
-                info.Display("Not allowed. Action already in queque.");
-        }
+        string message = IsAcctionAllowed(gameObject, type);
+        if (message == null)
+            actionList.Add(gameObject, type);
         else
-            info.Display("Not allowed. Animation is in progress.");
-    }
-
-
-    // Add action only if animation is NOT in progress
-    public void AddAction(GameObject gameObject, PlayerActionList.ActionType type, int actionLength, string imageDirectory)
-    {
-        if (!isPlayButtonPressed)
-        {
-            if (IsAcctionAllowed(gameObject, type))
-                actionList.Add(gameObject, type, actionLength, imageDirectory);
-            else
-                info.Display("Not allowed! Action already in queque.");
-        }
-        else
-            info.Display("Not allowed. Animation is in progress.");
+            info.Display("Not allowed. " + message);
+ 
     }
 
     // Providing Instantiate method for other classes (context problem)
