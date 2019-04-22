@@ -8,7 +8,7 @@ using System.Linq;
 * Stores positions (where actions should be performed), lengths of those actions
 * (how long player stays there) and buttons (they represent actions and creates queque) 
 */
-public class PlayerActionList
+public class ActionList
 {
     /* New action should be added in PerformAction (GameController), OnMouseDown (ActionController
          * and eventually in Farmland or other classes created (custom method)
@@ -42,7 +42,7 @@ public class PlayerActionList
     public static readonly ActionType plant = new ActionType("plant", "Sprites/planting", 500);
     public static readonly ActionType collectPlant = new ActionType("collect plant", "Sprites/carrot", 1000);
 
-    public PlayerActionList()
+    public ActionList()
     {
         queueInterspace = 5;
         quequeCurrentPosition = queueInterspace*4;
@@ -153,7 +153,7 @@ public class PlayerActionList
         return button;
     }
 
-    public bool IsActionInQueque(GameObject gameObject, PlayerActionList.ActionType type)
+    public bool IsActionInQueque(GameObject gameObject, ActionList.ActionType type)
     {
         for(int i = 0; i<gameObjects.Count; i++)
         {
@@ -171,7 +171,7 @@ public class PlayerActionList
         return count;
     }
 
-    public int ActionTimeSum()
+    public int ActionsLengthsSum()
     {
         return types.Sum(item => item.length);
     }

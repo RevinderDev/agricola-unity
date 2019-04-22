@@ -10,10 +10,11 @@ public class GameController : MonoBehaviour
     private QuestionWindow questionWindow;
     private Farmland farmland;
     private AnimalFarm animalFarm;
-    public PlayerActionList actionList;
+    public ActionList actionList;
     public Inventory inventory;
     public int money;
     private readonly int dayLength = 12000;
+    private int currentDay = 0;
 
     private bool isPlayButtonPressed;
     Button playButton;
@@ -23,7 +24,7 @@ public class GameController : MonoBehaviour
     {
         farmland = new Farmland();
         animalFarm = new AnimalFarm();
-        actionList = new PlayerActionList();
+        actionList = new ActionList();
         player = SceneManager.Instance.player;
         isPlayButtonPressed = false;
         playButton = GameObject.Find("PlayButton").GetComponent<Button>();
@@ -38,6 +39,9 @@ public class GameController : MonoBehaviour
         questionWindow.Hide();
         money = 0;
         MoneyTransaction(0);
+        ActualizeTimeBar();
+        Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
+        dayLabel.text = "Day " + (currentDay++).ToString();
     }
 
     public void MoneyTransaction(int transactionAmount)
@@ -57,7 +61,7 @@ public class GameController : MonoBehaviour
                 {
                      isPlayButtonPressed = true;
                     // Add final action (walk back home) - transparent
-                    actionList.Add(null, PlayerActionList.walk);
+                    actionList.Add(null, ActionList.walk);
                 }
                 else
                 {
@@ -81,11 +85,11 @@ public class GameController : MonoBehaviour
     public void PerformAction(Vector3 position) 
     {
         // Custom reaction
-        if(actionList.GetActionType() == PlayerActionList.walk)
+        if(actionList.GetActionType() == ActionList.walk)
             ;
-        else if(actionList.GetActionType() == PlayerActionList.plant)
+        else if(actionList.GetActionType() == ActionList.plant)
             farmland.AddPlant(actionList.GetGameObject(), farmland.carrot);
-        else if(actionList.GetActionType() == PlayerActionList.collectPlant)
+        else if(actionList.GetActionType() == ActionList.collectPlant)
             farmland.CollectPlant(actionList.GetGameObject());
         // Delete action from queque
         RemoveGameObject(actionList.Remove(0).gameObject);
@@ -94,9 +98,9 @@ public class GameController : MonoBehaviour
     public void StartActionQueue()
     {
         playButton.interactable = false;
-        if(actionList.ActionTimeSum() < dayLength)
+        if(actionList.ActionsLengthsSum() < dayLength)
         {
-            double timeUsed = (double)actionList.ActionTimeSum() / 1000;
+            double timeUsed = (double)actionList.ActionsLengthsSum() / 1000;
             double timeLeft = ((double)dayLength / 1000 - timeUsed);
             questionWindow.DisplayQuestion("You used " + timeUsed + "h of your day time, " + 
                 "but you still have " + timeLeft +  "h. " +
@@ -107,7 +111,7 @@ public class GameController : MonoBehaviour
         {
             isPlayButtonPressed = true;
             // Add final action (walk back home) - transparent
-            actionList.Add(null, PlayerActionList.walk);
+            actionList.Add(null, ActionList.walk);
         }
     }
 
@@ -149,6 +153,9 @@ public class GameController : MonoBehaviour
         isPlayButtonPressed = false;
         playButton.interactable = true;
         farmland.GrowPlants();
+        ActualizeTimeBar();
+        Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
+        dayLabel.text = "Day " + (currentDay++).ToString();
     }
 
     /* Action is not allowed: 
@@ -156,29 +163,46 @@ public class GameController : MonoBehaviour
      * 2) planting area is already taken
      * 3) plant can not be collected yet (baby or spoiled plant)
      */
-    public string IsAcctionAllowed(GameObject gameObject, PlayerActionList.ActionType type)
+    public string IsAcctionAllowed(GameObject gameObject, ActionList.ActionType type)
     {
         if (isPlayButtonPressed)
             return "Animation is in progress.";
         if (actionList.IsActionInQueque(gameObject, type))
             return "Action already in queque.";
-        if (actionList.ActionTimeSum() >= dayLength + type.length)
-            return "Action too long. " + ((double)(dayLength - actionList.ActionTimeSum()) / 1000) + "h left.";
-        if (type == PlayerActionList.plant)
+        if (actionList.ActionsLengthsSum() >= dayLength + type.length)
+            return "Action too long. " + ((double)(dayLength - actionList.ActionsLengthsSum()) / 1000) + "h left.";
+        if (type == ActionList.plant)
             if(farmland.IsAreaTaken(gameObject))
                 return "Action already in queque.";
-        if (type == PlayerActionList.collectPlant)
+        if (type == ActionList.collectPlant)
             if (!farmland.CanPlantBeCollected(gameObject))
                 return "Plant can not be collected.";
         return null;
     }
 
+    private void ActualizeTimeBar()
+    {
+        float timeUsed = (float)actionList.ActionsLengthsSum()/1000;
+        float timeLeft = (float)dayLength/1000 - timeUsed;
+        float totalTime = (float)dayLength / 1000;
+
+        Image bar = GameObject.Find("TimeBar").GetComponent<Image>();
+        bar.rectTransform.localScale = new Vector2(timeLeft / totalTime, 1f);
+        Text value = GameObject.Find("TimeValue").GetComponent<Text>();
+        // Label off
+        value.text = "";
+        //value.text = timeLeft.ToString() + "/" + totalTime.ToString() + "h";
+    }
+
     // Add action only if animation is NOT in progress
-    public void AddAction(GameObject gameObject, PlayerActionList.ActionType type)
+    public void AddAction(GameObject gameObject, ActionList.ActionType type)
     {
         string message = IsAcctionAllowed(gameObject, type);
         if (message == null)
+        {
             actionList.Add(gameObject, type);
+            ActualizeTimeBar();
+        }
         else
             info.Display("Not allowed. " + message);
  
