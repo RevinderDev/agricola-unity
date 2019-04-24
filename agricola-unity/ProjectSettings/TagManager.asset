@@ -10,6 +10,7 @@ TagManager:
   - CowFarm
   - PigFarm
   - Cow
+  - CowSlots
   layers:
   - Default
   - TransparentFX

@@ -5,65 +5,134 @@ using UnityEngine;
 
 public class AnimalFarm
 {
-    private Dictionary<string, int> animalCount;  //here we store how many animals of each type we have
-    private List<Animal> listOfAnimals;
-    private Dictionary<string, GameObject> farmsGameObjects;
+    private List<AnimalSlot> cowSlotsList;
     GameController gameController;
 
-    private readonly Vector3 COW_FARM_POSITION;
-    private readonly Vector3 PIG_FARM_POSITION;
-    private readonly Vector3 SHEEP_FARM_POSITION;
-    private readonly Vector3 ANIMAL_SCALE;
-    private readonly Vector3 ANIMAL_ROTATION;
+
+    private readonly Vector3 AnimalScale;
+    private readonly Vector3 AnimalRotation;
+    private readonly int ErrorCode = -1;
 
     private AnimalFactory animalFactory = AnimalFactory.getInstance();
 
     public AnimalFarm()
     {
-        ANIMAL_SCALE = new Vector3(1, 1, 1);
-        COW_FARM_POSITION = new Vector3(10, 0.5f, -10);
-        PIG_FARM_POSITION = new Vector3(13, -0.8f, -16);
-        SHEEP_FARM_POSITION = new Vector3(13, -0.8f, 0);
-        ANIMAL_ROTATION = new Vector3(0, -90, 0);
+        AnimalScale = new Vector3(0.8f, 0.8f, 0.8f);
+        AnimalRotation = new Vector3(0, -90, 0);
 
-        farmsGameObjects = new Dictionary<string, GameObject>();
-        animalCount = new Dictionary<string, int>();
-        listOfAnimals = new List<Animal>();
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
 
         initStartingAnimals();
-        initFarms();
+        initFarmSlots();
     }
 
 
-    private void initFarms()
+    private void initFarmSlots()
     {
-        // TODO: Is broken, find a way to get reference to farm objects.
-        //farmsGameObjects.Add("CowFarm", GameObject.FindGameObjectWithTag("CowFarm"));
-        //farmsGameObjects.Add("SheepFarm", GameObject.Find("SheepFarm"));
-        //farmsGameObjects.Add("PigFarm", GameObject.Find("PigFarm").GetComponent<GameObject>());
-        //foreach (KeyValuePair<string, GameObject> entry in farmsGameObjects)
-        //{
-            //entry.Value.AddComponent<ActionController>();
-        //}
+        GameObject[] cowSlotsObjects = GameObject.FindGameObjectsWithTag("CowSlots");
+        cowSlotsList = new List<AnimalSlot>();
+        for(int i = 0; i < cowSlotsObjects.Length; i++)
+        {
+            AnimalSlot animalSlot = new AnimalSlot(cowSlotsObjects[i]);
+            cowSlotsList.Add(animalSlot);
+        }
     }
 
     private void initStartingAnimals()
     {
-        addCow();
+        //addCow();
     }
 
-    public void addCow()
+    public bool isSlotAvailable(GameObject slotObject)
+    {
+        switch(slotObject.tag)
+        {
+            case "CowSlots":
+                int slotIndex = getSlotIndex(slotObject, cowSlotsList);
+                if(slotIndex != ErrorCode)
+                {
+                    return !cowSlotsList[slotIndex].isSlotTaken();
+                }
+                break;
+        }
+
+       return false;
+    }
+
+    public int getSlotIndex(GameObject slotObject, List<AnimalSlot> slotsList)
+    {
+        foreach(var animalSlot in slotsList)
+        {
+            if(animalSlot.slotGameObject == slotObject)
+            {
+                return slotsList.IndexOf(animalSlot);
+            }
+        }
+
+        return -1;
+    }
+
+
+    public void addCow(GameObject slotGameObject)
     {
         
         Object prefab = AssetDatabase.LoadAssetAtPath(animalFactory.getCowPrefab(), typeof(GameObject));
         GameObject cloneCow = gameController.InstantiatePrefab(prefab, Vector3.zero, Quaternion.identity) as GameObject;
         Animal newCow = animalFactory.buildCow(cloneCow);
 
-        cloneCow.transform.localScale = ANIMAL_SCALE;
-        cloneCow.transform.position = COW_FARM_POSITION;
-        cloneCow.transform.eulerAngles = ANIMAL_ROTATION;
-        cloneCow.tag = newCow.getAnimalType().name;
+        int slotIndex = getSlotIndex(slotGameObject, cowSlotsList);
+
+        if (slotIndex != ErrorCode)
+        {
+            cowSlotsList[slotIndex].takeSlot(newCow);
+
+            cloneCow.transform.localScale = AnimalScale;
+            cloneCow.transform.position = cowSlotsList[slotIndex].slotGameObject.transform.position;
+            cloneCow.transform.eulerAngles = AnimalRotation;
+            //cloneCow.AddComponent<ActionController>(); TODO: Problem z kolorami w teksturze.
+            cloneCow.tag = newCow.getAnimalType().name;
+        }
+        else
+            Debug.Log("Error adding cow (addCow) error code: " + slotIndex);
+    }
+
+}
+
+
+public class AnimalSlot
+{
+    public Animal animal { get; set; }
+    private bool isTaken = false;
+    public GameObject slotGameObject { get; }
+
+
+    public AnimalSlot(GameObject slotGameObject)
+    {
+        this.slotGameObject = slotGameObject;
+    }
+
+
+    public bool isSlotTaken()
+    {
+        return isTaken;
+    }
+
+    public void takeSlot(Animal animal)
+    {
+        if (!isTaken)
+        {
+            this.animal = animal;
+            isTaken = true;
+        }
+    }
+
+    public void removeAnimal()
+    {
+        if(animal != null && isTaken)
+        {
+            animal = null;
+            isTaken = false;
+        }
     }
 
 }

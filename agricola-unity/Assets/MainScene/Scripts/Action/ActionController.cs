@@ -54,6 +54,9 @@ public class ActionController : MonoBehaviour
             case "Carrot":
                 gameController.AddAction(gameObject, ActionList.collectPlant);
                 break;
+            case "CowSlots":
+                gameController.AddAction(gameObject, ActionList.buyCow);
+                break;
         }
     }
 
@@ -87,6 +90,10 @@ public class ActionController : MonoBehaviour
                 case "Carrot":
                     EditorGUI.TextField(new Rect(x + 20, y, 100, 35),
                          "Action: " + ActionList.plant.name + "\nTime:" + (double)ActionList.collectPlant.length / 1000 + " h");
+                    break;
+                case "CowSlots":
+                    EditorGUI.TextField(new Rect(x + 20, y, 100, 35),
+                         "Action: " + ActionList.buyCow.name + "\nTime:" + (double)ActionList.buyCow.length / 1000 + " h");
                     break;
             }
         }

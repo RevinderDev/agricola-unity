@@ -41,6 +41,7 @@ public class ActionList
     public static readonly ActionType walk = new ActionType("walk", null, 0);
     public static readonly ActionType plant = new ActionType("plant", "Sprites/planting", 500);
     public static readonly ActionType collectPlant = new ActionType("collect plant", "Sprites/carrot", 1000);
+    public static readonly ActionType buyCow = new ActionType("buy cow", "Sprites/cowIcon2", 5000); //TODO: ta liczba nie wiem jaka ma byc..
 
     public ActionList()
     {

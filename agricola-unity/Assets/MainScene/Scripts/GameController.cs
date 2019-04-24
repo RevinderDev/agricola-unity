@@ -85,12 +85,14 @@ public class GameController : MonoBehaviour
     public void PerformAction(Vector3 position) 
     {
         // Custom reaction
-        if(actionList.GetActionType() == ActionList.walk)
+        if (actionList.GetActionType() == ActionList.walk)
             ;
-        else if(actionList.GetActionType() == ActionList.plant)
+        else if (actionList.GetActionType() == ActionList.plant)
             farmland.AddPlant(actionList.GetGameObject(), farmland.carrot);
-        else if(actionList.GetActionType() == ActionList.collectPlant)
+        else if (actionList.GetActionType() == ActionList.collectPlant)
             farmland.CollectPlant(actionList.GetGameObject());
+        else if (actionList.GetActionType() == ActionList.buyCow)
+            animalFarm.addCow(actionList.GetGameObject());
         // Delete action from queque
         RemoveGameObject(actionList.Remove(0).gameObject);
     }
@@ -167,7 +169,7 @@ public class GameController : MonoBehaviour
     {
         if (isPlayButtonPressed)
             return "Animation is in progress.";
-        if (actionList.IsActionInQueque(gameObject, type))
+        if (actionList.IsActionInQueque(gameObject, type)) // TODO: blad tutaj jest z wyswietlaniem komunikatu kiedy action przekroczy sie limit czasu uzywajac tylko krów.
             return "Action already in queque.";
         if (actionList.ActionsLengthsSum() >= dayLength + type.length)
             return "Action too long. " + ((double)(dayLength - actionList.ActionsLengthsSum()) / 1000) + "h left.";
@@ -177,6 +179,9 @@ public class GameController : MonoBehaviour
         if (type == ActionList.collectPlant)
             if (!farmland.CanPlantBeCollected(gameObject))
                 return "Plant can not be collected.";
+        if (type == ActionList.buyCow)
+            if (!animalFarm.isSlotAvailable(gameObject))
+                return "Slots already taken by another cow.";
         return null;
     }
 
