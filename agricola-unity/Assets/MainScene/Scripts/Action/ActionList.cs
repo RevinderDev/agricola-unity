@@ -27,6 +27,7 @@ public class ActionList
         }
     }
 
+    GameController gameController;
     private int count;
     private List<Button> buttons;
     private List<GameObject> gameObjects;
@@ -42,6 +43,7 @@ public class ActionList
     public static readonly ActionType plant = new ActionType("plant", "Sprites/planting", 500);
     public static readonly ActionType collectPlant = new ActionType("collect plant", "Sprites/carrot", 1000);
     public static readonly ActionType buyCow = new ActionType("buy cow", "Sprites/cowIcon2", 5000); //TODO: ta liczba nie wiem jaka ma byc..
+    public static readonly ActionType market = new ActionType("market", "Sprites/market", 12000);
 
     public ActionList()
     {
@@ -53,6 +55,7 @@ public class ActionList
         gameObjects = new List<GameObject>();
         buttons = new List<Button>();
         types = new List<ActionType>();
+        gameController = GameObject.Find("GameController").GetComponent<GameController>();
     }
 
     public void Add(GameObject gameObject, ActionType type)
@@ -62,6 +65,7 @@ public class ActionList
         types.Add(type);
         quequeCurrentPosition += queueInterspace / 2 + (int)queueElementSize.x;
         count++;
+        gameController.ActualizeTimeBar();
     }
 
     public Button Remove(int i)
@@ -78,6 +82,7 @@ public class ActionList
         }
         count--;
         quequeCurrentPosition -= queueInterspace / 2 + (int)queueElementSize.x;
+        gameController.ActualizeTimeBar();
         return buttonToBeDestroyed;
     }
 
@@ -97,12 +102,7 @@ public class ActionList
         return gameObjects[0];
     }
 
-    public int GetActionLength()
-    {
-        return types[0].length;
-    }
-
-    public ActionType GetActionType()
+    public ActionType GetAction()
     {
         return types[0];
     }

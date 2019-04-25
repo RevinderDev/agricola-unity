@@ -74,9 +74,11 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    public void SetAction(int actionLength) //Should probably contain parameter actionType (see ActionList) for animations etc.
+    public void SetAction(ActionList.ActionType actionType)
     {
-        currentActionLengh = actionLength;
+        currentActionLengh = actionType.length;
+        if (actionType == ActionList.market)
+            currentActionLengh = 0;
         actionStopwatch.Restart();
     }
 

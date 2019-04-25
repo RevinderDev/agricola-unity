@@ -10,17 +10,16 @@ public class PlantType
     public readonly int daysToCollect;
     public readonly int daysToBeSpoiled;
     public readonly string prefabDirectory;
-    public readonly string spriteDirectory;
-    
+    public readonly Item.ItemType itemType;
 
-    public PlantType(string name, float growthPerDay, int daysToCollect, int daysToBeSpoiled, string prefabDirectory, string spriteDirectory)
+    public PlantType(string name, float growthPerDay, int daysToCollect, int daysToBeSpoiled, string prefabDirectory, Item.ItemType itemType)
     {
         this.name = name;
         this.growthPerDay = growthPerDay;
         this.daysToBeSpoiled = daysToBeSpoiled;
         this.daysToCollect = daysToCollect;
         this.prefabDirectory = prefabDirectory;
-        this.spriteDirectory = spriteDirectory;
+        this.itemType = itemType;
     }
 }
 
@@ -86,7 +85,7 @@ public class Farmland
 
     // Name of PlantType must exist in project tags!
     public readonly PlantType carrot = new PlantType("Carrot", 0.1f, 2, 4, 
-        "Assets/simple_low_poly_village_buildings/models/carrot2.prefab", "Sprites/carrot");
+        "Assets/simple_low_poly_village_buildings/models/carrot2.prefab", Item.ItemType.carrot);
 
     public Farmland()
     {
@@ -156,7 +155,7 @@ public class Farmland
         {
             if (plants[i].GetGameObject().Equals(plantObject))
             {
-                gameController.inventory.AddItem(plants[i].GetPlantType().spriteDirectory);
+                gameController.inventory.AddItem(plants[i].GetPlantType().itemType);
                 plants.RemoveAt(i);
                 
                 break;

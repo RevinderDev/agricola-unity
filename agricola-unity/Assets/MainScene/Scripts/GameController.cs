@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour
     PlayerController player;
     private Information info;
     private QuestionWindow questionWindow;
+    private Market market;
     private Farmland farmland;
     private AnimalFarm animalFarm;
     public ActionList actionList;
@@ -37,11 +38,20 @@ public class GameController : MonoBehaviour
             GameObject.Find("ButtonYes").GetComponent<Button>(), 
             GameObject.Find("ButtonNo").GetComponent<Button>());
         questionWindow.Hide();
-        money = 0;
+        Item.ItemType.Initialize();
+        market = FindObjectOfType<Market>();
+        market.SetMarket();
+        market.Hide();
+        money = 10;
         MoneyTransaction(0);
         ActualizeTimeBar();
         Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
         dayLabel.text = "Day " + (currentDay++).ToString();
+    }
+
+    public int GetMoney()
+    {
+        return money;
     }
 
     public void MoneyTransaction(int transactionAmount)
@@ -85,14 +95,16 @@ public class GameController : MonoBehaviour
     public void PerformAction(Vector3 position) 
     {
         // Custom reaction
-        if (actionList.GetActionType() == ActionList.walk)
+        if (actionList.GetAction() == ActionList.walk)
             ;
-        else if (actionList.GetActionType() == ActionList.plant)
+        else if (actionList.GetAction() == ActionList.plant)
             farmland.AddPlant(actionList.GetGameObject(), farmland.carrot);
-        else if (actionList.GetActionType() == ActionList.collectPlant)
+        else if (actionList.GetAction() == ActionList.collectPlant)
             farmland.CollectPlant(actionList.GetGameObject());
-        else if (actionList.GetActionType() == ActionList.buyCow)
+        else if (actionList.GetAction() == ActionList.buyCow)
             animalFarm.addCow(actionList.GetGameObject());
+        else if (actionList.GetAction() == ActionList.market)
+            market.Display();
         // Delete action from queque
         RemoveGameObject(actionList.Remove(0).gameObject);
     }
@@ -139,7 +151,7 @@ public class GameController : MonoBehaviour
                 if (actionList.Count() > 0)
                 {
                     //at the destination, perform actions
-                    player.SetAction(actionList.GetActionLength());
+                    player.SetAction(actionList.GetAction());
                 }
             }
         }
@@ -171,11 +183,11 @@ public class GameController : MonoBehaviour
             return "Animation is in progress.";
         if (actionList.IsActionInQueque(gameObject, type)) // TODO: blad tutaj jest z wyswietlaniem komunikatu kiedy action przekroczy sie limit czasu uzywajac tylko krów.
             return "Action already in queque.";
-        if (actionList.ActionsLengthsSum() >= dayLength + type.length)
+        if (actionList.ActionsLengthsSum() + type.length > dayLength)
             return "Action too long. " + ((double)(dayLength - actionList.ActionsLengthsSum()) / 1000) + "h left.";
         if (type == ActionList.plant)
             if(farmland.IsAreaTaken(gameObject))
-                return "Action already in queque.";
+                return "This area is already taken.";
         if (type == ActionList.collectPlant)
             if (!farmland.CanPlantBeCollected(gameObject))
                 return "Plant can not be collected.";
@@ -185,7 +197,7 @@ public class GameController : MonoBehaviour
         return null;
     }
 
-    private void ActualizeTimeBar()
+    public void ActualizeTimeBar()
     {
         float timeUsed = (float)actionList.ActionsLengthsSum()/1000;
         float timeLeft = (float)dayLength/1000 - timeUsed;
@@ -204,13 +216,15 @@ public class GameController : MonoBehaviour
     {
         string message = IsAcctionAllowed(gameObject, type);
         if (message == null)
-        {
             actionList.Add(gameObject, type);
-            ActualizeTimeBar();
-        }
         else
             info.Display("Not allowed. " + message);
  
+    }
+
+    public void DisplayInfo(string message)
+    {
+        info.Display(message);
     }
 
     // Providing Instantiate method for other classes (context problem)

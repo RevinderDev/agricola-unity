@@ -57,6 +57,9 @@ public class ActionController : MonoBehaviour
             case "CowSlots":
                 gameController.AddAction(gameObject, ActionList.buyCow);
                 break;
+            case "Market":
+                gameController.AddAction(gameObject, ActionList.market);
+                break;
         }
     }
 
@@ -83,17 +86,20 @@ public class ActionController : MonoBehaviour
             {
                 // TODO maybe do it in some "clever" way (universal call)
                 case "PlantingArea":
-                    //GUI.Label(new Rect(x + 20, y, 200, 30), (double)ActionList.plant.length/1000 + " h");
                    EditorGUI.TextField(new Rect(x + 20, y, 100, 35),
                         "Action: " + ActionList.plant.name + "\nTime: " + (double)ActionList.plant.length / 1000 + " h");
                     break;
                 case "Carrot":
                     EditorGUI.TextField(new Rect(x + 20, y, 100, 35),
-                         "Action: " + ActionList.plant.name + "\nTime:" + (double)ActionList.collectPlant.length / 1000 + " h");
+                         "Action: " + ActionList.plant.name + "\nTime: " + (double)ActionList.collectPlant.length / 1000 + " h");
                     break;
                 case "CowSlots":
                     EditorGUI.TextField(new Rect(x + 20, y, 100, 35),
-                         "Action: " + ActionList.buyCow.name + "\nTime:" + (double)ActionList.buyCow.length / 1000 + " h");
+                         "Action: " + ActionList.buyCow.name + "\nTime: " + (double)ActionList.buyCow.length / 1000 + " h");
+                    break;
+                case "Market":
+                    EditorGUI.TextField(new Rect(x + 20, y, 100, 35),
+                         "Action: " + ActionList.market.name + "\nTime: " + (double)ActionList.market.length / 1000 + " h");
                     break;
             }
         }

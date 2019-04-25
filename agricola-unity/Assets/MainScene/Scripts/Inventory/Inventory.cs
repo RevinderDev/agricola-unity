@@ -3,18 +3,20 @@ using UnityEngine.UI;
 public class Inventory : MonoBehaviour
 {
     public Image[] itemImages = new Image[numItemSlots];
+    public Image[] quantityBackgrounds = new Image[numItemSlots];
     public Item[] items = new Item[numItemSlots];
     public Text[] quantities = new Text[numItemSlots];
+    public Item.ItemType[] types = new Item.ItemType[numItemSlots];
 
     public const int numItemSlots = 6;
 
-    public void AddItem(string spriteDirectory, int quantityToAdd = 1)
+    public void AddItem(Item.ItemType type, int quantityToAdd = 1)
     {
         for (int i = 0; i < items.Length; i++)
         {
             if (items[i] != null)
             {
-                if (items[i].spriteDirectory == spriteDirectory)
+                if (items[i].type == type)
                 {
                     items[i].quantity+= quantityToAdd;
                     quantities[i].text = items[i].quantity.ToString();
@@ -23,19 +25,21 @@ public class Inventory : MonoBehaviour
             }
             else
             {
-                items[i] = new Item(spriteDirectory, 1);
-                itemImages[i].sprite = Resources.Load<Sprite>(spriteDirectory);
+                types[i] = type;
+                items[i] = new Item(type, quantityToAdd);
+                itemImages[i].sprite = Resources.Load<Sprite>(type.spriteDirectory);
                 itemImages[i].enabled = true;
+                quantityBackgrounds[i].enabled = true;
                 quantities[i].text = items[i].quantity.ToString();
                 return;
             }
         }
     }
-    public void RemoveItem(string spriteDirectory, int quantityToRemove = 1)
+    public void RemoveItem(Item.ItemType type, int quantityToRemove = 1)
     {
         for (int i = 0; i < items.Length; i++)
         {
-            if (items[i].spriteDirectory == spriteDirectory)
+            if (items[i] != null && items[i].type == type)
             {
                 if (items[i].quantity > quantityToRemove)
                 {
@@ -45,9 +49,11 @@ public class Inventory : MonoBehaviour
                 }
                 else
                 {
+                    types[i] = null;
                     items[i] = null;
                     itemImages[i].sprite = null;
                     itemImages[i].enabled = false;
+                    quantityBackgrounds[i].enabled = false;
                     quantities[i].text = "";
                     return;
                 }
