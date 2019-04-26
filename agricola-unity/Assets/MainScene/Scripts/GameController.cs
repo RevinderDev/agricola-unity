@@ -13,6 +13,7 @@ public class GameController : MonoBehaviour
     private AnimalFarm animalFarm;
     public ActionList actionList;
     public Inventory inventory;
+    public DropdownSelect dropdown;
     public int money;
     private readonly int dayLength = 12000;
     private int currentDay = 0;
@@ -30,6 +31,7 @@ public class GameController : MonoBehaviour
         isPlayButtonPressed = false;
         playButton = GameObject.Find("PlayButton").GetComponent<Button>();
         inventory = FindObjectOfType<Inventory>();
+        inventory.AddItem(Item.ItemType.tomatoSeeds, 5);
         info = new Information(GameObject.Find("InformationObject"),
             GameObject.Find("InformationText").GetComponent<Text>());
         info.Hide();
@@ -47,6 +49,8 @@ public class GameController : MonoBehaviour
         ActualizeTimeBar();
         Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
         dayLabel.text = "Day " + (currentDay++).ToString();
+        dropdown = FindObjectOfType<DropdownSelect>();
+        dropdown.Hide();
     }
 
     public int GetMoney()
@@ -98,7 +102,15 @@ public class GameController : MonoBehaviour
         if (actionList.GetAction() == ActionList.walk)
             ;
         else if (actionList.GetAction() == ActionList.plant)
-            farmland.AddPlant(actionList.GetGameObject(), farmland.carrot);
+            switch (dropdown.getSelected())
+            {
+                case "carrot seeds":
+                   farmland.AddPlant(actionList.GetGameObject(), farmland.carrot);
+                    break;
+                case "tomato seeds":
+                    farmland.AddPlant(actionList.GetGameObject(), farmland.tomato);
+                    break;
+            }
         else if (actionList.GetAction() == ActionList.collectPlant)
             farmland.CollectPlant(actionList.GetGameObject());
         else if (actionList.GetAction() == ActionList.buyCow)
@@ -186,8 +198,16 @@ public class GameController : MonoBehaviour
         if (actionList.ActionsLengthsSum() + type.length > dayLength)
             return "Action too long. " + ((double)(dayLength - actionList.ActionsLengthsSum()) / 1000) + "h left.";
         if (type == ActionList.plant)
-            if(farmland.IsAreaTaken(gameObject))
+        {
+            if (farmland.IsAreaTaken(gameObject))
                 return "This area is already taken.";
+            string seedType = dropdown.getSelected();
+            if (!inventory.DoesContain(seedType))
+            {
+                Debug.Log(seedType);
+                return "You do not have relevant seeds.";
+            }
+        }
         if (type == ActionList.collectPlant)
             if (!farmland.CanPlantBeCollected(gameObject))
                 return "Plant can not be collected.";

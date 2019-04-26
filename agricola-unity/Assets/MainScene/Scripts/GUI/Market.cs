@@ -19,9 +19,7 @@ public class Market : MonoBehaviour
     public InputField[] quantities = new InputField[numItemSlots];
     public int totalPrice = 0;
 
-    public const int numItemSlots = 2;
-
-
+    public const int numItemSlots = 6;
 
     public void Initialize()
     {

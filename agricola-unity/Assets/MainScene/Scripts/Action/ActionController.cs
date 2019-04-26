@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 /*
- * Defines the behaviour of object with which player can interact.
- */
+* Defines the behaviour of object with which player can interact.
+*/
 public class ActionController : MonoBehaviour
 {
     private Color materialBasicColor;
@@ -38,7 +40,8 @@ public class ActionController : MonoBehaviour
     {
         if (!isActive)
             return;
-        GetComponent<Renderer>().material.color = lastColor;
+        if(lastColor != new Color(0, 0, 0, 0))
+            GetComponent<Renderer>().material.color = lastColor;
         showTooltip = false;
     }
 
@@ -46,10 +49,13 @@ public class ActionController : MonoBehaviour
     {
         if (!isActive)
             return;
+        showTooltip = false;
+        GetComponent<Renderer>().material.color = lastColor;
         switch (tag)
         {
             case "PlantingArea":
-                gameController.AddAction(gameObject, ActionList.plant);
+                isActive = false;
+                gameController.dropdown.Display(gameObject);
                 break;
             case "Carrot":
                 gameController.AddAction(gameObject, ActionList.collectPlant);
@@ -79,8 +85,6 @@ public class ActionController : MonoBehaviour
 
             //Label Color
             EditorStyles.label.normal.textColor = Color.yellow;
-
-          
 
             switch (tag)
             {

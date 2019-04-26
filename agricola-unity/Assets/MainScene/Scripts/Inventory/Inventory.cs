@@ -60,4 +60,51 @@ public class Inventory : MonoBehaviour
             }
         }
     }
+    public void RemoveItem(string name, int quantityToRemove = 1)
+    {
+        for (int i = 0; i < items.Length; i++)
+        {
+            if (items[i] != null && items[i].type.name == name)
+            {
+                if (items[i].quantity > quantityToRemove)
+                {
+                    items[i].quantity -= quantityToRemove;
+                    quantities[i].text = items[i].quantity.ToString();
+                    return;
+                }
+                else
+                {
+                    types[i] = null;
+                    items[i] = null;
+                    itemImages[i].sprite = null;
+                    itemImages[i].enabled = false;
+                    quantityBackgrounds[i].enabled = false;
+                    quantities[i].text = "";
+                    return;
+                }
+            }
+        }
+    }
+    public bool DoesContain(Item.ItemType type)
+    {
+        for (int i = 0; i < items.Length; i++)
+        {
+            if (items[i] != null && items[i].type == type)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public bool DoesContain(string name)
+    {
+        for (int i = 0; i < items.Length; i++)
+        {
+            if (items[i] != null && items[i].type.name == name)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 }
