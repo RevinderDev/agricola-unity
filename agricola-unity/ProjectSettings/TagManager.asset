@@ -12,6 +12,7 @@ TagManager:
   - Cow
   - CowSlots
   - Market
+  - Tomato
   layers:
   - Default
   - TransparentFX
