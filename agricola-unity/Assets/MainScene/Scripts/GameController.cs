@@ -193,7 +193,7 @@ public class GameController : MonoBehaviour
                 return "Plant can not be collected.";
         if (type == ActionList.buyCow)
             if (!animalFarm.isSlotAvailable(gameObject))
-                return "Slots already taken by another cow.";
+                return "Plots already taken by another cow.";
         return null;
     }
 
