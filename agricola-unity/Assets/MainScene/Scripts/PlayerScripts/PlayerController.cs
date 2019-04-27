@@ -74,10 +74,10 @@ public class PlayerController : MonoBehaviour
         return false;
     }
 
-    public void SetAction(ActionList.ActionType actionType)
+    public void SetAction(ActionType actionType)
     {
         currentActionLengh = actionType.length;
-        if (actionType == ActionList.market)
+        if (actionType == ActionType.market)
             currentActionLengh = 0;
         actionStopwatch.Restart();
     }

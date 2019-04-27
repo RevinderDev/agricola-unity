@@ -32,7 +32,7 @@ public class DropdownSelect : MonoBehaviour
         if (dropdown.value != 0)
         {
             selected = dropOptions[dropdown.value];
-            gameController.AddAction(areaObject, ActionList.plant);
+            gameController.AddAction(areaObject, ActionType.plant);
             ActionController.isActive = true;
             Hide();
         }

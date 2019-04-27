@@ -10,40 +10,18 @@ using System.Linq;
 */
 public class ActionList
 {
-    /* New action should be added in PerformAction (GameController), OnMouseDown (ActionController
-         * and eventually in Farmland or other classes created (custom method)
-         * */
-    public class ActionType
-    {
-        public readonly string name;
-        public readonly string spriteDirectory;
-        public readonly int length;
-
-        public ActionType(string name, string spriteDirectory, int length)
-        {
-            this.name = name;
-            this.spriteDirectory = spriteDirectory;
-            this.length = length;
-        }
-    }
-
     GameController gameController;
     private int count;
     private List<Button> buttons;
     private List<GameObject> gameObjects;
-    private List<ActionType> types;
+    private List<ActionType> actionTypes;
+    private List<ItemType> itemsTypesRequired;
 
     public int quequeCurrentPosition;
     public int queueInterspace;
     public Vector2 queueElementSize;
 
     GameObject mCanvas;
-
-    public static readonly ActionType walk = new ActionType("walk", null, 0);
-    public static readonly ActionType plant = new ActionType("plant", "Sprites/planting", 500);
-    public static readonly ActionType collectPlant = new ActionType("collect plant", "Sprites/carrot", 1000);
-    public static readonly ActionType buyCow = new ActionType("buy cow", "Sprites/cowIcon2", 5000); //TODO: ta liczba nie wiem jaka ma byc..
-    public static readonly ActionType market = new ActionType("market", "Sprites/market", 12000);
 
     public ActionList()
     {
@@ -54,26 +32,35 @@ public class ActionList
         count = 0;
         gameObjects = new List<GameObject>();
         buttons = new List<Button>();
-        types = new List<ActionType>();
+        actionTypes = new List<ActionType>();
+        itemsTypesRequired = new List<ItemType>();
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
     }
 
-    public void Add(GameObject gameObject, ActionType type)
+    public void Add(GameObject gameObject, ActionType type, ItemType required = null)
     {
         gameObjects.Add(gameObject);
-        buttons.Add(CreateButton(type.spriteDirectory));
-        types.Add(type);
+        buttons.Add(CreateButton(type.directory));
+        actionTypes.Add(type);
+        itemsTypesRequired.Add(required);
+        gameController.inventory.RemoveItem(required);
         quequeCurrentPosition += queueInterspace / 2 + (int)queueElementSize.x;
         count++;
         gameController.ActualizeTimeBar();
     }
 
-    public Button Remove(int i)
+    public Button Remove(int i, bool notUsed = false)
     {
         Button buttonToBeDestroyed = buttons[i];
         buttons.RemoveAt(i);
         gameObjects.RemoveAt(i);
-        types.RemoveAt(i);
+        actionTypes.RemoveAt(i);
+        ItemType type = itemsTypesRequired[i];
+        if (type != null && notUsed)
+        {
+            gameController.inventory.AddItem(type);
+        }
+        itemsTypesRequired.RemoveAt(i);
         for (int j = i; j < buttons.Count; j++)
         {
             int move = queueInterspace / 2 + (int)queueElementSize.x;
@@ -89,7 +76,7 @@ public class ActionList
     public Button Remove(Button button)
     {
         int i = buttons.IndexOf(button);
-        return Remove(i);
+        return Remove(i, true);
     }
 
     public Vector3 GetDestination()
@@ -104,7 +91,12 @@ public class ActionList
 
     public ActionType GetAction()
     {
-        return types[0];
+        return actionTypes[0];
+    }
+
+    public ItemType GetItemTypeRequired()
+    {
+        return itemsTypesRequired[0];
     }
 
     public Button CreateButton(string spriteDirectory)
@@ -154,13 +146,13 @@ public class ActionList
         return button;
     }
 
-    public bool IsActionInQueque(GameObject gameObject, ActionList.ActionType type)
+    public bool IsActionInQueque(GameObject gameObject, ActionType type)
     {
         for(int i = 0; i<gameObjects.Count; i++)
         {
             if (gameObjects[i].Equals(gameObject))
             {
-                if (types[i].Equals(type))
+                if (actionTypes[i].Equals(type))
                     return true;
             }
         }
@@ -174,6 +166,6 @@ public class ActionList
 
     public int ActionsLengthsSum()
     {
-        return types.Sum(item => item.length);
+        return actionTypes.Sum(item => item.length);
     }
 }

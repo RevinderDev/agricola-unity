@@ -12,29 +12,43 @@ public class Market : MonoBehaviour
     private Button buttonFinish;
     private Button buttonAccept;
     private Slider slider;
-    public Item.ItemType[] itemTypes = new Item.ItemType[numItemSlots];
+    public GameObject[] marketItems = new GameObject[numItemSlots];
+    public ItemType[] itemTypes = new ItemType[numItemSlots];
     public Image[] itemImages = new Image[numItemSlots];
     public Text[] itemsNames = new Text[numItemSlots];
     public Text[] itemsPrices = new Text[numItemSlots];
     public InputField[] quantities = new InputField[numItemSlots];
     public int totalPrice = 0;
+    public static readonly int marketItemWidth = 130;
 
     public const int numItemSlots = 6;
 
     public void Initialize()
     {
         int i = 0;
-        foreach (Item.ItemType value in Item.ItemType.list)
+        foreach (ItemType value in ItemType.list)
         {
-            itemTypes[i] = value;
-            itemsNames[i].text = value.name;
-            itemsPrices[i].text = "" + value.price;
-            quantities[i].text = "0";
-            quantities[i].onValueChanged.AddListener(delegate { ActualizeTotalPrice(); });
-            itemImages[i].sprite = Resources.Load<Sprite>(value.spriteDirectory);
-            itemImages[i].enabled = true;
-            i++;
+            //Buy and can be bought or sell and can be sold
+            if (slider.value == 0 && value.canBeBought || slider.value == 1 && value.canBeSold)
+            {
+                marketItems[i].SetActive(true);
+                itemTypes[i] = value;
+                itemsNames[i].text = value.name;
+                //Buy
+                if (slider.value == 0)
+                    itemsPrices[i].text = "" + value.priceBuy;
+                //Sell
+                else
+                    itemsPrices[i].text = "" + value.priceSell;
+                quantities[i].text = "0";
+                quantities[i].onValueChanged.AddListener(delegate { ActualizeTotalPrice(); });
+                itemImages[i].sprite = Resources.Load<Sprite>(value.directory);
+                itemImages[i].enabled = true;
+                i++;
+            }
         }
+        for (int j = i; j < numItemSlots; j++)
+            marketItems[j].SetActive(false);
     }
 
     public void SetMarket()
@@ -44,6 +58,7 @@ public class Market : MonoBehaviour
         buttonFinish = GameObject.Find("ButtonFinish").GetComponent<Button>();
         buttonAccept = GameObject.Find("ButtonAccept").GetComponent<Button>();
         slider = GameObject.Find("Slider").GetComponent<Slider>();
+        slider.onValueChanged.AddListener(delegate { Initialize(); });
         buttonFinish.onClick.AddListener(delegate { Hide(); });
         buttonAccept.onClick.AddListener(delegate { AcceptTransaction(); });
         Initialize();

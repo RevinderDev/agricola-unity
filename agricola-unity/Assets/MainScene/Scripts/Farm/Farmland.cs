@@ -2,76 +2,6 @@
 using UnityEditor;
 using UnityEngine;
 
-
-public class PlantType
-{
-    public readonly string name;
-    public readonly float growthPerDay;
-    public readonly float startPosision;
-    public readonly int daysToCollect;
-    public readonly int daysToBeSpoiled;
-    public readonly string prefabDirectory;
-    public readonly Item.ItemType itemType;
-
-    public PlantType(string name, float growthPerDay, float startPosision, int daysToCollect, int daysToBeSpoiled, string prefabDirectory, Item.ItemType itemType)
-    {
-        this.name = name;
-        this.growthPerDay = growthPerDay;
-        this.startPosision = startPosision;
-        this.daysToBeSpoiled = daysToBeSpoiled;
-        this.daysToCollect = daysToCollect;
-        this.prefabDirectory = prefabDirectory;
-        this.itemType = itemType;
-    }
-}
-
-public class Plant
-{
-    private GameObject gameObject;
-    private readonly PlantType plantType;
-    private int daysOfExistence;
-    private bool isSpoiled;
-
-    public Plant(GameObject gameObject, PlantType plantType)
-    {
-        this.gameObject = gameObject;
-        this.plantType = plantType;
-        daysOfExistence = 0;
-        isSpoiled = false;
-    }
-
-    public PlantType GetPlantType()
-    {
-        return plantType;
-    }
-
-    public GameObject GetGameObject()
-    {
-        return gameObject;
-    }
-
-    public int GetDaysOfExistence()
-    {
-        return daysOfExistence;
-    }
-
-    public void AddDayOfExsistence()
-    {
-        daysOfExistence++;
-    }
-
-    public bool IsSpoiled()
-    {
-        return isSpoiled;
-    }
-
-    public void Spoil()
-    {
-        gameObject.GetComponent<Renderer>().material.color = Color.black;
-        isSpoiled = true;
-    }
-}
-
 /*
 * Creates areas for plants. It is to manage planting plants, allows to add new areas.
 */
@@ -84,12 +14,6 @@ public class Farmland
     private int count;
     private Vector3 position;
     GameController gameController;
-
-    // Name of PlantType must exist in project tags!
-    public readonly PlantType carrot = new PlantType("Carrot", 0.1f, -0.1f, 2, 4, 
-        "Assets/simple_low_poly_village_buildings/models/carrot2.prefab", Item.ItemType.carrot);
-    public readonly PlantType tomato = new PlantType("Tomato", 0.1f, 0.15f, 4, 4,
-    "Assets/simple_low_poly_village_buildings/models/tomato2.prefab", Item.ItemType.tomato);
 
     public Farmland()
     {
@@ -122,15 +46,14 @@ public class Farmland
 
     public void AddPlant(GameObject areaObject, PlantType type)
     {
-        gameController.inventory.RemoveItem(gameController.dropdown.getSelected());
-        Object prefab = AssetDatabase.LoadAssetAtPath(type.prefabDirectory, typeof(GameObject));
+        Object prefab = AssetDatabase.LoadAssetAtPath(type.directory, typeof(GameObject));
         GameObject clone = gameController.InstantiatePrefab(prefab, Vector3.zero, Quaternion.identity) as GameObject;
         clone.transform.localScale = new Vector3(15, 15, 15);
         clone.transform.position = new Vector3(areaObject.transform.position.x, type.startPosision, areaObject.transform.position.z);
         clone.AddComponent<ActionController>();
         clone.AddComponent<BoxCollider>();
         clone.tag = type.name;
-        plants.Add(new Plant(clone, carrot));
+        plants.Add(new Plant(clone, type));
         // Take the area
         plantsToAreaMap.Add(clone, areaObject);
     }

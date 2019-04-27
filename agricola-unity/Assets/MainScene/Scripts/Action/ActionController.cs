@@ -58,13 +58,16 @@ public class ActionController : MonoBehaviour
                 gameController.dropdown.Display(gameObject);
                 break;
             case "Carrot":
-                gameController.AddAction(gameObject, ActionList.collectPlant);
+                gameController.AddAction(gameObject, ActionType.collectPlant);
+                break;
+            case "Tomato":
+                gameController.AddAction(gameObject, ActionType.collectPlant);
                 break;
             case "CowSlots":
-                gameController.AddAction(gameObject, ActionList.buyCow);
+                gameController.AddAction(gameObject, ActionType.buyCow);
                 break;
             case "Market":
-                gameController.AddAction(gameObject, ActionList.market);
+                gameController.AddAction(gameObject, ActionType.market);
                 break;
         }
     }
@@ -91,19 +94,19 @@ public class ActionController : MonoBehaviour
                 // TODO maybe do it in some "clever" way (universal call)
                 case "PlantingArea":
                    EditorGUI.TextField(new Rect(x + 20, y, 100, 35),
-                        "Action: " + ActionList.plant.name + "\nTime: " + (double)ActionList.plant.length / 1000 + " h");
+                        "Action: " + ActionType.plant.name + "\nTime: " + (double)ActionType.plant.length / 1000 + " h");
                     break;
                 case "Carrot":
                     EditorGUI.TextField(new Rect(x + 20, y, 100, 35),
-                         "Action: " + ActionList.plant.name + "\nTime: " + (double)ActionList.collectPlant.length / 1000 + " h");
+                         "Action: " + ActionType.plant.name + "\nTime: " + (double)ActionType.collectPlant.length / 1000 + " h");
                     break;
                 case "CowSlots":
                     EditorGUI.TextField(new Rect(x + 20, y, 100, 35),
-                         "Action: " + ActionList.buyCow.name + "\nTime: " + (double)ActionList.buyCow.length / 1000 + " h");
+                         "Action: " + ActionType.buyCow.name + "\nTime: " + (double)ActionType.buyCow.length / 1000 + " h");
                     break;
                 case "Market":
                     EditorGUI.TextField(new Rect(x + 20, y, 100, 35),
-                         "Action: " + ActionList.market.name + "\nTime: " + (double)ActionList.market.length / 1000 + " h");
+                         "Action: " + ActionType.market.name + "\nTime: " + (double)ActionType.market.length / 1000 + " h");
                     break;
             }
         }

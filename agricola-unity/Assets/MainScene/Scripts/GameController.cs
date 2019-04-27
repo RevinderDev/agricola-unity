@@ -31,7 +31,8 @@ public class GameController : MonoBehaviour
         isPlayButtonPressed = false;
         playButton = GameObject.Find("PlayButton").GetComponent<Button>();
         inventory = FindObjectOfType<Inventory>();
-        inventory.AddItem(Item.ItemType.tomatoSeeds, 5);
+        inventory.AddItem(ItemType.tomatoSeeds, 5);
+        inventory.AddItem(ItemType.carrotSeeds, 5);
         info = new Information(GameObject.Find("InformationObject"),
             GameObject.Find("InformationText").GetComponent<Text>());
         info.Hide();
@@ -40,7 +41,7 @@ public class GameController : MonoBehaviour
             GameObject.Find("ButtonYes").GetComponent<Button>(), 
             GameObject.Find("ButtonNo").GetComponent<Button>());
         questionWindow.Hide();
-        Item.ItemType.Initialize();
+        ItemType.Initialize();
         market = FindObjectOfType<Market>();
         market.SetMarket();
         market.Hide();
@@ -75,7 +76,7 @@ public class GameController : MonoBehaviour
                 {
                      isPlayButtonPressed = true;
                     // Add final action (walk back home) - transparent
-                    actionList.Add(null, ActionList.walk);
+                    actionList.Add(null, ActionType.walk);
                 }
                 else
                 {
@@ -99,23 +100,23 @@ public class GameController : MonoBehaviour
     public void PerformAction(Vector3 position) 
     {
         // Custom reaction
-        if (actionList.GetAction() == ActionList.walk)
+        if (actionList.GetAction() == ActionType.walk)
             ;
-        else if (actionList.GetAction() == ActionList.plant)
-            switch (dropdown.getSelected())
+        else if (actionList.GetAction() == ActionType.plant)
+            switch (actionList.GetItemTypeRequired().name)
             {
                 case "carrot seeds":
-                   farmland.AddPlant(actionList.GetGameObject(), farmland.carrot);
+                   farmland.AddPlant(actionList.GetGameObject(), PlantType.carrot);
                     break;
                 case "tomato seeds":
-                    farmland.AddPlant(actionList.GetGameObject(), farmland.tomato);
+                    farmland.AddPlant(actionList.GetGameObject(), PlantType.tomato);
                     break;
             }
-        else if (actionList.GetAction() == ActionList.collectPlant)
+        else if (actionList.GetAction() == ActionType.collectPlant)
             farmland.CollectPlant(actionList.GetGameObject());
-        else if (actionList.GetAction() == ActionList.buyCow)
+        else if (actionList.GetAction() == ActionType.buyCow)
             animalFarm.addCow(actionList.GetGameObject());
-        else if (actionList.GetAction() == ActionList.market)
+        else if (actionList.GetAction() == ActionType.market)
             market.Display();
         // Delete action from queque
         RemoveGameObject(actionList.Remove(0).gameObject);
@@ -137,7 +138,7 @@ public class GameController : MonoBehaviour
         {
             isPlayButtonPressed = true;
             // Add final action (walk back home) - transparent
-            actionList.Add(null, ActionList.walk);
+            actionList.Add(null, ActionType.walk);
         }
     }
 
@@ -189,7 +190,7 @@ public class GameController : MonoBehaviour
      * 2) planting area is already taken
      * 3) plant can not be collected yet (baby or spoiled plant)
      */
-    public string IsAcctionAllowed(GameObject gameObject, ActionList.ActionType type)
+    public string IsAcctionAllowed(GameObject gameObject, ActionType type)
     {
         if (isPlayButtonPressed)
             return "Animation is in progress.";
@@ -197,21 +198,17 @@ public class GameController : MonoBehaviour
             return "Action already in queque.";
         if (actionList.ActionsLengthsSum() + type.length > dayLength)
             return "Action too long. " + ((double)(dayLength - actionList.ActionsLengthsSum()) / 1000) + "h left.";
-        if (type == ActionList.plant)
+        if (type == ActionType.plant)
         {
             if (farmland.IsAreaTaken(gameObject))
                 return "This area is already taken.";
-            string seedType = dropdown.getSelected();
-            if (!inventory.DoesContain(seedType))
-            {
-                Debug.Log(seedType);
+            if (!inventory.DoesContain(dropdown.getSelected()))
                 return "You do not have relevant seeds.";
-            }
         }
-        if (type == ActionList.collectPlant)
+        if (type == ActionType.collectPlant)
             if (!farmland.CanPlantBeCollected(gameObject))
                 return "Plant can not be collected.";
-        if (type == ActionList.buyCow)
+        if (type == ActionType.buyCow)
             if (!animalFarm.isSlotAvailable(gameObject))
                 return "Slots taken by another cow.";
         return null;
@@ -232,11 +229,28 @@ public class GameController : MonoBehaviour
     }
 
     // Add action only if animation is NOT in progress
-    public void AddAction(GameObject gameObject, ActionList.ActionType type)
+    public void AddAction(GameObject gameObject, ActionType type)
     {
         string message = IsAcctionAllowed(gameObject, type);
         if (message == null)
-            actionList.Add(gameObject, type);
+        {
+            if(type == ActionType.plant)
+            {
+                switch (dropdown.getSelected())
+                {
+                    case "carrot seeds":
+                        actionList.Add(gameObject, type, ItemType.carrotSeeds);
+                        break;
+                    case "tomato seeds":
+                        actionList.Add(gameObject, type, ItemType.tomatoSeeds);
+                        break;
+                }
+            }
+            else
+                actionList.Add(gameObject, type);
+        }
+
+            
         else
             info.Display("Not allowed. " + message);
  
