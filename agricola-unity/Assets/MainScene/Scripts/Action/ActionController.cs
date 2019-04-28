@@ -19,6 +19,7 @@ public class ActionController : MonoBehaviour
     void Start()
     {
         materialBasicColor = GetComponent<Renderer>().material.color;
+        lastColor = materialBasicColor;
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
     }
 
@@ -40,8 +41,7 @@ public class ActionController : MonoBehaviour
     {
         if (!isActive)
             return;
-        if(lastColor != new Color(0, 0, 0, 0))
-            GetComponent<Renderer>().material.color = lastColor;
+        GetComponent<Renderer>().material.color = lastColor;
         showTooltip = false;
     }
 
@@ -51,6 +51,7 @@ public class ActionController : MonoBehaviour
             return;
         showTooltip = false;
         GetComponent<Renderer>().material.color = lastColor;
+
         switch (tag)
         {
             case "PlantingArea":

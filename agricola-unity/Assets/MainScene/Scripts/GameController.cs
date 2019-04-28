@@ -224,7 +224,7 @@ public class GameController : MonoBehaviour
         {
             if (farmland.IsAreaTaken(gameObject))
                 return "This area is already taken.";
-            if (!inventory.DoesContain(dropdown.getSelected()))
+            if (!inventory.DoesContain(dropdown.GetSelected()))
                 return "You do not have relevant seeds.";
         }
         if (type == ActionType.collectPlant)
@@ -260,7 +260,7 @@ public class GameController : MonoBehaviour
         {
             if(type == ActionType.plant)
             {
-                switch (dropdown.getSelected())
+                switch (dropdown.GetSelected())
                 {
                     case "carrot seeds":
                         actionList.Add(gameObject, type, ItemType.carrotSeeds);
