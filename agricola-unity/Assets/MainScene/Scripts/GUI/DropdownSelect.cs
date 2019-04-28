@@ -9,6 +9,8 @@ public class DropdownSelect : MonoBehaviour
     private string selected;
     GameController gameController;
     GameObject areaObject;
+    Rect dropdownRectClosed;
+    Rect dropdownRectOpened;
 
 
     void Start()
@@ -33,13 +35,13 @@ public class DropdownSelect : MonoBehaviour
         {
             selected = dropOptions[dropdown.value];
             gameController.AddAction(areaObject, ActionType.plant);
-            ActionController.isActive = true;
             Hide();
         }
     }
 
     public void Hide()
     {
+        ActionController.isActive = true;
         dropdown.gameObject.SetActive(false);
         if(dropdown.transform.Find("Dropdown List") != null)
             Destroy(dropdown.transform.Find("Dropdown List").gameObject);
@@ -53,7 +55,12 @@ public class DropdownSelect : MonoBehaviour
         dropdown.value = 0;
         var x = Input.mousePosition.x;
         var y = Input.mousePosition.y;
-        dropdown.transform.position = new Vector3(x, y, 0);
+        dropdown.transform.position = new Vector3(x+50, y, 0);
         dropdown.gameObject.SetActive(true);
+
+        dropdownRectClosed = new Rect(x, y, 160, 30);
+        dropdownRectClosed = new Rect(x, y, 160, 90);
     }
+
+   
 }

@@ -11,14 +11,14 @@ using System.Diagnostics;
 public class PlayerController : MonoBehaviour
 {
     public NavMeshAgent agent;
-    public int health;
-    public int maxHealth;
-    public int hunger;
-    public int maxHunger;
+    private int health;
+    private int maxHealth;
+    private int hunger;
+    private int maxHunger;
 
-    public Stopwatch actionStopwatch;
-    public int currentActionLengh;
-    GameController gameController;
+    private Stopwatch actionStopwatch;
+    private int currentActionLengh;
+    private GameController gameController;
 
     // before the first frame update
     void Start() { 
@@ -38,7 +38,7 @@ public class PlayerController : MonoBehaviour
     void ActualizeHealthBar()
     {
         Image bar = GameObject.Find("HealthBar").GetComponent<Image>();
-        bar.rectTransform.localScale = new Vector2(health / maxHealth, 1f);
+        bar.rectTransform.localScale = new Vector2((float)health / maxHealth, 1f);
         Text value = GameObject.Find("HealthValue").GetComponent<Text>();
         value.text = health.ToString() + "/" + maxHealth.ToString();
         //if lower than... do...
@@ -47,10 +47,39 @@ public class PlayerController : MonoBehaviour
     void ActualizeHungerBar()
     {
         Image bar = GameObject.Find("HungerBar").GetComponent<Image>();
-        bar.rectTransform.localScale = new Vector2(hunger / maxHunger, 1f);
+        bar.rectTransform.localScale = new Vector2((float)hunger / maxHunger, 1f);
         Text value = GameObject.Find("HungerValue").GetComponent<Text>();
         value.text = hunger.ToString() + "/" + maxHunger.ToString();
-        //if lower than... do...
+        if (hunger == 0)
+        {
+            ChangeHalth(-10);
+        }
+    }
+
+    public void ChangeHunger(int value)
+    {
+        if (hunger == 0 && value < 0 || hunger == maxHunger && value > 0)
+            ;
+        else if (hunger + value > maxHunger)
+            hunger = maxHunger;
+        else if (hunger + value < 0)
+            hunger = 0;
+        else
+            hunger += value;
+        ActualizeHungerBar();
+    }
+
+    public void ChangeHalth(int value)
+    {
+        if (health == 0 && value < 0 || health == maxHealth && value > 0)
+            ;
+        else if (health + value > maxHealth)
+            health = maxHealth;
+        else if (health + value < 0)
+            health = 0;
+        else
+            health += value;
+        ActualizeHealthBar();
     }
 
     public void SetDestination(Vector3 target)

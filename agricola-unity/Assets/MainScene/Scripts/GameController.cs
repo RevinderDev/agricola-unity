@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
-    PlayerController player;
+    private PlayerController player;
     private Information info;
     private QuestionWindow questionWindow;
     private Market market;
@@ -17,6 +17,8 @@ public class GameController : MonoBehaviour
     public int money;
     private readonly int dayLength = 12000;
     private int currentDay = 0;
+    private Vector3 homePosition = new Vector3(-5.3f, 1, 17);
+    private Vector3 marketPosition = new Vector3(27f, 1, -48); 
 
     private bool isPlayButtonPressed;
     Button playButton;
@@ -137,6 +139,8 @@ public class GameController : MonoBehaviour
         else
         {
             isPlayButtonPressed = true;
+            if(actionList.GetAction() == ActionType.market)
+                actionList.Add(null, ActionType.walk);
             // Add final action (walk back home) - transparent
             actionList.Add(null, ActionType.walk);
         }
@@ -150,10 +154,14 @@ public class GameController : MonoBehaviour
             //action finished, check for next
             if (actionList.Count() > 0)
             {
-                if (actionList.GetGameObject() == null) // Last action, just walk home
-                    player.SetDestination(new Vector3(0, 1.5f, 0));
+                if (actionList.GetGameObject() == null)
+                    if (actionList.Count() == 1)        // Last action, just walk home
+                        player.SetDestination(homePosition);
+                    else                                // Market action, walk somewhere
+                        player.SetDestination(marketPosition);
+
                 else
-                 player.SetDestination(actionList.GetDestination());
+                    player.SetDestination(actionList.GetDestination());
             }
             else
             {
@@ -183,6 +191,7 @@ public class GameController : MonoBehaviour
         ActualizeTimeBar();
         Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
         dayLabel.text = "Day " + (currentDay++).ToString();
+        player.ChangeHunger(-10);
     }
 
     /* Action is not allowed: 

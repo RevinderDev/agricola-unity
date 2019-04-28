@@ -17,16 +17,16 @@ public class Farmland
 
     public Farmland()
     {
-        scale = new Vector3(3, 0.25f, 3);
-        position = new Vector3(-5, 0.5f, -10);
-        interspace = 3.5f;
-        count = 6;
+        scale = new Vector3(2f, 0.25f, 2f);
+        position = new Vector3(-14f, 0.5f, 2f);
+        interspace = 2.3f;
+        count = 20;
         plantsToAreaMap = new Dictionary<GameObject, GameObject>();
         plants = new List<Plant>();
         // Create planting areas
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 4; i++)
         {
-            for (int j = 0; j < 2; j++)
+            for (int j = 0; j < 5; j++)
             {
                 CreateArea(i, j);
             }
@@ -48,7 +48,7 @@ public class Farmland
     {
         Object prefab = AssetDatabase.LoadAssetAtPath(type.directory, typeof(GameObject));
         GameObject clone = gameController.InstantiatePrefab(prefab, Vector3.zero, Quaternion.identity) as GameObject;
-        clone.transform.localScale = new Vector3(15, 15, 15);
+        clone.transform.localScale = new Vector3(10, 10, 10);
         clone.transform.position = new Vector3(areaObject.transform.position.x, type.startPosision, areaObject.transform.position.z);
         clone.AddComponent<ActionController>();
         clone.AddComponent<BoxCollider>();

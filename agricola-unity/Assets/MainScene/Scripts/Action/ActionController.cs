@@ -79,33 +79,23 @@ public class ActionController : MonoBehaviour
             var x = Event.current.mousePosition.x;
             var y = Event.current.mousePosition.y;
 
-            GUIStyle TextFieldStyles = new GUIStyle(EditorStyles.textField);
-            GUI.contentColor = Color.white;
-            GUI.color = Color.white;
-
-            //Value Color
-            TextFieldStyles.normal.textColor = Color.white;
-
-            //Label Color
-            EditorStyles.label.normal.textColor = Color.yellow;
-
             switch (tag)
             {
                 // TODO maybe do it in some "clever" way (universal call)
                 case "PlantingArea":
-                   EditorGUI.TextField(new Rect(x + 20, y, 100, 35),
+                   EditorGUI.TextField(new Rect(x -50, y + 20, 100, 35),
                         "Action: " + ActionType.plant.name + "\nTime: " + (double)ActionType.plant.length / 1000 + " h");
                     break;
                 case "Carrot":
-                    EditorGUI.TextField(new Rect(x + 20, y, 100, 35),
+                    EditorGUI.TextField(new Rect(x - 50, y + 20, 100, 35),
                          "Action: " + ActionType.plant.name + "\nTime: " + (double)ActionType.collectPlant.length / 1000 + " h");
                     break;
                 case "CowSlots":
-                    EditorGUI.TextField(new Rect(x + 20, y, 100, 35),
+                    EditorGUI.TextField(new Rect(x -50, y + 20, 100, 35),
                          "Action: " + ActionType.buyCow.name + "\nTime: " + (double)ActionType.buyCow.length / 1000 + " h");
                     break;
                 case "Market":
-                    EditorGUI.TextField(new Rect(x + 20, y, 100, 35),
+                    EditorGUI.TextField(new Rect(x -50, y + 20, 100, 35),
                          "Action: " + ActionType.market.name + "\nTime: " + (double)ActionType.market.length / 1000 + " h");
                     break;
             }
