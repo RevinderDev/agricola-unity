@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class DropdownSelect : EventTrigger
 {
+    public List<Image> optionImages;
     public GameObject dropdown;
     private string selected;
     GameController gameController;
@@ -12,6 +13,9 @@ public class DropdownSelect : EventTrigger
 
     void Start()
     {
+        optionImages = new List<Image>();
+        optionImages.Add(GameObject.Find("Option1").GetComponent<Image>());
+        optionImages.Add(GameObject.Find("Option2").GetComponent<Image>());
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
         dropdown = GameObject.Find("Dropdown");
     }
@@ -31,7 +35,10 @@ public class DropdownSelect : EventTrigger
 
     public void Hide()
     {
+        dropdown.transform.position = new Vector3(-100, -100, 0);
         dropdown.SetActive(false);
+        foreach(Image optionImage in optionImages)
+            optionImage.color = Color.white;
         ActionController.isActive = true;
     }
 
@@ -40,7 +47,7 @@ public class DropdownSelect : EventTrigger
         this.areaObject = areaObject;
         var x = Input.mousePosition.x;
         var y = Input.mousePosition.y;
-        dropdown.transform.position = new Vector3(x, y, 0);
+        dropdown.transform.position = new Vector3(x+60, y, 0);
         dropdown.SetActive(true);
     }
 
