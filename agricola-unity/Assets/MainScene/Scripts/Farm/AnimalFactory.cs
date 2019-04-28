@@ -25,7 +25,7 @@ public class AnimalFactory
         int milkDaysToCollect = 5;
         int milkDaysToSpoil = 3;
         string productName = "Milk";
-        string milkPrefab = ""; // TODO: add milk prefab
+        string milkPrefab = "Assets/01_3D/ETC/3D Bakery Object/Prefab/Milk.prefab";
         int milkNutritionValue = 10;
         GeneratedFoodProduct milk = new GeneratedFoodProduct(milkDaysToCollect, milkDaysToSpoil, milkPrefab, productName, milkNutritionValue);
 

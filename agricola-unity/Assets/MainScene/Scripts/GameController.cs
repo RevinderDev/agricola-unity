@@ -67,6 +67,16 @@ public class GameController : MonoBehaviour
         GameObject.Find("MoneyValue").GetComponent<Text>().text = money.ToString();
     }
 
+    public int getMilkSpoilage()
+    {
+        return animalFarm.getMilkSpoilage();
+    }
+
+    public int getMilkCount()
+    {
+        return animalFarm.milksList.Count;
+    }
+
     // once per frame
     void Update()
     {
@@ -108,7 +118,7 @@ public class GameController : MonoBehaviour
             switch (actionList.GetItemTypeRequired().name)
             {
                 case "carrot seeds":
-                   farmland.AddPlant(actionList.GetGameObject(), PlantType.carrot);
+                    farmland.AddPlant(actionList.GetGameObject(), PlantType.carrot);
                     break;
                 case "tomato seeds":
                     farmland.AddPlant(actionList.GetGameObject(), PlantType.tomato);
@@ -118,6 +128,8 @@ public class GameController : MonoBehaviour
             farmland.CollectPlant(actionList.GetGameObject());
         else if (actionList.GetAction() == ActionType.buyCow)
             animalFarm.addCow(actionList.GetGameObject());
+        else if (actionList.GetAction() == ActionType.gatherMilk)
+            animalFarm.gatherMilk();
         else if (actionList.GetAction() == ActionType.market)
             market.Display();
         // Delete action from queque
@@ -192,6 +204,7 @@ public class GameController : MonoBehaviour
         Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
         dayLabel.text = "Day " + (currentDay++).ToString();
         player.ChangeHunger(-10);
+        animalFarm.generateFoodProducts();
     }
 
     /* Action is not allowed: 
@@ -220,6 +233,8 @@ public class GameController : MonoBehaviour
         if (type == ActionType.buyCow)
             if (!animalFarm.isSlotAvailable(gameObject))
                 return "Slots taken by another cow.";
+        if (type == ActionType.gatherMilk)
+            return null;
         return null;
     }
 

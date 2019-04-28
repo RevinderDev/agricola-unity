@@ -69,6 +69,9 @@ public class ActionController : MonoBehaviour
             case "Market":
                 gameController.AddAction(gameObject, ActionType.market);
                 break;
+            case "MilkArea":
+                gameController.AddAction(gameObject, ActionType.gatherMilk);
+                break;
         }
     }
 
@@ -97,6 +100,20 @@ public class ActionController : MonoBehaviour
                 case "Market":
                     EditorGUI.TextField(new Rect(x -50, y + 20, 100, 35),
                          "Action: " + ActionType.market.name + "\nTime: " + (double)ActionType.market.length / 1000 + " h");
+                    break;
+                case "MilkArea":
+                    int milkSpoilage = gameController.getMilkSpoilage();
+                    string milkSpoilageString = "";
+                    int windowResizeY = 48;
+                    int windowResizeX = 110;
+                    if (milkSpoilage > 0)
+                    {
+                        milkSpoilageString = "Spoiled in: " + milkSpoilage + " days \n";
+                        windowResizeY = 65;
+                    }
+                    EditorGUI.TextField(new Rect(x - 50, y + 20, windowResizeX, windowResizeY),
+                         "Action: " + ActionType.gatherMilk.name + "\nTime: " + (double)ActionType.gatherMilk.length / 1000 + " h\n"
+                         + milkSpoilageString +"Count: " + gameController.getMilkCount());
                     break;
             }
         }

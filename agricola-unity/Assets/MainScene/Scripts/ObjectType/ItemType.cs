@@ -18,6 +18,7 @@ public class ItemType : Type
     //animals
     public static readonly ItemType cow = new ItemType("cow", "Sprites/cow", 10, 20, true, true);
     public static readonly ItemType michal = new ItemType("Michal", "Sprites/michal", 100, 200, true, true);
+    public static readonly ItemType milk = new ItemType("milk", "Sprites/milkIcon", 4, 6, true, true);
 
     public ItemType(string name, string spriteDirectory, int priceSell, int priceBuy, bool canBeSold, bool canBeBought) 
         : base(name, spriteDirectory)
@@ -37,7 +38,8 @@ public class ItemType : Type
                 carrot,
                 tomato,
                 cow,
-                michal
+                michal,
+                milk
 
             }.AsReadOnly();
     }
