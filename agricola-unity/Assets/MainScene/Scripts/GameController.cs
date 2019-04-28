@@ -18,7 +18,8 @@ public class GameController : MonoBehaviour
     private readonly int dayLength = 12000;
     private int currentDay = 0;
     private Vector3 homePosition = new Vector3(-5.3f, 1, 17);
-    private Vector3 marketPosition = new Vector3(27f, 1, -48); 
+    private Vector3 marketPosition = new Vector3(27f, 1, -48);
+    private List<ActionController> controlledObjects = new List<ActionController>();
 
     private bool isPlayButtonPressed;
     Button playButton;
@@ -56,6 +57,16 @@ public class GameController : MonoBehaviour
         dropdown.Hide();
     }
 
+    public void AddControlledObject(ActionController actionController)
+    {
+        controlledObjects.Add(actionController);
+    }
+
+    public void RemoveControlledObject(ActionController actionController)
+    {
+        controlledObjects.Remove(actionController);
+    }
+
     public int GetMoney()
     {
         return money;
@@ -67,12 +78,12 @@ public class GameController : MonoBehaviour
         GameObject.Find("MoneyValue").GetComponent<Text>().text = money.ToString();
     }
 
-    public int getMilkSpoilage()
+    public int GetMilkSpoilage()
     {
         return animalFarm.getMilkSpoilage();
     }
 
-    public int getMilkCount()
+    public int GetMilkCount()
     {
         return animalFarm.getMilkCount();
     }
@@ -206,6 +217,8 @@ public class GameController : MonoBehaviour
         player.ChangeHunger(-10);
         animalFarm.spoilFood();
         animalFarm.generateFoodProducts();
+        foreach (ActionController actionController in controlledObjects)
+            actionController.age += 1;
     }
 
     /* Action is not allowed: 
@@ -249,9 +262,9 @@ public class GameController : MonoBehaviour
         Image bar = GameObject.Find("TimeBar").GetComponent<Image>();
         bar.rectTransform.localScale = new Vector2(timeLeft / totalTime, 1f);
         Text value = GameObject.Find("TimeValue").GetComponent<Text>();
-        // Label off
-        value.text = "";
-        //value.text = timeLeft.ToString() + "/" + totalTime.ToString() + "h";
+        // Label off/on
+        //value.text = "";
+        value.text = timeLeft.ToString() + "/" + totalTime.ToString() + "h";
     }
 
     // Add action only if animation is NOT in progress

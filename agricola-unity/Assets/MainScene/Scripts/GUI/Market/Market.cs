@@ -21,7 +21,7 @@ public class Market : MonoBehaviour
     public int totalPrice = 0;
     public static readonly int marketItemWidth = 130;
 
-    public const int numItemSlots = 6;
+    public const int numItemSlots = 7;
 
     public void Initialize()
     {
