@@ -15,6 +15,7 @@ TagManager:
   - Tomato
   - Milk
   - MilkArea
+  - SpoiledMilk
   layers:
   - Default
   - TransparentFX

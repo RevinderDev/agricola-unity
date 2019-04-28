@@ -12,6 +12,7 @@ public class AnimalFarm
     public List<GeneratedFoodProduct> milksList { get; }
     private GameObject milkArea { get; }
     private readonly Vector3 MilkScale;
+    private int milkDaysSpoilage;
 
     private readonly Vector3 AnimalScale;
     private readonly Vector3 AnimalRotation;
@@ -33,6 +34,7 @@ public class AnimalFarm
         milksList = new List<GeneratedFoodProduct>();
         milkArea = GameObject.FindGameObjectWithTag("MilkArea");
         newestMilkPosition = milkArea.transform.position;
+        milkDaysSpoilage = -1;
 
         initStartingAnimals();
         initFarmSlots();
@@ -65,6 +67,8 @@ public class AnimalFarm
                 milkClone.transform.localScale = MilkScale;
                 milkClone.tag = "Milk";
                 recalculateMilkPosition();
+                if(milkDaysSpoilage <= 0)
+                    milkDaysSpoilage = 3;
             }
         }
     }
@@ -73,9 +77,15 @@ public class AnimalFarm
     public int getMilkSpoilage()
     {
         if (milksList.Count > 0)
-            return milksList[0].daysToBeSpoiled;
+            return milkDaysSpoilage;
         else
             return ErrorCode;
+    }
+
+
+    public int getMilkCount()
+    {
+        return GameObject.FindGameObjectsWithTag("Milk").Length;
     }
 
     public void gatherMilk()
@@ -83,7 +93,22 @@ public class AnimalFarm
         if(milksList.Count > 0)
         {
             //gameController.inventory.AddItem(plants[i].GetPlantType().itemType);
-            gameController.inventory.AddItem(ItemType.milk, milksList.Count);
+            GameObject[] milks = GameObject.FindGameObjectsWithTag("Milk");
+            gameController.inventory.AddItem(ItemType.milk, milks.Length);
+            milksList.Clear();
+            foreach (var milk in milks)
+            {
+                GameController.RemoveGameObject(milk);
+            }
+
+            GameObject[] spoiledMilks = GameObject.FindGameObjectsWithTag("SpoiledMilk");
+            foreach(var milk in spoiledMilks)
+            {
+                GameController.RemoveGameObject(milk);
+            }
+
+            newestMilkPosition = milkArea.transform.position;
+            milkDaysSpoilage = 3;
         }
     }
 
@@ -135,6 +160,24 @@ public class AnimalFarm
         return -1;
     }
 
+
+
+    public void spoilFood()
+    {
+        if(milksList.Count > 0)
+        {
+            milkDaysSpoilage -= 1;
+            if (milkDaysSpoilage <= 0)
+            {
+                GameObject[] milksToBeSpoiled = GameObject.FindGameObjectsWithTag("Milk");
+                foreach (var milk in milksToBeSpoiled)
+                {
+                    milk.tag = "SpoiledMilk";
+                    milk.GetComponent<Renderer>().material = Resources.Load("Milk_Spoiled_Test", typeof(Material)) as Material;
+                }
+            }
+        }
+    }
 
     public void addCow(GameObject slotGameObject)
     {

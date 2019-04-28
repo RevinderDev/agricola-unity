@@ -74,7 +74,7 @@ public class GameController : MonoBehaviour
 
     public int getMilkCount()
     {
-        return animalFarm.milksList.Count;
+        return animalFarm.getMilkCount();
     }
 
     // once per frame
@@ -204,6 +204,7 @@ public class GameController : MonoBehaviour
         Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
         dayLabel.text = "Day " + (currentDay++).ToString();
         player.ChangeHunger(-10);
+        animalFarm.spoilFood();
         animalFarm.generateFoodProducts();
     }
 
@@ -234,7 +235,8 @@ public class GameController : MonoBehaviour
             if (!animalFarm.isSlotAvailable(gameObject))
                 return "Slots taken by another cow.";
         if (type == ActionType.gatherMilk)
-            return null;
+            if (animalFarm.getMilkCount() <= 0)
+                return "No milks to gather.";
         return null;
     }
 

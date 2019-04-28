@@ -22,7 +22,7 @@ public class AnimalType : Type
 public class GeneratedFoodProduct
 {
     public readonly int daysToCollect;
-    public readonly int daysToBeSpoiled;
+    public int daysToBeSpoiled { get; set; }
     public readonly string prefabDirectory;
     public readonly string productName;
     public readonly int nutritionValue;
