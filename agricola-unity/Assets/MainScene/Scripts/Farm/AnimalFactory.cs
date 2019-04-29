@@ -23,7 +23,7 @@ public class AnimalFactory
     public Animal buildCow(GameObject gameObject)
     {
         int milkDaysToCollect = 5;
-        int milkDaysToSpoil = 3;
+        int milkDaysToSpoil = 1;
         string productName = "Milk";
         string milkPrefab = "Assets/01_3D/ETC/3D Bakery Object/Prefab/Milk.prefab";
         int milkNutritionValue = 10;

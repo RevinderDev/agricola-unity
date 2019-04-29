@@ -80,6 +80,9 @@ public class ActionController : MonoBehaviour
             case "MilkArea":
                 gameController.AddAction(gameObject, ActionType.gatherMilk);
                 break;
+            case "TakenCowSlot":
+                gameController.AddAction(gameObject, ActionType.feedCow);
+                break;
         }
     }
 
@@ -138,6 +141,11 @@ public class ActionController : MonoBehaviour
                         "Action: " + ActionType.gatherMilk.name + "\nTime: " + (double)ActionType.gatherMilk.length / 1000 + " h\n"
                         + milkSpoilageString + "Count: " + gameController.GetMilkCount());
 
+            }
+            if(tag == "TakenCowSlot")
+            {
+                EditorGUI.TextField(new Rect(x - 50, y + 20, 100, 35),
+                    "Action: " + ActionType.feedCow.name + "\nTime: " + (double)ActionType.feedCow.length / 1000 + " h\n");
             }
         }
     }

@@ -9,6 +9,7 @@ public class AnimalFarm
     GameController gameController;
 
     private Vector3 newestMilkPosition;
+    private Vector3 milkAreaInitPosition;
     public List<GeneratedFoodProduct> milksList { get; }
     private GameObject milkArea { get; }
     private readonly Vector3 MilkScale;
@@ -34,6 +35,7 @@ public class AnimalFarm
         milksList = new List<GeneratedFoodProduct>();
         milkArea = GameObject.FindGameObjectWithTag("MilkArea");
         newestMilkPosition = milkArea.transform.position;
+        milkAreaInitPosition = milkArea.transform.position;
         milkDaysSpoilage = -1;
 
         initStartingAnimals();
@@ -68,7 +70,7 @@ public class AnimalFarm
                 milkClone.tag = "Milk";
                 recalculateMilkPosition();
                 if(milkDaysSpoilage <= 0)
-                    milkDaysSpoilage = 3;
+                    milkDaysSpoilage = 1;
             }
         }
     }
@@ -107,22 +109,30 @@ public class AnimalFarm
                 GameController.RemoveGameObject(milk);
             }
 
-            newestMilkPosition = milkArea.transform.position;
-            milkDaysSpoilage = 3;
+            newestMilkPosition = milkAreaInitPosition;
+            milkArea.transform.position = milkAreaInitPosition;
+            milkArea.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
+            milkDaysSpoilage = 1;
         }
     }
 
 
     private void recalculateMilkPosition()
     {
-        if (newestMilkPosition.z < milkArea.transform.position.z + 4.0f)
+        if (newestMilkPosition.z < milkAreaInitPosition.z + 4.0f)
         {
             newestMilkPosition.z += 0.4f;
+            int MaxMilkCapacity = 11;
+            if(milksList.Count <= MaxMilkCapacity) {
+                milkArea.transform.localScale = new Vector3(milkArea.transform.localScale.x, milkArea.transform.localScale.y, milkArea.transform.localScale.z + 0.05f);
+                milkArea.transform.position = new Vector3(milkArea.transform.position.x, milkArea.transform.position.y, milkArea.transform.position.z + 0.175f);
+            }
         }
         else
         {
             newestMilkPosition.z = 0.7f;
             newestMilkPosition.x -= 0.4f;
+            milkArea.transform.localScale = new Vector3(milkArea.transform.localScale.x + 0.01f, milkArea.transform.localScale.y, milkArea.transform.localScale.z);
         }
     }
 
@@ -196,10 +206,17 @@ public class AnimalFarm
             cloneCow.transform.eulerAngles = AnimalRotation;
             //cloneCow.AddComponent<ActionController>(); TODO: Problem z kolorami w teksturze.
             cloneCow.tag = newCow.getAnimalType().name;
+            slotGameObject.tag = "TakenCowSlot";
         }
         else
             Debug.Log("Error adding cow (addCow) error code: " + slotIndex);
     }
+
+    public void feedCow(GameObject cowSlot)
+    {
+        //
+    }
+
 }
 
 

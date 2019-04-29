@@ -144,6 +144,10 @@ public class GameController : MonoBehaviour
         else if (actionList.GetAction() == ActionType.market)
             market.Display();
         // Delete action from queque
+        else if (actionList.GetAction() == ActionType.feedCow)
+        {
+            animalFarm.feedCow(actionList.GetGameObject());
+        }
         RemoveGameObject(actionList.Remove(0).gameObject);
     }
 

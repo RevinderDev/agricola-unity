@@ -16,6 +16,7 @@ TagManager:
   - Milk
   - MilkArea
   - SpoiledMilk
+  - TakenCowSlot
   layers:
   - Default
   - TransparentFX

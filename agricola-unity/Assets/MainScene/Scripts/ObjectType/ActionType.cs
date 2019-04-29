@@ -15,6 +15,7 @@ public class ActionType : Type
     public static readonly ActionType buyCow = new ActionType("buy cow", "Sprites/cowIcon2", 5000); //TODO: ta liczba nie wiem jaka ma byc..
     public static readonly ActionType market = new ActionType("market", "Sprites/market", 12000);
     public static readonly ActionType gatherMilk = new ActionType("get milk", "Sprites/milkIcon", 500);
+    public static readonly ActionType feedCow = new ActionType("feed cow", "Sprites/cowIcon", 500);
 
     public ActionType(string name, string spriteDirectory, int length) : base(name, spriteDirectory)
     {
