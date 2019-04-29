@@ -16,6 +16,15 @@ TagManager:
   - Milk
   - MilkArea
   - SpoiledMilk
+  - House
+  - Item
+  - ItemImage
+  - ItemName
+  - ItemPriceOrNutrutions
+  - ItemPriceOrNutritionsLabels
+  - CoinImage
+  - Quantity
+  - ItemPriceOrNutritions
   layers:
   - Default
   - TransparentFX
