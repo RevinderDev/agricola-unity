@@ -71,7 +71,7 @@ public class Farmland
         {
             if (plant.GetGameObject().Equals(gameObject))
             {
-                return plant.GetDaysOfExistence() >= plant.GetPlantType().daysToCollect && !plant.IsSpoiled();
+                return plant.GetDaysOfExistence() >= plant.GetPlantType().daysToCollect;
             }
         }
         return false;
@@ -83,7 +83,10 @@ public class Farmland
         {
             if (plants[i].GetGameObject().Equals(plantObject))
             {
-                gameController.inventory.AddItem(plants[i].GetPlantType().itemType);
+                if (!plants[i].IsSpoiled())
+                    gameController.inventory.AddItem(plants[i].GetPlantType().itemType);
+                else
+                    gameController.DisplayInfo("Plant was spoiled!");
                 plants.RemoveAt(i);
                 
                 break;

@@ -17,6 +17,15 @@ TagManager:
   - MilkArea
   - SpoiledMilk
   - TakenCowSlot
+  - House
+  - Item
+  - ItemImage
+  - ItemName
+  - ItemPriceOrNutrutions
+  - ItemPriceOrNutritionsLabels
+  - CoinImage
+  - Quantity
+  - ItemPriceOrNutritions
   layers:
   - Default
   - TransparentFX

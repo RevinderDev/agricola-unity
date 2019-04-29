@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2899820163486324229}
   m_Layer: 5
   m_Name: Name
-  m_TagString: Untagged
+  m_TagString: ItemName
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 2389718138128598508}
   m_Layer: 5
   m_Name: Price
-  m_TagString: Untagged
+  m_TagString: ItemPriceOrNutritions
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -109,7 +109,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6419108333108478743}
-  m_RootOrder: 8
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -172,7 +172,7 @@ GameObject:
   - component: {fileID: 1479548107054834192}
   m_Layer: 5
   m_Name: InputField
-  m_TagString: Untagged
+  m_TagString: Quantity
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -191,7 +191,7 @@ RectTransform:
   - {fileID: 7646577098787028074}
   - {fileID: 6812080722419826452}
   m_Father: {fileID: 6419108333108478743}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -311,7 +311,7 @@ GameObject:
   - component: {fileID: 7136875838311018540}
   - component: {fileID: 8632342908839059267}
   m_Layer: 5
-  m_Name: Quantity
+  m_Name: QuantityLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -329,11 +329,11 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6419108333108478743}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: -0.63100004, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -19.3, y: -52.6}
+  m_AnchoredPosition: {x: -19.3, y: -52.599995}
   m_SizeDelta: {x: 80, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7136875838311018540
@@ -391,7 +391,7 @@ GameObject:
   - component: {fileID: 2634271218596466651}
   m_Layer: 5
   m_Name: CoinImage
-  m_TagString: Untagged
+  m_TagString: CoinImage
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -408,7 +408,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6419108333108478743}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -618,7 +618,7 @@ GameObject:
   - component: {fileID: 906534207700668460}
   m_Layer: 5
   m_Name: PriceLabel
-  m_TagString: Untagged
+  m_TagString: ItemPriceOrNutritionsLabels
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -635,7 +635,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 6419108333108478743}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -695,7 +695,7 @@ GameObject:
   - component: {fileID: 6419108333108478743}
   m_Layer: 5
   m_Name: MarketItem
-  m_TagString: Untagged
+  m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -715,11 +715,11 @@ RectTransform:
   - {fileID: 7427950170223726752}
   - {fileID: 6419108333307437167}
   - {fileID: 3695769263857055108}
+  - {fileID: 8218953289519975537}
   - {fileID: 2138791034388641343}
   - {fileID: 7491429875379633755}
   - {fileID: 5115954840595790222}
   - {fileID: 2102831581987024591}
-  - {fileID: 8218953289519975537}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -741,7 +741,7 @@ GameObject:
   - component: {fileID: 6419108333307437164}
   m_Layer: 5
   m_Name: ItemImage
-  m_TagString: Untagged
+  m_TagString: ItemImage
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -40,6 +40,8 @@ public class ActionController : MonoBehaviour
     {
         if (!isActive)
             return;
+        if (tag == "House")
+            Debug.Log("House mouse enter");
         lastColor = GetComponent<Renderer>().material.color;
         GetComponent<Renderer>().material.color = Color.gray;
         showTooltip = true;
@@ -82,6 +84,8 @@ public class ActionController : MonoBehaviour
                 break;
             case "TakenCowSlot":
                 gameController.AddAction(gameObject, ActionType.feedCow);
+            case "House":
+                gameController.AddAction(gameObject, ActionType.eat);
                 break;
         }
     }
@@ -98,7 +102,7 @@ public class ActionController : MonoBehaviour
                 EditorGUI.TextField(new Rect(x -50, y + 20, 100, 35),
                         "Action: " + ActionType.plant.name + 
                         "\nTime: " + (double)ActionType.plant.length / 1000 + " h");
-            if (tag == "Tomato")
+           else if (tag == "Tomato")
             {
                 int ripe = (PlantType.tomato.daysToCollect - age) <= 0 ? 0 : (PlantType.tomato.daysToCollect - age);
                 int spoiled = (PlantType.tomato.daysToBeSpoiled - age) <= 0 ? 0 : (PlantType.tomato.daysToBeSpoiled - age);
@@ -108,7 +112,7 @@ public class ActionController : MonoBehaviour
                         "\nRipe in: " + ripe + " days" +
                         "\nSpoiled in: " + spoiled + " days");
             }
-            if (tag == "Carrot")
+            else if (tag == "Carrot")
             {
                 int ripe = (PlantType.carrot.daysToCollect - age) <= 0 ? 0 : (PlantType.carrot.daysToCollect - age);
                 int spoiled = (PlantType.carrot.daysToBeSpoiled - age) <= 0 ? 0 : (PlantType.carrot.daysToBeSpoiled - age);
@@ -118,15 +122,15 @@ public class ActionController : MonoBehaviour
                         "\nRipe in: " + ripe + " days" +
                         "\nSpoiled in: " + spoiled + " days");
             }
-            if (tag == "CowSlots")
+            else if (tag == "CowSlots")
                 EditorGUI.TextField(new Rect(x -50, y + 20, 100, 35),
                         "Action: " + ActionType.buyCow.name + 
                         "\nTime: " + (double)ActionType.buyCow.length / 1000 + " h");
-            if (tag == "Market")
+            else if (tag == "Market")
                 EditorGUI.TextField(new Rect(x -50, y + 20, 100, 35),
                         "Action: " + ActionType.market.name + 
                         "\nTime: " + (double)ActionType.market.length / 1000 + " h");
-            if (tag == "MilkArea")
+            else if (tag == "MilkArea")
             {
                 int milkSpoilage = gameController.GetMilkSpoilage();
                 string milkSpoilageString = "";
@@ -147,6 +151,10 @@ public class ActionController : MonoBehaviour
                 EditorGUI.TextField(new Rect(x - 50, y + 20, 100, 35),
                     "Action: " + ActionType.feedCow.name + "\nTime: " + (double)ActionType.feedCow.length / 1000 + " h\n");
             }
+            else if(tag == "House")
+                EditorGUI.TextField(new Rect(x - 50, y + 20, 100, 35),
+                    "Action: " + ActionType.eat.name +
+                    "\nTime: " + (double)ActionType.eat.length / 1000 + " h");
         }
     }
 

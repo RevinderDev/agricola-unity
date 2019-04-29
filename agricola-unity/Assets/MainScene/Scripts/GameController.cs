@@ -5,10 +5,10 @@ using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
-    private PlayerController player;
+    public PlayerController player;
     private Information info;
     private QuestionWindow questionWindow;
-    private Market market;
+    private ItemSelection itemSelection;
     private Farmland farmland;
     private AnimalFarm animalFarm;
     public ActionList actionList;
@@ -45,9 +45,9 @@ public class GameController : MonoBehaviour
             GameObject.Find("ButtonNo").GetComponent<Button>());
         questionWindow.Hide();
         ItemType.Initialize();
-        market = FindObjectOfType<Market>();
-        market.SetMarket();
-        market.Hide();
+        itemSelection = FindObjectOfType<ItemSelection>();
+        itemSelection.SetMarket();
+        itemSelection.Hide();
         money = 10;
         MoneyTransaction(0);
         ActualizeTimeBar();
@@ -142,7 +142,17 @@ public class GameController : MonoBehaviour
         else if (actionList.GetAction() == ActionType.gatherMilk)
             animalFarm.gatherMilk();
         else if (actionList.GetAction() == ActionType.market)
-            market.Display();
+        {
+            itemSelection.SetMode(ItemSelection.Mode.market);
+            itemSelection.Initialize();
+            itemSelection.Display();
+        }
+        else if (actionList.GetAction() == ActionType.eat)
+        {
+            itemSelection.SetMode(ItemSelection.Mode.eating);
+            itemSelection.Initialize();
+            itemSelection.Display();
+        }
         // Delete action from queque
         else if (actionList.GetAction() == ActionType.feedCow)
         {
