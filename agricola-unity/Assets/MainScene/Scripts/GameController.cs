@@ -36,6 +36,7 @@ public class GameController : MonoBehaviour
         inventory = FindObjectOfType<Inventory>();
         inventory.AddItem(ItemType.tomatoSeeds, 5);
         inventory.AddItem(ItemType.carrotSeeds, 5);
+        inventory.AddItem(ItemType.pumpkinSeeds, 1);
         info = new Information(GameObject.Find("InformationObject"),
             GameObject.Find("InformationText").GetComponent<Text>());
         info.Hide();
@@ -133,6 +134,9 @@ public class GameController : MonoBehaviour
                     break;
                 case "tomato seeds":
                     farmland.AddPlant(actionList.GetGameObject(), PlantType.tomato);
+                    break;
+                case "pumpkin seeds":
+                    farmland.AddPlant(actionList.GetGameObject(), PlantType.pumpkin);
                     break;
             }
         else if (actionList.GetAction() == ActionType.collectPlant)
@@ -300,6 +304,9 @@ public class GameController : MonoBehaviour
                         break;
                     case "tomato seeds":
                         actionList.Add(gameObject, type, ItemType.tomatoSeeds);
+                        break;
+                    case "pumpkin seeds":
+                        actionList.Add(gameObject, type, ItemType.pumpkinSeeds);
                         break;
                 }
             }

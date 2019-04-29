@@ -19,7 +19,10 @@ public class ActionController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        materialBasicColor = GetComponent<Renderer>().material.color;
+        if (tag == "Pumpkin")
+            materialBasicColor = transform.GetChild(0).GetComponent<Renderer>().material.color;
+        else
+            materialBasicColor = GetComponent<Renderer>().material.color;
         lastColor = materialBasicColor;
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
         gameController.AddControlledObject(this);
@@ -28,7 +31,7 @@ public class ActionController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     void OnDestroy()
@@ -38,18 +41,22 @@ public class ActionController : MonoBehaviour
 
     void OnMouseEnter()
     {
-        if (!isActive)
+        if (!isActive || tag == "Player")
             return;
-        if (tag == "House")
-            Debug.Log("House mouse enter");
+        if (tag == "Pumpkin")
+            for (int i = 0; i < 4; i++)
+                transform.GetChild(i).GetComponent<Renderer>().material.color = Color.gray;
         lastColor = GetComponent<Renderer>().material.color;
         GetComponent<Renderer>().material.color = Color.gray;
         showTooltip = true;
     }
     void OnMouseExit()
     {
-        if (!isActive)
+        if (!isActive || tag == "Player")
             return;
+        if (tag == "Pumpkin")
+            for (int i = 0; i < 4; i++)
+                transform.GetChild(i).GetComponent<Renderer>().material.color = lastColor;
         GetComponent<Renderer>().material.color = lastColor;
         showTooltip = false;
     }
@@ -71,6 +78,9 @@ public class ActionController : MonoBehaviour
                 gameController.AddAction(gameObject, ActionType.collectPlant);
                 break;
             case "Tomato":
+                gameController.AddAction(gameObject, ActionType.collectPlant);
+                break;
+            case "Pumpkin":
                 gameController.AddAction(gameObject, ActionType.collectPlant);
                 break;
             case "CowSlots":
@@ -120,6 +130,17 @@ public class ActionController : MonoBehaviour
             {
                 int ripe = (PlantType.carrot.daysToCollect - age) <= 0 ? 0 : (PlantType.carrot.daysToCollect - age);
                 int spoiled = (PlantType.carrot.daysToBeSpoiled - age) <= 0 ? 0 : (PlantType.carrot.daysToBeSpoiled - age);
+                EditorGUI.TextField(new Rect(x - 50, y + 20, 130, 62),
+                        "Action: " + ActionType.collectPlant.name +
+                        "\nTime: " + (double)ActionType.collectPlant.length / 1000 + " h" +
+                        "\nRipe in: " + ripe + " days" +
+                        "\nSpoiled in: " + spoiled + " days");
+            }
+
+            else if (tag == "Pumpkin")
+            {
+                int ripe = (PlantType.pumpkin.daysToCollect - age) <= 0 ? 0 : (PlantType.pumpkin.daysToCollect - age);
+                int spoiled = (PlantType.pumpkin.daysToBeSpoiled - age) <= 0 ? 0 : (PlantType.pumpkin.daysToBeSpoiled - age);
                 EditorGUI.TextField(new Rect(x - 50, y + 20, 130, 62),
                         "Action: " + ActionType.collectPlant.name +
                         "\nTime: " + (double)ActionType.collectPlant.length / 1000 + " h" +

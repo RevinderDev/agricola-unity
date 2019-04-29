@@ -13,9 +13,11 @@ public class ItemType : Type
     //seeds
     public static readonly ItemType carrotSeeds = new ItemType("carrot seeds", "Sprites/seeds_carrot", 0, 1, true, true);
     public static readonly ItemType tomatoSeeds = new ItemType("tomato seeds", "Sprites/seeds_tomato", 0, 1, true, true);
+    public static readonly ItemType pumpkinSeeds = new ItemType("pumpkin seeds", "Sprites/seeds_pumpkin", 0, 1, true, true);
     //plants
     public static readonly ItemType carrot = new ItemType("carrot", "Sprites/carrot", 2, 5, true, false, 1);
     public static readonly ItemType tomato = new ItemType("tomato", "Sprites/tomato", 3, 7, true, false, 2);
+    public static readonly ItemType pumpkin = new ItemType("pumpkin", "Sprites/pumpkin", 5, 10, true, false, 5);
     //animals
     public static readonly ItemType cow = new ItemType("cow", "Sprites/cow", 10, 20, true, true);
     public static readonly ItemType michal = new ItemType("Michal", "Sprites/michal", 100, 200, true, true, 50);
@@ -38,8 +40,10 @@ public class ItemType : Type
             {
                 carrotSeeds,
                 tomatoSeeds,
+                pumpkinSeeds,
                 carrot,
                 tomato,
+                pumpkin,
                 cow,
                 michal,
                 milk

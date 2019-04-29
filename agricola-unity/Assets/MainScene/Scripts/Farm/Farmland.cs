@@ -48,7 +48,8 @@ public class Farmland
     {
         Object prefab = AssetDatabase.LoadAssetAtPath(type.directory, typeof(GameObject));
         GameObject clone = gameController.InstantiatePrefab(prefab, Vector3.zero, Quaternion.identity) as GameObject;
-        clone.transform.localScale = new Vector3(10, 10, 10);
+        if(type != PlantType.pumpkin)
+            clone.transform.localScale = new Vector3(10, 10, 10);
         clone.transform.position = new Vector3(areaObject.transform.position.x, type.startPosision, areaObject.transform.position.z);
         clone.AddComponent<ActionController>();
         clone.AddComponent<BoxCollider>();
@@ -84,7 +85,15 @@ public class Farmland
             if (plants[i].GetGameObject().Equals(plantObject))
             {
                 if (!plants[i].IsSpoiled())
-                    gameController.inventory.AddItem(plants[i].GetPlantType().itemType);
+                {
+                    if(plants[i].GetPlantType() == PlantType.carrot)
+                        gameController.inventory.AddItem(plants[i].GetPlantType().itemType, 12);
+                    else if (plants[i].GetPlantType() == PlantType.tomato)
+                        gameController.inventory.AddItem(plants[i].GetPlantType().itemType, 16);
+                    else if (plants[i].GetPlantType() == PlantType.pumpkin)
+                        gameController.inventory.AddItem(plants[i].GetPlantType().itemType, 5);
+                }
+                    
                 else
                     gameController.DisplayInfo("Plant was spoiled!");
                 plants.RemoveAt(i);

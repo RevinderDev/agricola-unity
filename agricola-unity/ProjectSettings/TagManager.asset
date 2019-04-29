@@ -27,6 +27,7 @@ TagManager:
   - Quantity
   - ItemPriceOrNutritions
   - FoodHouseCows
+  - Pumpkin
   layers:
   - Default
   - TransparentFX

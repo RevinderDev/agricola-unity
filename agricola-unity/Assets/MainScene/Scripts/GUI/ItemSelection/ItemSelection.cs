@@ -21,6 +21,7 @@ public class ItemSelection : MonoBehaviour
     private Button buttonAccept;
     private GameObject transactionType;
     private Slider slider;
+    public const int numItemSlots = 14;
     public GameObject[] items = new GameObject[numItemSlots];
     public ItemType[] itemTypes = new ItemType[numItemSlots];
     public Image[] itemImages = new Image[numItemSlots];
@@ -32,8 +33,6 @@ public class ItemSelection : MonoBehaviour
     public Image coinImage;
     public int totalPriceOrNutritions = 0;
     public static readonly int itemWidth = 130;
-
-    public const int numItemSlots = 7;
 
     public void SetMode(Mode mode)
     {
