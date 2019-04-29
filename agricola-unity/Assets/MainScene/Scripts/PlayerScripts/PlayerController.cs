@@ -35,6 +35,11 @@ public class PlayerController : MonoBehaviour
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
     }
 
+    public bool IsAlive()
+    {
+        return health > 0;
+    }
+
     void ActualizeHealthBar()
     {
         Image bar = GameObject.Find("HealthBar").GetComponent<Image>();
@@ -42,6 +47,11 @@ public class PlayerController : MonoBehaviour
         Text value = GameObject.Find("HealthValue").GetComponent<Text>();
         value.text = health.ToString() + "/" + maxHealth.ToString();
         //if lower than... do...
+    }
+
+    public bool IsHungry()
+    {
+        return hunger != maxHunger;
     }
 
     void ActualizeHungerBar()
