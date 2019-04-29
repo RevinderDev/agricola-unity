@@ -7,8 +7,10 @@ public class Animal
     private readonly AnimalType animalType;
     private GameObject gameObject;
     private bool isHungry;
-    private int daysInExistance { get; set; }
-    private int currentHungerLevel;
+    public int daysInExistance { get; private set; }
+    public int currentHungerLevel { get; }
+    public int maxHungerLevel { get; }
+    public int dayOfDeath { get; }
 
     public AnimalType getAnimalType()
     {
@@ -21,9 +23,11 @@ public class Animal
     {
         isHungry = false;
         daysInExistance = 0;
+        dayOfDeath = 10;
         this.gameObject = gameObject;
         this.animalType = animalType;
-        this.currentHungerLevel = 0;
+        this.currentHungerLevel = 50;
+        this.maxHungerLevel = 50;
     }
     
 

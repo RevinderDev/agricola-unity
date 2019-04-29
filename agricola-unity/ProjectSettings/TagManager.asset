@@ -26,6 +26,7 @@ TagManager:
   - CoinImage
   - Quantity
   - ItemPriceOrNutritions
+  - FoodHouseCows
   layers:
   - Default
   - TransparentFX

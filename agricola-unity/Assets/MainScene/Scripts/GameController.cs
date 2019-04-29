@@ -10,7 +10,7 @@ public class GameController : MonoBehaviour
     private QuestionWindow questionWindow;
     private ItemSelection itemSelection;
     private Farmland farmland;
-    private AnimalFarm animalFarm;
+    public AnimalFarm animalFarm { get; set; }
     public ActionList actionList;
     public Inventory inventory;
     public DropdownSelect dropdown;
@@ -153,11 +153,12 @@ public class GameController : MonoBehaviour
             itemSelection.Initialize();
             itemSelection.Display();
         }
-        // Delete action from queque
         else if (actionList.GetAction() == ActionType.feedCow)
         {
             animalFarm.feedCow(actionList.GetGameObject());
         }
+
+        // Delete action from queque
         RemoveGameObject(actionList.Remove(0).gameObject);
     }
 
@@ -231,6 +232,7 @@ public class GameController : MonoBehaviour
         player.ChangeHunger(-10);
         animalFarm.spoilFood();
         animalFarm.generateFoodProducts();
+        animalFarm.ageAnimals();
         foreach (ActionController actionController in controlledObjects)
             actionController.age += 1;
     }
@@ -264,6 +266,8 @@ public class GameController : MonoBehaviour
         if (type == ActionType.gatherMilk)
             if (animalFarm.getMilkCount() <= 0)
                 return "No milks to gather.";
+        if (type == ActionType.checkCowStatus)
+            return "No action to be done.";
         return null;
     }
 

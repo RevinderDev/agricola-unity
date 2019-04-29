@@ -42,6 +42,14 @@ public class AnimalFarm
         initFarmSlots();
     }
 
+    public void ageAnimals()
+    {
+        foreach(AnimalSlot cowSlot in cowSlotsList)
+        {
+            if(cowSlot.animal != null)
+                cowSlot.animal.AddDayInExistance();
+        }
+    }
 
     private void initFarmSlots()
     {
@@ -52,6 +60,17 @@ public class AnimalFarm
             AnimalSlot animalSlot = new AnimalSlot(cowSlotsObjects[i]);
             cowSlotsList.Add(animalSlot);
         }
+    }
+
+
+    public AnimalSlot getSelectedAnimalSlot(GameObject cowSlotObject)
+    {
+        int slotIndex = getSlotIndex(cowSlotObject, cowSlotsList);
+        if (slotIndex != ErrorCode)
+            return cowSlotsList[slotIndex];
+
+
+        return null;
     }
     
 

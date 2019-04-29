@@ -83,7 +83,11 @@ public class ActionController : MonoBehaviour
                 gameController.AddAction(gameObject, ActionType.gatherMilk);
                 break;
             case "TakenCowSlot":
+                gameController.AddAction(gameObject, ActionType.checkCowStatus);
+                break;
+            case "FoodHouseCows":
                 gameController.AddAction(gameObject, ActionType.feedCow);
+                break;
             case "House":
                 gameController.AddAction(gameObject, ActionType.eat);
                 break;
@@ -123,7 +127,7 @@ public class ActionController : MonoBehaviour
                         "\nSpoiled in: " + spoiled + " days");
             }
             else if (tag == "CowSlots")
-                EditorGUI.TextField(new Rect(x -50, y + 20, 100, 35),
+                EditorGUI.TextField(new Rect(x -50, y + 20, 110, 35),
                         "Action: " + ActionType.buyCow.name + 
                         "\nTime: " + (double)ActionType.buyCow.length / 1000 + " h");
             else if (tag == "Market")
@@ -146,10 +150,22 @@ public class ActionController : MonoBehaviour
                         + milkSpoilageString + "Count: " + gameController.GetMilkCount());
 
             }
-            if(tag == "TakenCowSlot")
+            else if(tag == "TakenCowSlot")
             {
+                AnimalSlot cowSlot = gameController.animalFarm.getSelectedAnimalSlot(gameObject);
+                if(cowSlot != null) {
+                    Animal cow = cowSlot.animal;
+                    EditorGUI.TextField(new Rect(x - 50, y + 20, 100, 50), "Animal: " + cow.getAnimalType().name 
+                        + "\nHunger: " + cow.currentHungerLevel + "/" + cow.maxHungerLevel 
+                        + "\nAge: " + cow.daysInExistance + "/" + cow.dayOfDeath + " days");
+                }
+            }
+            else if(tag == "FoodHouseCows")
+            {
+                //TODO: dodac food amount
                 EditorGUI.TextField(new Rect(x - 50, y + 20, 100, 35),
-                    "Action: " + ActionType.feedCow.name + "\nTime: " + (double)ActionType.feedCow.length / 1000 + " h\n");
+                    "Action:" + ActionType.feedCow.name +
+                    "\nTime:" + (double)ActionType.feedCow.length / 1000 + " h");
             }
             else if(tag == "House")
                 EditorGUI.TextField(new Rect(x - 50, y + 20, 100, 35),
