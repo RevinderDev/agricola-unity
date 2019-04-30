@@ -14,7 +14,19 @@ public class ItemSelection : MonoBehaviour
         animalEating
     }
 
+    public class Tag
+    {
+        public static readonly string item = "Item";
+        public static readonly string itemImage = "ItemImage";
+        public static readonly string itemName = "ItemName";
+        public static readonly string itemValue = "ItemValue";
+        public static readonly string itemValueLabel = "ItemValueLabel";
+        public static readonly string itemQuantity = "ItemQuantity";
+        public static readonly string itemValueImage = "ItemValueImage";
+    }
+
     private Mode mode = Mode.market;
+    public static bool isVisible;
     private GameController gameController;
     private GameObject windowObject;
     private Text title;
@@ -23,16 +35,10 @@ public class ItemSelection : MonoBehaviour
     private GameObject transactionType;
     private Slider slider;
     public const int numItemSlots = 14;
-    public GameObject[] items = new GameObject[numItemSlots];
+    public Dictionary<string, GameObject[]> gameObjects = new Dictionary<string, GameObject[]>();
     public ItemType[] itemTypes = new ItemType[numItemSlots];
-    public Image[] itemImages = new Image[numItemSlots];
-    public Text[] itemsNames = new Text[numItemSlots];
-    public Text[] itemsPricesOrNutritions = new Text[numItemSlots];
-    public Text[] itemsPricesOrNutritionsLabels = new Text[numItemSlots];
-    public Image[] coinImages = new Image[numItemSlots];
-    public InputField[] quantities = new InputField[numItemSlots];
-    public Image coinImage;
-    public int totalPriceOrNutritions = 0;
+    public Image totalValueImage;
+    public int totalValue = 0;
     public static readonly int itemWidth = 130;
     public string animalName { set; get; }
 
@@ -40,16 +46,17 @@ public class ItemSelection : MonoBehaviour
     {
         if (this.mode != mode)
         {
-            if (mode == Mode.eating)
+            
+            if(mode == Mode.market)
+            {
+                title.text = "Market";
+                transactionType.SetActive(true);
+            }
+            else if (mode == Mode.eating)
             {
                 title.text = "Eating";
                 transactionType.SetActive(false);
 
-            }
-            else if(mode == Mode.market)
-            {
-                title.text = "Market";
-                transactionType.SetActive(true);
             }
             else if(mode == Mode.animalEating)
             {
@@ -58,6 +65,17 @@ public class ItemSelection : MonoBehaviour
             }
         }
         this.mode = mode;
+    }
+
+    public void SetCommon(int i, ItemType value)
+    {
+        gameObjects[Tag.item][i].SetActive(true);
+        itemTypes[i] = value;
+        gameObjects[Tag.itemName][i].GetComponent<Text>().text = value.name;
+        gameObjects[Tag.itemQuantity][i].GetComponent<InputField>().text = "0";
+        gameObjects[Tag.itemQuantity][i].GetComponent<InputField>().onValueChanged.AddListener(delegate { ActualizeTotal(); });
+        gameObjects[Tag.itemImage][i].GetComponent<Image>().sprite = Resources.Load<Sprite>(value.directory);
+        gameObjects[Tag.itemImage][i].GetComponent<Image>().enabled = true;
     }
 
     public void Initialize()
@@ -70,22 +88,16 @@ public class ItemSelection : MonoBehaviour
                 //Buy and can be bought or sell and can be sold
                 if (slider.value == 0 && value.canBeBought || slider.value == 1 && value.canBeSold)
                 {
-                    items[i].SetActive(true);
-                    itemTypes[i] = value;
-                    itemsNames[i].text = value.name;
+                    SetCommon(i, value);
                     //Buy
                     if (slider.value == 0)
-                        itemsPricesOrNutritions[i].text = "" + value.priceBuy;
+                        gameObjects[Tag.itemValue][i].GetComponent<Text>().text = "" + value.priceBuy;
                     //Sell
                     else
-                        itemsPricesOrNutritions[i].text = "" + value.priceSell;
-                    quantities[i].text = "0";
-                    quantities[i].onValueChanged.AddListener(delegate { ActualizeTotal(); });
-                    itemImages[i].sprite = Resources.Load<Sprite>(value.directory);
-                    itemImages[i].enabled = true;
-                    coinImages[i].sprite = Resources.Load<Sprite>("Sprites/coin");
-                    coinImage.sprite = Resources.Load<Sprite>("Sprites/coin");
-                    itemsPricesOrNutritionsLabels[i].text = "Price";
+                        gameObjects[Tag.itemValue][i].GetComponent<Text>().text = "" + value.priceSell;
+                    gameObjects[Tag.itemValueImage][i].GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/coin");
+                    totalValueImage.sprite = Resources.Load<Sprite>("Sprites/coin");
+                    gameObjects[Tag.itemValueLabel][i].GetComponent<Text>().text = "Price";
                     i++;
                 }
             }
@@ -93,36 +105,29 @@ public class ItemSelection : MonoBehaviour
             {
                 if(value.nutritionValue != 0)
                 {
-                    Debug.Log(value.name);
-                    items[i].SetActive(true);
-                    itemTypes[i] = value;
-                    itemsNames[i].text = value.name;
-                    quantities[i].text = "0";
-                    itemsPricesOrNutritions[i].text = "" + value.nutritionValue;
-                    quantities[i].onValueChanged.AddListener(delegate { ActualizeTotal(); });
-                    itemImages[i].sprite = Resources.Load<Sprite>(value.directory);
-                    itemImages[i].enabled = true;
-                    coinImages[i].sprite = Resources.Load<Sprite>("Sprites/eat");
-                    coinImage.sprite = Resources.Load<Sprite>("Sprites/eat");
-                    itemsPricesOrNutritionsLabels[i].text = "Nutritions";
+                    SetCommon(i, value);
+                    gameObjects[Tag.itemValue][i].GetComponent<Text>().text = "" + value.nutritionValue;
+                    gameObjects[Tag.itemValueImage][i].GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/eat");
+                    totalValueImage.sprite = Resources.Load<Sprite>("Sprites/eat");
+                    gameObjects[Tag.itemValueLabel][i].GetComponent<Text>().text = "Nutritions";
                     i++;
                 }
             }
             else if(mode == Mode.animalEating)
             {
-                if (value.nutritionValue != 0)
+                if (value.ratioValue != 0)
                 {
-                    //TODO 
-                    items[i].SetActive(true);
-                    coinImages[i].sprite = Resources.Load<Sprite>("Sprites/animalFood");
-                    coinImage.sprite = Resources.Load<Sprite>("Sprites/animalFood");
-                    itemsPricesOrNutritionsLabels[i].text = "Ratio";
+                    SetCommon(i, value);
+                    gameObjects[Tag.itemValue][i].GetComponent<Text>().text = "" + value.ratioValue;
+                    gameObjects[Tag.itemValueImage][i].GetComponent<Image>().sprite = Resources.Load<Sprite>("Sprites/animalFood");
+                    totalValueImage.sprite = Resources.Load<Sprite>("Sprites/animalFood");
+                    gameObjects[Tag.itemValueLabel][i].GetComponent<Text>().text = "Ratio";
                     i++;
                 }
             }
         }
         for (int j = i; j < numItemSlots; j++)
-            items[j].SetActive(false);
+            gameObjects[Tag.item][j].SetActive(false);
     }
 
     public void SetMarket()
@@ -143,205 +148,151 @@ public class ItemSelection : MonoBehaviour
             else if (mode == Mode.eating || mode == Mode.animalEating)
                 Eat();
         });
-        coinImage = GameObject.Find("CoinImageTotal").GetComponent<Image>();
+        totalValueImage = GameObject.Find("CoinImageTotal").GetComponent<Image>();
 
-        items = GameObject.FindGameObjectsWithTag("Item");
-        //itemTypes = new ItemType[numItemSlots];
-        int i = 0;
-        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("ItemImage"))
-        {
-            itemImages[i] = obj.GetComponent<Image>();
-            i++;
-        }
-        i = 0;
-        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("ItemName"))
-        {
-            itemsNames[i] = obj.GetComponent<Text>();
-            i++;
-        }
-        i = 0;
-        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("ItemPriceOrNutritions"))
-        {
-            itemsPricesOrNutritions[i] = obj.GetComponent<Text>();
-            i++;
-        }
-        i = 0;
-        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("ItemPriceOrNutritionsLabels"))
-        {
-            itemsPricesOrNutritionsLabels[i] = obj.GetComponent<Text>();
-            i++;
-        }
-        i = 0;
-        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("CoinImage"))
-        {
-            coinImages[i] = obj.GetComponent<Image>();
-            i++;
-        }
-        i = 0;
-        foreach (GameObject obj in GameObject.FindGameObjectsWithTag("Quantity"))
-        {
-            quantities[i] = obj.GetComponent<InputField>();
-            i++;
-        }
-
+        gameObjects.Add(Tag.item, GameObject.FindGameObjectsWithTag(Tag.item));
+        gameObjects.Add(Tag.itemName, GameObject.FindGameObjectsWithTag(Tag.itemName));
+        gameObjects.Add(Tag.itemImage, GameObject.FindGameObjectsWithTag(Tag.itemImage));
+        gameObjects.Add(Tag.itemValue, GameObject.FindGameObjectsWithTag(Tag.itemValue));
+        gameObjects.Add(Tag.itemValueLabel, GameObject.FindGameObjectsWithTag(Tag.itemValueLabel));
+        gameObjects.Add(Tag.itemValueImage, GameObject.FindGameObjectsWithTag(Tag.itemValueImage));
+        gameObjects.Add(Tag.itemQuantity, GameObject.FindGameObjectsWithTag(Tag.itemQuantity));
+      
         Initialize();
     }
 
     public void Display()
     {
+        isVisible = true;
         windowObject.SetActive(true);
         ActionController.isActive = false;
     }
 
     public void Hide()
     {
+        isVisible = false;
         windowObject.SetActive(false);
         ActionController.isActive = true;
     }
 
     public void ActualizeTotal()
     {
-        totalPriceOrNutritions = 0;
+        totalValue = 0;
         for(int i = 0; i<numItemSlots; i++)
         {
-            totalPriceOrNutritions += Int32.Parse(quantities[i].text) * Int32.Parse(itemsPricesOrNutritions[i].text);
+            try
+            {
+                totalValue += Int32.Parse(gameObjects[Tag.itemQuantity][i].GetComponent<InputField>().text) * 
+                    Int32.Parse(gameObjects[Tag.itemValue][i].GetComponent<Text>().text);
+            }
+            catch (FormatException e)
+            {
+                gameController.DisplayInfo("Invalid quantity.");
+                break;
+            }
         }
-        GameObject.Find("TotalPrice").GetComponent<Text>().text = totalPriceOrNutritions.ToString();
+        GameObject.Find("TotalPrice").GetComponent<Text>().text = totalValue.ToString();
     }
+
     public void AcceptTransaction()
     {
-        //Buy
-        if(slider.value == 0)
-            if(gameController.GetMoney() >= totalPriceOrNutritions)
-            {
-                for (int i = 0; i < numItemSlots; i++)
+        int total = totalValue;
+        try
+        { 
+            //Buy
+            if (slider.value == 0)
+                if (gameController.GetMoney() >= totalValue)
                 {
-                    try
+                    for (int i = 0; i < numItemSlots; i++)
                     {
-                        try
-                        {
-                            if (Int32.Parse(quantities[i].text) != 0)
-                                gameController.inventory.AddItem(itemTypes[i], Int32.Parse(quantities[i].text));
-                        }
-                        catch (FormatException e) { }
+                        InputField quantity = gameObjects[Tag.itemQuantity][i].GetComponent<InputField>();
+                        if (Int32.Parse(quantity.text) != 0)
+                            gameController.inventory.AddItem(itemTypes[i], Int32.Parse(quantity.text));
+                        quantity.text = "0";
                     }
-                    catch (FormatException e)
-                    {
-                        gameController.DisplayInfo("Invalid quantity.");
-                        break;
-                    }
+                    gameController.MoneyTransaction(-total);
                 }
-                gameController.MoneyTransaction(-totalPriceOrNutritions);
-                for (int i = 0; i < numItemSlots; i++)
-                    quantities[i].text = "0";
-            }
-            else
-            {
-                gameController.DisplayInfo("You do not have enough money.");
-            }
-        //Sell
-        else
-            {
-            int isValid = 0;
-            for (int i = 0; i < numItemSlots; i++)
-            {
-                if (Int32.Parse(quantities[i].text) == 0)
-                    isValid++;
                 else
-                    for (int j = 0; j<Inventory.numItemSlots; j++)
-                    {
-                        if (gameController.inventory.types[j] != null && itemTypes[i].Equals(gameController.inventory.types[j]))
-                        {
-                            try
-                            {
-                                if (gameController.inventory.quantities[j].text == null)
-                                    ;
-                                else if (Int32.Parse(quantities[i].text) > Int32.Parse(gameController.inventory.quantities[j].text))
-                                    ;
-                                else
-                                    isValid++;
-                            }
-                            catch (FormatException e)
-                            {
-                                gameController.DisplayInfo("Invalid quantity.");
-                                return;
-                            }
-                        }
-                    }
-            }
-            if(isValid == numItemSlots)
-            {
-                for (int i = 0; i < numItemSlots; i++)
-                {
-                    if (Int32.Parse(quantities[i].text) != 0)
-                        gameController.inventory.RemoveItem(itemTypes[i], Int32.Parse(quantities[i].text));
-                }
-                gameController.MoneyTransaction(+totalPriceOrNutritions);
-                for (int i = 0; i < numItemSlots; i++)
-                    quantities[i].text = "0";
-            }
+                    gameController.DisplayInfo("You do not have enough money.");
+            //Sell
             else
             {
-                gameController.DisplayInfo("You do not have enough items.");
+                int isValid = 0;
+                for (int i = 0; i < numItemSlots; i++)
+                {
+                    InputField quantity = gameObjects[Tag.itemQuantity][i].GetComponent<InputField>();
+                    if (Int32.Parse(quantity.text) == 0)
+                        isValid++;
+                    else
+                        for (int j = 0; j < Inventory.numItemSlots; j++)
+                            if (gameController.inventory.types[j] != null && itemTypes[i].Equals(gameController.inventory.types[j]))
+                                if (Int32.Parse(quantity.text) <= Int32.Parse(gameController.inventory.quantities[j].text))
+                                    isValid++;
+                }
+                if (isValid == numItemSlots)
+                {
+                    for (int i = 0; i < numItemSlots; i++)
+                    {
+                        InputField quantity = gameObjects[Tag.itemQuantity][i].GetComponent<InputField>();
+                        if (Int32.Parse(quantity.text) != 0)
+                            gameController.inventory.RemoveItem(itemTypes[i], Int32.Parse(quantity.text));
+                        quantity.text = "0";
+                    }
+                    gameController.MoneyTransaction(+total);
+                }
+                else
+                    gameController.DisplayInfo("You do not have enough items.");
             }
+        }
+        catch (FormatException e)
+        {
+            gameController.DisplayInfo("Invalid quantity 1.");
         }
     }
 
     private void Eat()
     {
-        int isValid = 0;
-        for (int i = 0; i < numItemSlots; i++)
+        int total = totalValue;
+        try
         {
-            if (Int32.Parse(quantities[i].text) == 0)
-                isValid++;
-            else
-                for (int j = 0; j < Inventory.numItemSlots; j++)
-                {
-                    if (gameController.inventory.types[j] != null && itemTypes[i].Equals(gameController.inventory.types[j]))
-                    {
-                        try
-                        {
-                            if (gameController.inventory.quantities[j].text == null)
-                                ;
-                            else if (Int32.Parse(quantities[i].text) > Int32.Parse(gameController.inventory.quantities[j].text))
-                                ;
-                            else
-                                isValid++;
-                        }
-                        catch (FormatException e)
-                        {
-                            gameController.DisplayInfo("Invalid quantity.");
-                            return;
-                        }
-                    }
-                }
-        }
-        if (isValid == numItemSlots)
-        {
+            int isValid = 0;
             for (int i = 0; i < numItemSlots; i++)
             {
-                if (Int32.Parse(quantities[i].text) != 0)
-                {
-                    gameController.inventory.RemoveItem(itemTypes[i], Int32.Parse(quantities[i].text));
-                    if(mode == Mode.animalEating)
-                    {
-                        if (animalName != null)
-                        {
-                            //TODO : Ratio ?
-                            gameController.animalFarm.addAnimalFood(animalName, totalPriceOrNutritions);
-                        }
-                    }
-                    else
-                        gameController.player.ChangeHunger(itemTypes[i].nutritionValue * Int32.Parse(quantities[i].text));
-                }
+                InputField quantity = gameObjects[Tag.itemQuantity][i].GetComponent<InputField>();
+                if (Int32.Parse(quantity.text) == 0)
+                    isValid++;
+                else
+                    for (int j = 0; j < Inventory.numItemSlots; j++)
+                        if (gameController.inventory.types[j] != null && itemTypes[i].Equals(gameController.inventory.types[j]))
+                            if (Int32.Parse(quantity.text) <= Int32.Parse(gameController.inventory.quantities[j].text))
+                                isValid++;
             }
-            for (int i = 0; i < numItemSlots; i++)
-                quantities[i].text = "0";
+            if (isValid == numItemSlots)
+            {
+                for (int i = 0; i < numItemSlots; i++)
+                {
+                    InputField quantity = gameObjects[Tag.itemQuantity][i].GetComponent<InputField>();
+                    if (Int32.Parse(quantity.text) != 0)
+                        gameController.inventory.RemoveItem(itemTypes[i], Int32.Parse(quantity.text));
+                    quantity.text = "0";
+                }
+                if (mode == Mode.animalEating)
+                {
+                    if (animalName != null)
+                        gameController.animalFarm.addAnimalFood(animalName, total);
+                }
+                else
+                    gameController.player.ChangeHunger(total);
+            }
+            else
+                gameController.DisplayInfo("You do not have enough items.");
         }
-        else
+        catch (FormatException e)
         {
-            gameController.DisplayInfo("You do not have enough items.");
+            gameController.DisplayInfo("Invalid quantity.");
+            return;
         }
     }
+
 }
 

@@ -21,13 +21,12 @@ TagManager:
   - Item
   - ItemImage
   - ItemName
-  - ItemPriceOrNutrutions
-  - ItemPriceOrNutritionsLabels
-  - CoinImage
-  - Quantity
-  - ItemPriceOrNutritions
   - FoodHouseCows
   - Pumpkin
+  - ItemValue
+  - ItemValueLabel
+  - ItemValueImage
+  - ItemQuantity
   layers:
   - Default
   - TransparentFX

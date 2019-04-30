@@ -124,6 +124,8 @@ public class PlayerController : MonoBehaviour
     // Checks if player spend enough time performing action
     public bool IsActionFinished()
     {
+        if (ItemSelection.isVisible == true)
+            return false;
         if (!actionStopwatch.IsRunning)
             return true;
         if (actionStopwatch.ElapsedMilliseconds >= currentActionLengh)
