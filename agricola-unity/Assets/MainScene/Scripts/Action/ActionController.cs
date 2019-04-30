@@ -183,10 +183,10 @@ public class ActionController : MonoBehaviour
             }
             else if(tag == "FoodHouseCows")
             {
-                //TODO: dodac food amount
-                EditorGUI.TextField(new Rect(x - 50, y + 20, 100, 35),
+                EditorGUI.TextField(new Rect(x - 50, y + 20, 110, 48),
                     "Action:" + ActionType.feedCow.name +
-                    "\nTime:" + (double)ActionType.feedCow.length / 1000 + " h");
+                    "\nTime:" + (double)ActionType.feedCow.length / 1000 + " h"
+                    + "\nFood amount:" + gameController.animalFarm.getAnimalFood("cows"));
             }
             else if(tag == "House")
                 EditorGUI.TextField(new Rect(x - 50, y + 20, 100, 35),

@@ -10,7 +10,8 @@ public class ItemSelection : MonoBehaviour
     public enum Mode
     {
         market,
-        eating
+        eating,
+        animalEating
     }
 
     private Mode mode = Mode.market;
@@ -33,6 +34,7 @@ public class ItemSelection : MonoBehaviour
     public Image coinImage;
     public int totalPriceOrNutritions = 0;
     public static readonly int itemWidth = 130;
+    public string animalName { set; get; }
 
     public void SetMode(Mode mode)
     {
@@ -44,10 +46,15 @@ public class ItemSelection : MonoBehaviour
                 transactionType.SetActive(false);
 
             }
-            else
+            else if(mode == Mode.market)
             {
                 title.text = "Market";
                 transactionType.SetActive(true);
+            }
+            else if(mode == Mode.animalEating)
+            {
+                title.text = "Animal food";
+                transactionType.SetActive(false);
             }
         }
         this.mode = mode;
@@ -82,7 +89,7 @@ public class ItemSelection : MonoBehaviour
                     i++;
                 }
             }
-            else
+            else if(mode == Mode.eating)
             {
                 if(value.nutritionValue != 0)
                 {
@@ -98,6 +105,18 @@ public class ItemSelection : MonoBehaviour
                     coinImages[i].sprite = Resources.Load<Sprite>("Sprites/eat");
                     coinImage.sprite = Resources.Load<Sprite>("Sprites/eat");
                     itemsPricesOrNutritionsLabels[i].text = "Nutritions";
+                    i++;
+                }
+            }
+            else if(mode == Mode.animalEating)
+            {
+                if (value.nutritionValue != 0)
+                {
+                    //TODO 
+                    items[i].SetActive(true);
+                    coinImages[i].sprite = Resources.Load<Sprite>("Sprites/animalFood");
+                    coinImage.sprite = Resources.Load<Sprite>("Sprites/animalFood");
+                    itemsPricesOrNutritionsLabels[i].text = "Ratio";
                     i++;
                 }
             }
@@ -117,7 +136,13 @@ public class ItemSelection : MonoBehaviour
         slider = GameObject.Find("Slider").GetComponent<Slider>();
         slider.onValueChanged.AddListener(delegate { Initialize(); });
         buttonFinish.onClick.AddListener(delegate { Hide(); });
-        buttonAccept.onClick.AddListener(delegate { if (mode == Mode.market) AcceptTransaction(); else Eat(); });
+        buttonAccept.onClick.AddListener(delegate 
+        {
+            if (mode == Mode.market)
+                AcceptTransaction();
+            else if (mode == Mode.eating || mode == Mode.animalEating)
+                Eat();
+        });
         coinImage = GameObject.Find("CoinImageTotal").GetComponent<Image>();
 
         items = GameObject.FindGameObjectsWithTag("Item");
@@ -298,10 +323,18 @@ public class ItemSelection : MonoBehaviour
                 if (Int32.Parse(quantities[i].text) != 0)
                 {
                     gameController.inventory.RemoveItem(itemTypes[i], Int32.Parse(quantities[i].text));
-                    gameController.player.ChangeHunger(itemTypes[i].nutritionValue * Int32.Parse(quantities[i].text));
+                    if(mode == Mode.animalEating)
+                    {
+                        if (animalName != null)
+                        {
+                            //TODO : Ratio ?
+                            gameController.animalFarm.addAnimalFood(animalName, totalPriceOrNutritions);
+                        }
+                    }
+                    else
+                        gameController.player.ChangeHunger(itemTypes[i].nutritionValue * Int32.Parse(quantities[i].text));
                 }
             }
-            gameController.MoneyTransaction(+totalPriceOrNutritions);
             for (int i = 0; i < numItemSlots; i++)
                 quantities[i].text = "0";
         }

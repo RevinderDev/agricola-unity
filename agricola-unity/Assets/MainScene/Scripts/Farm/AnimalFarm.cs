@@ -14,6 +14,7 @@ public class AnimalFarm
     private GameObject milkArea { get; }
     private readonly Vector3 MilkScale;
     private int milkDaysSpoilage;
+    private int cowFood;
 
     private readonly Vector3 AnimalScale;
     private readonly Vector3 AnimalRotation;
@@ -37,17 +38,64 @@ public class AnimalFarm
         newestMilkPosition = milkArea.transform.position;
         milkAreaInitPosition = milkArea.transform.position;
         milkDaysSpoilage = -1;
+        cowFood = 0;
 
         initStartingAnimals();
         initFarmSlots();
+    }
+
+
+    public void addAnimalFood(string animalName, int totalFood)
+    {
+        switch(animalName)
+        {
+            case "cows":
+                cowFood += totalFood;
+                return;
+        }
+    }
+
+
+    public void animalsEat()
+    {
+        while (cowFood > 0)
+        {
+            foreach (var cowSlot in cowSlotsList)
+            {
+                if (cowSlot.animal != null)
+                {
+                    if (cowSlot.animal.isHungry() && cowFood > 0)
+                        cowSlot.animal.eat(ref cowFood);
+                }
+            }
+        }
+    }
+
+
+    public int? getAnimalFood(string animalName)
+    {
+        switch (animalName)
+        {
+            case "cows":
+                return cowFood;
+        }
+
+        return null;
     }
 
     public void ageAnimals()
     {
         foreach(AnimalSlot cowSlot in cowSlotsList)
         {
-            if(cowSlot.animal != null)
+            if (cowSlot.animal != null)
+            {
                 cowSlot.animal.AddDayInExistance();
+                if (cowSlot.animal.isDead)
+                {
+                    gameController.DisplayInfo("One of your cows died :(");
+                    cowSlot.removeAnimal();
+                }
+            }
         }
     }
 
@@ -210,21 +258,21 @@ public class AnimalFarm
     public void addCow(GameObject slotGameObject)
     {
         Object prefab = AssetDatabase.LoadAssetAtPath(animalFactory.getCowPrefab(), typeof(GameObject));
-        GameObject cloneCow = gameController.InstantiatePrefab(prefab, Vector3.zero, Quaternion.identity) as GameObject;
-        Animal newCow = animalFactory.buildCow(cloneCow);
+        GameObject cloneCowGameObject = gameController.InstantiatePrefab(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+        Animal newCow = animalFactory.buildCow(cloneCowGameObject);
 
         int slotIndex = getSlotIndex(slotGameObject, cowSlotsList);
 
         if (slotIndex != ErrorCode)
         {
             cowSlotsList[slotIndex].takeSlot(newCow);
+            cowSlotsList[slotIndex].cowGameObject = cloneCowGameObject;
 
-            cloneCow.transform.localScale = AnimalScale;
-            cloneCow.transform.position = cowSlotsList[slotIndex].slotGameObject.transform.position;
-            cloneCow.transform.eulerAngles = AnimalRotation;
+            cloneCowGameObject.transform.localScale = AnimalScale;
+            cloneCowGameObject.transform.position = cowSlotsList[slotIndex].slotGameObject.transform.position;
+            cloneCowGameObject.transform.eulerAngles = AnimalRotation;
             //cloneCow.AddComponent<ActionController>(); TODO: Problem z kolorami w teksturze.
-            cloneCow.tag = newCow.getAnimalType().name;
-            slotGameObject.tag = "TakenCowSlot";
+            cloneCowGameObject.tag = newCow.getAnimalType().name;
         }
         else
             Debug.Log("Error adding cow (addCow) error code: " + slotIndex);
@@ -237,6 +285,7 @@ public class AnimalSlot
     public Animal animal { get; set; }
     private bool isTaken = false;
     public GameObject slotGameObject { get; }
+    public GameObject cowGameObject { get; set; }
 
 
     public AnimalSlot(GameObject slotGameObject)
@@ -256,6 +305,7 @@ public class AnimalSlot
         {
             this.animal = animal;
             isTaken = true;
+            slotGameObject.tag = "TakenCowSlot";
         }
     }
 
@@ -265,6 +315,9 @@ public class AnimalSlot
         {
             animal = null;
             isTaken = false;
+            slotGameObject.tag = "CowSlots";
+            GameController.RemoveGameObject(cowGameObject);
+            cowGameObject = null;
         }
     }
 

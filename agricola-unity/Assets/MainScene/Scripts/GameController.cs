@@ -53,7 +53,7 @@ public class GameController : MonoBehaviour
         itemSelection = FindObjectOfType<ItemSelection>();
         itemSelection.SetMarket();
         itemSelection.Hide();
-        money = 10;
+        money = 1000;
         MoneyTransaction(0);
         ActualizeTimeBar();
         Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
@@ -163,7 +163,11 @@ public class GameController : MonoBehaviour
         }
         else if (actionList.GetAction() == ActionType.feedCow)
         {
-            animalFoodWindow.Display();
+            //animalFoodWindow.Display();
+            itemSelection.SetMode(ItemSelection.Mode.animalEating);
+            itemSelection.Initialize();
+            itemSelection.animalName = "cows";
+            itemSelection.Display();
         }
 
         // Delete action from queque
@@ -259,6 +263,7 @@ public class GameController : MonoBehaviour
         animalFarm.spoilFood();
         animalFarm.generateFoodProducts();
         animalFarm.ageAnimals();
+        animalFarm.animalsEat();
         foreach (ActionController actionController in controlledObjects)
             actionController.age += 1;
         KillPlayers();
@@ -290,6 +295,8 @@ public class GameController : MonoBehaviour
         if (type == ActionType.buyCow)
             if (!animalFarm.isSlotAvailable(gameObject))
                 return "Slots taken by another cow.";
+            else if (!inventory.DoesContain(ItemType.cow))
+                return "You don't have cow.";
         if (type == ActionType.gatherMilk)
             if (animalFarm.getMilkCount() <= 0)
                 return "No milks to gather.";
@@ -318,7 +325,7 @@ public class GameController : MonoBehaviour
         string message = IsAcctionAllowed(gameObject, type);
         if (message == null)
         {
-            if(type == ActionType.plant)
+            if (type == ActionType.plant)
             {
                 switch (dropdown.GetSelected())
                 {
@@ -333,6 +340,8 @@ public class GameController : MonoBehaviour
                         break;
                 }
             }
+            else if (type == ActionType.buyCow)
+                actionList.Add(gameObject, type, ItemType.cow);
             else
                 actionList.Add(gameObject, type);
         }
