@@ -9,6 +9,7 @@ public class GameController : MonoBehaviour
     private Information info;
     private QuestionWindow questionWindow;
     private ItemSelection itemSelection;
+    private AnimalFoodWindow animalFoodWindow;
     private Farmland farmland;
     public AnimalFarm animalFarm { get; set; }
     public ActionList actionList;
@@ -29,6 +30,8 @@ public class GameController : MonoBehaviour
     {
         farmland = new Farmland();
         animalFarm = new AnimalFarm();
+        animalFoodWindow = FindObjectOfType<AnimalFoodWindow>();
+        animalFoodWindow.Hide();
         actionList = new ActionList();
         player = SceneManager.Instance.player;
         isPlayButtonPressed = false;
@@ -159,7 +162,7 @@ public class GameController : MonoBehaviour
         }
         else if (actionList.GetAction() == ActionType.feedCow)
         {
-            animalFarm.feedCow(actionList.GetGameObject());
+            animalFoodWindow.Display();
         }
 
         // Delete action from queque

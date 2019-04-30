@@ -113,7 +113,6 @@ public class AnimalFarm
     {
         if(milksList.Count > 0)
         {
-            //gameController.inventory.AddItem(plants[i].GetPlantType().itemType);
             GameObject[] milks = GameObject.FindGameObjectsWithTag("Milk");
             gameController.inventory.AddItem(ItemType.milk, milks.Length);
             milksList.Clear();
@@ -230,12 +229,6 @@ public class AnimalFarm
         else
             Debug.Log("Error adding cow (addCow) error code: " + slotIndex);
     }
-
-    public void feedCow(GameObject cowSlot)
-    {
-        //
-    }
-
 }
 
 
