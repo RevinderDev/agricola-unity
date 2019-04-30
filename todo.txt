@@ -1,12 +1,13 @@
-- jedzenie
-- wartoœæ kaloryczna warzyw
-- zbieranie/usuwanie zepsutych warzyw
-- ró¿ne ilosci zbieranych warzyw
++ jedzenie
++ wartoœæ kaloryczna warzyw
++ zbieranie/usuwanie zepsutych warzyw
++ ró¿ne ilosci zbieranych warzyw
+- ³adniejsze (indywidualne) "roœniêcie" warzyw
 - inne zwierzêta
 - poprawne stawianie krowy (z ekwipunku)
 - karmienie zwierz¹t
 - umieranie zwierz¹t
-- umieranie ludzi
++/- umieranie ludzi
 - liczenie punktów
 
 PóŸniej
@@ -16,12 +17,11 @@ PóŸniej
 - menu (start, opis, wczytaj, poziom trudnoœci, ranking itp.)
 
 Czy i jeœli to co z tym zrobiæ
-- regeneracja hp (ka¿dego dnia?)
++ regeneracja hp (ka¿dego dnia?)
 - opieka nad roœlinami 
 - zabijanie zwierz¹t 
 - narzêdzia 
 - wytwarzanie innych produktów np. ser z mleka
 - umiejêtnoœci 
 - podzial ekwipunku na kategorie
-- 
 

@@ -16,6 +16,7 @@ public class GameController : MonoBehaviour
     public Inventory inventory;
     public DropdownSelect dropdown;
     public int money;
+    private readonly int lifeLength = 10;
     private readonly int dayLength = 12000;
     private int currentDay = 0;
     private Vector3 homePosition = new Vector3(-5.3f, 1, 17);
@@ -227,6 +228,22 @@ public class GameController : MonoBehaviour
     {
         StartActionQueue();
     }
+
+    private void KillPlayers()
+    {
+        for (int i = 0; i < 1; i++) //foreach player
+            if (player.GetComponent<ActionController>().age > lifeLength || !player.IsAlive())
+            {
+                //Remove player (add grave? xD)
+                //player.gameObject.SetActive(false);
+                if (true) //we do not have more players
+                {
+                    questionWindow.DisplayQuestion("All yours subordinates died. The game is over. Do you want to play again?", "Game over");
+                }
+            }
+
+    }
+
     // Applies some changes to the game view
     public void NextDay()
     {
@@ -236,12 +253,15 @@ public class GameController : MonoBehaviour
         ActualizeTimeBar();
         Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
         dayLabel.text = "Day " + (currentDay++).ToString();
+        if(!player.IsHungry())
+            player.ChangeHalth(+5);
         player.ChangeHunger(-10);
         animalFarm.spoilFood();
         animalFarm.generateFoodProducts();
         animalFarm.ageAnimals();
         foreach (ActionController actionController in controlledObjects)
             actionController.age += 1;
+        KillPlayers();
     }
 
     /* Action is not allowed: 
