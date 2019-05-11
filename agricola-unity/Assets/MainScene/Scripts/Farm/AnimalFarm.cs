@@ -5,9 +5,10 @@ using UnityEngine;
 
 public class AnimalFarm
 {
-    private List<AnimalSlot> cowSlotsList;
+
     GameController gameController;
 
+    private List<AnimalSlot> cowSlotsList;
     private Vector3 newestMilkPosition;
     private Vector3 milkAreaInitPosition;
     public List<GeneratedFoodProduct> milksList { get; }
@@ -15,6 +16,18 @@ public class AnimalFarm
     private readonly Vector3 MilkScale;
     private int milkDaysSpoilage;
     private int cowFood;
+
+
+    private List<AnimalSlot> chickenSlotsList;
+    private GameObject eggArea { get; }
+    public List<GeneratedFoodProduct> eggsList { get; }
+    private Vector3 newestEggPosition;
+    private readonly Vector3 EggScale;
+    private Vector3 eggAreaInitPosition;
+    private int eggDaysSpoilage;
+    private int chickenFood;
+
+
 
     private readonly Vector3 AnimalScale;
     private readonly Vector3 AnimalRotation;
@@ -40,6 +53,16 @@ public class AnimalFarm
         milkDaysSpoilage = -1;
         cowFood = 0;
 
+
+        eggArea = GameObject.FindGameObjectWithTag("EggArea");
+        eggsList = new List<GeneratedFoodProduct>();
+        newestEggPosition = eggArea.transform.position + new Vector3(0, 0.1f, 0); //Correction for egg to be above ground
+        eggAreaInitPosition = newestEggPosition;
+        EggScale = new Vector3(0.75f, 0.75f, 0.75f);
+        eggDaysSpoilage = -1;
+        chickenFood = 0;
+        
+
         initStartingAnimals();
         initFarmSlots();
     }
@@ -52,22 +75,49 @@ public class AnimalFarm
             case "cows":
                 cowFood += totalFood;
                 return;
+            case "chickens":
+                chickenFood += totalFood;
+                return;
         }
     }
 
 
     public void animalsEat()
     {
+        bool hungryAnimalFound = false;
         while (cowFood > 0)
         {
+            hungryAnimalFound = false;
             foreach (var cowSlot in cowSlotsList)
             {
                 if (cowSlot.animal != null)
                 {
                     if (cowSlot.animal.isHungry() && cowFood > 0)
+                    {
                         cowSlot.animal.eat(ref cowFood);
+                        hungryAnimalFound = true;
+                    }
                 }
             }
+            if (hungryAnimalFound == false)
+                break;
+        }
+
+        while (chickenFood > 0)
+        {
+            hungryAnimalFound = false;
+            foreach (var chickenSlot in chickenSlotsList)
+            {
+                if (chickenSlot.animal != null)
+                {
+                    if (chickenSlot.animal.isHungry() && chickenFood > 0) { 
+                        chickenSlot.animal.eat(ref chickenFood);
+                        hungryAnimalFound = true;
+                    }
+                }
+            }
+            if (hungryAnimalFound == false)
+                break;
         }
     }
 
@@ -78,6 +128,8 @@ public class AnimalFarm
         {
             case "cows":
                 return cowFood;
+            case "chickens":
+                return chickenFood;
         }
 
         return null;
@@ -97,6 +149,19 @@ public class AnimalFarm
                 }
             }
         }
+
+        foreach (AnimalSlot chickenSlot in chickenSlotsList)
+        {
+            if (chickenSlot.animal != null)
+            {
+                chickenSlot.animal.AddDayInExistance();
+                if (chickenSlot.animal.isDead)
+                {
+                    gameController.DisplayInfo("One of your chickens died :(");
+                    chickenSlot.removeAnimal();
+                }
+            }
+        }
     }
 
     private void initFarmSlots()
@@ -108,14 +173,32 @@ public class AnimalFarm
             AnimalSlot animalSlot = new AnimalSlot(cowSlotsObjects[i]);
             cowSlotsList.Add(animalSlot);
         }
+
+
+        GameObject[] chickenSlotsObjects = GameObject.FindGameObjectsWithTag("ChickenSlot");
+        chickenSlotsList = new List<AnimalSlot>();
+        for(int i = 0; i < chickenSlotsObjects.Length; i++)
+        {
+            AnimalSlot animalSlot = new AnimalSlot(chickenSlotsObjects[i]);
+            chickenSlotsList.Add(animalSlot);
+        }
+
     }
 
 
-    public AnimalSlot getSelectedAnimalSlot(GameObject cowSlotObject)
+    public AnimalSlot getSelectedAnimalSlot(GameObject animalSlotObject, string animalName)
     {
-        int slotIndex = getSlotIndex(cowSlotObject, cowSlotsList);
-        if (slotIndex != ErrorCode)
-            return cowSlotsList[slotIndex];
+
+        int slotIndex;
+        switch(animalName)
+        {
+            case "cow":
+                slotIndex = getSlotIndex(animalSlotObject, cowSlotsList);
+                return cowSlotsList[slotIndex];
+            case "chicken":
+                slotIndex = getSlotIndex(animalSlotObject, chickenSlotsList);
+                return chickenSlotsList[slotIndex];
+        }
 
 
         return null;
@@ -140,8 +223,45 @@ public class AnimalFarm
                     milkDaysSpoilage = 1;
             }
         }
+
+       foreach(var chickenSlot in chickenSlotsList)
+        {
+            if(chickenSlot.animal != null)
+            {
+                GeneratedFoodProduct egg = chickenSlot.animal.getAnimalType().generatedResource;
+                eggsList.Add(egg);
+                Object prefab = AssetDatabase.LoadAssetAtPath(egg.prefabDirectory, typeof(GameObject));
+                GameObject eggClone = gameController.InstantiatePrefab(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+                eggClone.tag = "Egg";
+                eggClone.transform.position = newestEggPosition;
+                eggClone.transform.localScale = EggScale;
+                recalculateEggPosition();
+                if (eggDaysSpoilage <= 0)
+                    eggDaysSpoilage = 1;
+            }
+        }
     }
 
+
+    public void recalculateEggPosition()
+    {
+        if (newestEggPosition.z < eggAreaInitPosition.z + 4.0f)
+        {
+            newestEggPosition.z += 0.4f;
+            int MaxEggCapacity = 11;
+            if (eggsList.Count <= MaxEggCapacity)
+            {
+                eggArea.transform.localScale = new Vector3(eggArea.transform.localScale.x, eggArea.transform.localScale.y, eggArea.transform.localScale.z + 0.05f);
+                eggArea.transform.position = new Vector3(eggArea.transform.position.x, eggArea.transform.position.y, eggArea.transform.position.z + 0.175f);
+            }
+        }
+        else
+        {
+            newestEggPosition.z = 0.7f;
+            newestEggPosition.x -= 0.4f;
+            eggArea.transform.localScale = new Vector3(eggArea.transform.localScale.x + 0.01f, eggArea.transform.localScale.y, eggArea.transform.localScale.z);
+        }
+    }
 
     public int getMilkSpoilage()
     {
@@ -151,10 +271,47 @@ public class AnimalFarm
             return ErrorCode;
     }
 
+    public int getEggSpoilage()
+    {
+        if (eggsList.Count > 0)
+            return eggDaysSpoilage;
+        else
+            return ErrorCode;
+    }
 
     public int getMilkCount()
     {
         return GameObject.FindGameObjectsWithTag("Milk").Length;
+    }
+
+    public int getEggCount()
+    {
+        return GameObject.FindGameObjectsWithTag("Egg").Length;
+    }
+
+    public void gatherEgg()
+    {
+        if (eggsList.Count > 0)
+        {
+            GameObject[] eggs = GameObject.FindGameObjectsWithTag("Egg");
+            gameController.inventory.AddItem(ItemType.egg, eggs.Length);
+            milksList.Clear();
+            foreach (var egg in eggs)
+            {
+                GameController.RemoveGameObject(egg);
+            }
+
+            GameObject[] spoiledEggs = GameObject.FindGameObjectsWithTag("SpoiledEgg");
+            foreach (var egg in spoiledEggs)
+            {
+                GameController.RemoveGameObject(egg);
+            }
+
+            newestEggPosition = eggAreaInitPosition;
+            eggArea.transform.position = eggAreaInitPosition;
+            eggArea.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
+            eggDaysSpoilage = 1;
+        }
     }
 
     public void gatherMilk()
@@ -209,14 +366,20 @@ public class AnimalFarm
 
     public bool isSlotAvailable(GameObject slotObject)
     {
-        switch(slotObject.tag)
+        int slotIndex;
+        switch (slotObject.tag)
         {
             case "CowSlots":
-                int slotIndex = getSlotIndex(slotObject, cowSlotsList);
+                slotIndex = getSlotIndex(slotObject, cowSlotsList);
                 if(slotIndex != ErrorCode)
                 {
                     return !cowSlotsList[slotIndex].isSlotTaken();
                 }
+                break;
+            case "ChickenSlot":
+                slotIndex = getSlotIndex(slotObject, chickenSlotsList);
+                if (slotIndex != ErrorCode)
+                    return !chickenSlotsList[slotIndex].isSlotTaken();
                 break;
         }
 
@@ -253,6 +416,43 @@ public class AnimalFarm
                 }
             }
         }
+
+        if (eggsList.Count > 0)
+        {
+            eggDaysSpoilage -= 1;
+            if (eggDaysSpoilage <= 0)
+            {
+                GameObject[] eggsToBeSpoiled = GameObject.FindGameObjectsWithTag("Egg");
+                foreach (var egg in eggsToBeSpoiled)
+                {
+                    egg.tag = "SpoiledEgg";
+                    egg.GetComponent<Renderer>().material = Resources.Load("Milk_Spoiled_Test", typeof(Material)) as Material;
+                }
+            }
+        }
+    }
+
+    public void addChicken(GameObject slotGameObject)
+    {
+        Object prefab = AssetDatabase.LoadAssetAtPath(animalFactory.getChickenPrefab(), typeof(GameObject));
+        GameObject chickenCloneObject = gameController.InstantiatePrefab(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+        Animal newChicken = animalFactory.buildChicken(chickenCloneObject);
+
+        int slotIndex = getSlotIndex(slotGameObject, chickenSlotsList);
+
+        if (slotIndex != ErrorCode)
+        {
+            chickenSlotsList[slotIndex].takeSlot(newChicken);
+            chickenSlotsList[slotIndex].animalGameObject = chickenCloneObject;
+
+            // Scale?
+            chickenCloneObject.transform.position = chickenSlotsList[slotIndex].slotGameObject.transform.position;
+            chickenCloneObject.transform.eulerAngles = AnimalRotation;
+            chickenCloneObject.tag = newChicken.getAnimalType().name;
+        }
+        else
+            Debug.Log("Error adding chicken (addChicken) error code: " + slotIndex);
+
     }
 
     public void addCow(GameObject slotGameObject)
@@ -266,12 +466,11 @@ public class AnimalFarm
         if (slotIndex != ErrorCode)
         {
             cowSlotsList[slotIndex].takeSlot(newCow);
-            cowSlotsList[slotIndex].cowGameObject = cloneCowGameObject;
+            cowSlotsList[slotIndex].animalGameObject = cloneCowGameObject;
 
             cloneCowGameObject.transform.localScale = AnimalScale;
             cloneCowGameObject.transform.position = cowSlotsList[slotIndex].slotGameObject.transform.position;
             cloneCowGameObject.transform.eulerAngles = AnimalRotation;
-            //cloneCow.AddComponent<ActionController>(); TODO: Problem z kolorami w teksturze.
             cloneCowGameObject.tag = newCow.getAnimalType().name;
         }
         else
@@ -285,7 +484,7 @@ public class AnimalSlot
     public Animal animal { get; set; }
     private bool isTaken = false;
     public GameObject slotGameObject { get; }
-    public GameObject cowGameObject { get; set; }
+    public GameObject animalGameObject { get; set; }
 
 
     public AnimalSlot(GameObject slotGameObject)
@@ -305,7 +504,15 @@ public class AnimalSlot
         {
             this.animal = animal;
             isTaken = true;
-            slotGameObject.tag = "TakenCowSlot";
+            switch(animal.getAnimalType().name)
+            {
+                case "Cow":
+                    slotGameObject.tag = "TakenCowSlot";
+                    break;
+                case "Chicken":
+                    slotGameObject.tag = "TakenChickenSlot";
+                    break;
+            }
         }
     }
 
@@ -313,11 +520,19 @@ public class AnimalSlot
     {
         if(animal != null && isTaken)
         {
+            switch (animal.getAnimalType().name)
+            {
+                case "Cow":
+                    slotGameObject.tag = "CowSlots";
+                    break;
+                case "Chicken":
+                    slotGameObject.tag = "ChickenSlot";
+                    break;
+            }
             animal = null;
             isTaken = false;
-            slotGameObject.tag = "CowSlots";
-            GameController.RemoveGameObject(cowGameObject);
-            cowGameObject = null;
+            GameController.RemoveGameObject(animalGameObject);
+            animalGameObject = null;
         }
     }
 

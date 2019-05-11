@@ -98,6 +98,18 @@ public class ActionController : MonoBehaviour
             case "FoodHouseCows":
                 gameController.AddAction(gameObject, ActionType.feedCow);
                 break;
+            case "EggArea":
+                gameController.AddAction(gameObject, ActionType.gatherEgg);
+                break;
+            case "ChickenSlot":
+                gameController.AddAction(gameObject, ActionType.placeChicken);
+                break;
+            case "TakenChickenSlot":
+                gameController.AddAction(gameObject, ActionType.checkChickenStatus);
+                break;
+            case "FoodHouseChickens":
+                gameController.AddAction(gameObject, ActionType.feedChicken);
+                break;
             case "House":
                 gameController.AddAction(gameObject, ActionType.eat);
                 break;
@@ -173,7 +185,7 @@ public class ActionController : MonoBehaviour
             }
             else if(tag == "TakenCowSlot")
             {
-                AnimalSlot cowSlot = gameController.animalFarm.getSelectedAnimalSlot(gameObject);
+                AnimalSlot cowSlot = gameController.animalFarm.getSelectedAnimalSlot(gameObject, "cow");
                 if(cowSlot != null) {
                     Animal cow = cowSlot.animal;
                     EditorGUI.TextField(new Rect(x - 50, y + 20, 100, 50), "Animal: " + cow.getAnimalType().name 
@@ -192,6 +204,44 @@ public class ActionController : MonoBehaviour
                 EditorGUI.TextField(new Rect(x - 50, y + 20, 100, 35),
                     "Action: " + ActionType.eat.name +
                     "\nTime: " + (double)ActionType.eat.length / 1000 + " h");
+            else if (tag == "ChickenSlot")
+                EditorGUI.TextField(new Rect(x - 50, y + 20, 130, 35),
+                        "Action: " + ActionType.placeChicken.name +
+                        "\nTime: " + (double)ActionType.placeChicken.length / 1000 + " h");
+            else if (tag == "EggArea")
+            {
+                int eggSpoilage = gameController.GetEggSpoilage();
+                string eggSpoilageString = "";
+                int windowResizeY = 48;
+                int windowResizeX = 110;
+                if (eggSpoilage > 0)
+                {
+                    eggSpoilageString = "Spoiled in: " + eggSpoilage + " days \n";
+                    windowResizeY = 65;
+                }
+                EditorGUI.TextField(new Rect(x - 50, y + 20, windowResizeX, windowResizeY),
+                        "Action: " + ActionType.gatherEgg.name + "\nTime: " + (double)ActionType.gatherEgg.length / 1000 + " h\n"
+                        + eggSpoilageString + "Count: " + gameController.GetEggCount());
+
+            }
+            else if (tag == "TakenChickenSlot")
+            {
+                AnimalSlot chickenSlot = gameController.animalFarm.getSelectedAnimalSlot(gameObject, "chicken");
+                if (chickenSlot != null)
+                {
+                    Animal chicken = chickenSlot.animal;
+                    EditorGUI.TextField(new Rect(x - 50, y + 20, 120, 50), "Animal: " + chicken.getAnimalType().name
+                        + "\nHunger: " + chicken.currentHungerLevel + "/" + chicken.maxHungerLevel
+                        + "\nAge: " + chicken.daysInExistance + "/" + chicken.dayOfDeath + " days");
+                }
+            }
+            else if (tag == "FoodHouseChickens")
+            {
+                EditorGUI.TextField(new Rect(x - 50, y + 20, 120, 48),
+                    "Action:" + ActionType.feedChicken.name +
+                    "\nTime:" + (double)ActionType.feedChicken.length / 1000 + " h"
+                    + "\nFood amount:" + gameController.animalFarm.getAnimalFood("chickens"));
+            }
         }
     }
 

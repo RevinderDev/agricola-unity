@@ -191,6 +191,7 @@ public class ItemSelection : MonoBehaviour
                 break;
             }
         }
+        //TODO: Tutaj blad
         GameObject.Find("TotalPrice").GetComponent<Text>().text = totalValue.ToString();
     }
 

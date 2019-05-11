@@ -13,11 +13,15 @@ public class ActionType : Type
     public static readonly ActionType plant = new ActionType("plant", "Sprites/planting", 500);
     public static readonly ActionType collectPlant = new ActionType("collect plant", "Sprites/plants", 1000);
     public static readonly ActionType buyCow = new ActionType("place cow", "Sprites/cow", 1000);
+    public static readonly ActionType placeChicken = new ActionType("place chicken", "Sprites/chicken", 1000);
     public static readonly ActionType market = new ActionType("market", "Sprites/market", 12000);
-    public static readonly ActionType gatherMilk = new ActionType("get milk", "Sprites/milkIcon", 500);
+    public static readonly ActionType gatherMilk = new ActionType("get milk", "Sprites/milk", 500);
+    public static readonly ActionType gatherEgg = new ActionType("get egg", "Sprites/egg", 500);
     public static readonly ActionType feedCow = new ActionType("feed cow", "Sprites/animalFood", 500);
+    public static readonly ActionType feedChicken = new ActionType("feed chicken", "Sprites/animalFood", 500);
     public static readonly ActionType eat = new ActionType("eat", "Sprites/eat", 1000);
     public static readonly ActionType checkCowStatus = new ActionType("-", null, 0);
+    public static readonly ActionType checkChickenStatus = new ActionType("-", null, 0);
 
     public ActionType(string name, string spriteDirectory, int length) : base(name, spriteDirectory)
     {

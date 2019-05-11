@@ -7,6 +7,7 @@ public class AnimalFactory
 
     private static AnimalFactory animalFactoryInstance = new AnimalFactory();
     private readonly string cowPrefab = "Assets/VertexColorFarmAnimals/Prefabs/CowBlW.prefab";
+    private readonly string chickenPrefab = "Assets/VertexColorFarmAnimals/Prefabs/ChickenBrown.prefab";
 
     private AnimalFactory()
     {
@@ -30,12 +31,17 @@ public class AnimalFactory
         GeneratedFoodProduct milk = new GeneratedFoodProduct(milkDaysToCollect, milkDaysToSpoil, milkPrefab, productName, milkNutritionValue);
 
  
-        int dayOfCowDeath = 15;
+        int dayOfCowDeath = 10;
         int cowDailyHungerLoss = 10;
-        int cowMaxHungerLevel = 100;
+        int cowMaxHungerLevel = 60;
         AnimalType cowType = new AnimalType("Cow", cowPrefab, dayOfCowDeath, milk, cowDailyHungerLoss, cowMaxHungerLevel);
 
         return new Animal(gameObject, cowType);
+    }
+
+    public string getChickenPrefab()
+    {
+        return chickenPrefab;
     }
 
     public string getCowPrefab()
@@ -43,16 +49,25 @@ public class AnimalFactory
         return cowPrefab;
     }
 
-
-    public Animal buildSheep(GameObject gameObject)
-    {
-        // TODO: implement build Sheep
-        throw new System.NotImplementedException();
-    }
-
     public Animal buildChicken(GameObject gameObject)
     {
-        // TODO: implement build Chicken
-        throw new System.NotImplementedException();
+
+        string eggPrefab = "Assets/FoodIcons/egg.FBX";
+
+        GeneratedFoodProduct egg = new GeneratedFoodProduct(daysToCollect: 3,
+            daysToBeSpoiled: 1, 
+            prefabDirectory: eggPrefab, 
+            productName: "egg",
+            nutritionValue: 8);
+
+
+        AnimalType chickenType = new AnimalType(name: "Chicken",
+            prefabDirectory: chickenPrefab,
+            dayOfDeath: 6,
+            generatedResource: egg,
+            dailyHungerLoss: 10,
+            maxHungerLevel: 40);
+
+        return new Animal(gameObject, chickenType);
     }
 }

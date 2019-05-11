@@ -27,6 +27,13 @@ TagManager:
   - ItemValueLabel
   - ItemValueImage
   - ItemQuantity
+  - FoodHouseChickens
+  - ChickenSlot
+  - EggArea
+  - Egg
+  - TakenChickenSlot
+  - SpoiledEgg
+  - Chicken
   layers:
   - Default
   - TransparentFX

@@ -22,11 +22,11 @@ public class Animal
     public Animal(GameObject gameObject, AnimalType animalType)
     {
         daysInExistance = 0;
-        dayOfDeath = 10;
+        dayOfDeath = animalType.dayOfDeath;
         this.gameObject = gameObject;
         this.animalType = animalType;
-        this.currentHungerLevel = 50;
-        this.maxHungerLevel = 50;
+        this.currentHungerLevel = animalType.maxHungerLevel;
+        this.maxHungerLevel = animalType.maxHungerLevel;
         this.isDead = false;
     }
 
@@ -45,7 +45,7 @@ public class Animal
 
     public void AddDayInExistance()
     {
-        currentHungerLevel -= 10;
+        currentHungerLevel -= animalType.dailyHungerLoss;
         daysInExistance++;
         if (daysInExistance >= dayOfDeath || currentHungerLevel <= 0)
             isDead = true;

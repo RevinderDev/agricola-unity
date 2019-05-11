@@ -21,8 +21,10 @@ public class ItemType : Type
     public static readonly ItemType pumpkin = new ItemType("pumpkin", "Sprites/pumpkin", 5, 10, true, false, 5, 10);
     //animals
     public static readonly ItemType cow = new ItemType("cow", "Sprites/cow", 10, 20, true, true);
+    public static readonly ItemType chicken = new ItemType("chicken", "Sprites/chicken", priceSell: 4, priceBuy: 6, canBeSold: true, canBeBought: true);
     public static readonly ItemType michal = new ItemType("Michal", "Sprites/michal", 100, 200, true, true, 50);
-    public static readonly ItemType milk = new ItemType("milk", "Sprites/milk", 4, 6, true, true, 5);
+    public static readonly ItemType milk = new ItemType("milk", "Sprites/milk", 4, 6, true, false, 5);
+    public static readonly ItemType egg = new ItemType("egg", "Sprites/egg", priceSell: 3, priceBuy: 5, canBeSold: true, canBeBought: false, nutritionValue:5);
 
     public ItemType(string name, string spriteDirectory, int priceSell, int priceBuy, 
         bool canBeSold, bool canBeBought, int nutritionValue = 0, int ratioValue = 0) 
@@ -48,7 +50,9 @@ public class ItemType : Type
                 pumpkin,
                 cow,
                 michal,
-                milk
+                milk,
+                chicken,
+                egg
 
             }.AsReadOnly();
     }

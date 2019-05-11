@@ -93,6 +93,16 @@ public class GameController : MonoBehaviour
         return animalFarm.getMilkCount();
     }
 
+    public int GetEggSpoilage()
+    {
+        return animalFarm.getEggSpoilage();
+    }
+
+    public int GetEggCount()
+    {
+        return animalFarm.getEggCount();
+    }
+
     // once per frame
     void Update()
     {
@@ -168,6 +178,21 @@ public class GameController : MonoBehaviour
             itemSelection.Initialize();
             itemSelection.animalName = "cows";
             itemSelection.Display();
+        }
+        else if(actionList.GetAction() == ActionType.placeChicken)
+        {
+            animalFarm.addChicken(actionList.GetGameObject());
+        }
+        else if(actionList.GetAction() == ActionType.feedChicken)
+        {
+            itemSelection.SetMode(ItemSelection.Mode.animalEating);
+            itemSelection.Initialize();
+            itemSelection.animalName = "chickens";
+            itemSelection.Display();
+        }
+        else if(actionList.GetAction() == ActionType.gatherEgg)
+        {
+            animalFarm.gatherEgg();
         }
 
         // Delete action from queque
@@ -279,7 +304,7 @@ public class GameController : MonoBehaviour
         if (isPlayButtonPressed)
             return "Animation is in progress.";
         if (actionList.IsActionInQueque(gameObject, type)) // TODO: blad tutaj jest z wyswietlaniem komunikatu kiedy action przekroczy sie limit czasu uzywajac tylko krów.
-            return "Action already in queque.";
+            return "Action already in queue.";
         if (actionList.ActionsLengthsSum() + type.length > dayLength)
             return "Action too long. " + ((double)(dayLength - actionList.ActionsLengthsSum()) / 1000) + "h left.";
         if (type == ActionType.plant)
@@ -296,12 +321,20 @@ public class GameController : MonoBehaviour
             if (!animalFarm.isSlotAvailable(gameObject))
                 return "Slots taken by another cow.";
             else if (!inventory.DoesContain(ItemType.cow))
-                return "You don't have cow.";
+                return "You don't have any cows.";
         if (type == ActionType.gatherMilk)
             if (animalFarm.getMilkCount() <= 0)
                 return "No milks to gather.";
-        if (type == ActionType.checkCowStatus)
+        if (type == ActionType.checkCowStatus || type == ActionType.checkChickenStatus)
             return "No action to be done.";
+        if (type == ActionType.placeChicken)
+            if (!animalFarm.isSlotAvailable(gameObject))
+                return "Slots taken by another chicken.";
+            else if (!inventory.DoesContain(ItemType.chicken))
+                return "You don't have any chickens.";
+        if (type == ActionType.gatherEgg)
+            if (animalFarm.getEggCount() <= 0)
+                return "No eggs to gather.";
         return null;
     }
 
@@ -342,6 +375,8 @@ public class GameController : MonoBehaviour
             }
             else if (type == ActionType.buyCow)
                 actionList.Add(gameObject, type, ItemType.cow);
+            else if (type == ActionType.placeChicken)
+                actionList.Add(gameObject, type, ItemType.chicken);
             else
                 actionList.Add(gameObject, type);
         }
