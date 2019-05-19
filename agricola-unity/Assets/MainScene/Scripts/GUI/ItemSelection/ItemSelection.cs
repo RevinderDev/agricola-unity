@@ -33,6 +33,7 @@ public class ItemSelection : MonoBehaviour
     private Button buttonFinish;
     private Button buttonAccept;
     private GameObject transactionType;
+    private Text totalPriceText; 
     private Slider slider;
     public const int numItemSlots = 14;
     public Dictionary<string, GameObject[]> gameObjects = new Dictionary<string, GameObject[]>();
@@ -56,7 +57,6 @@ public class ItemSelection : MonoBehaviour
             {
                 title.text = "Eating";
                 transactionType.SetActive(false);
-
             }
             else if(mode == Mode.animalEating)
             {
@@ -140,7 +140,7 @@ public class ItemSelection : MonoBehaviour
         transactionType = GameObject.Find("TransactionType");
         slider = GameObject.Find("Slider").GetComponent<Slider>();
         slider.onValueChanged.AddListener(delegate { Initialize(); });
-        buttonFinish.onClick.AddListener(delegate { Hide(); });
+        buttonFinish.onClick.AddListener(delegate { Hide(); totalPriceText.text = "0"; });
         buttonAccept.onClick.AddListener(delegate 
         {
             if (mode == Mode.market)
@@ -149,6 +149,7 @@ public class ItemSelection : MonoBehaviour
                 Eat();
         });
         totalValueImage = GameObject.Find("CoinImageTotal").GetComponent<Image>();
+        totalPriceText = GameObject.Find("TotalPrice").GetComponent<Text>();
 
         gameObjects.Add(Tag.item, GameObject.FindGameObjectsWithTag(Tag.item));
         gameObjects.Add(Tag.itemName, GameObject.FindGameObjectsWithTag(Tag.itemName));
@@ -191,8 +192,7 @@ public class ItemSelection : MonoBehaviour
                 break;
             }
         }
-        //TODO: Tutaj blad
-        GameObject.Find("TotalPrice").GetComponent<Text>().text = totalValue.ToString();
+        totalPriceText.text = totalValue.ToString();
     }
 
     public void AcceptTransaction()
