@@ -283,7 +283,7 @@ public class ItemSelection : MonoBehaviour
                         gameController.animalFarm.addAnimalFood(animalName, total);
                 }
                 else
-                    gameController.player.ChangeHunger(total);
+                    gameController.players[gameController.activePlayer].ChangeHunger(total);
             }
             else
                 gameController.DisplayInfo("You do not have enough items.");

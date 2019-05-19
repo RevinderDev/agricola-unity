@@ -7,20 +7,20 @@ using UnityEngine.UI;
 using System;
 using System.Diagnostics;
 
-// TODO block clicking when "play"
 public class PlayerController : MonoBehaviour
 {
     public NavMeshAgent agent;
+    public int id;
     private int health;
     private int maxHealth;
     private int hunger;
     private int maxHunger;
+    public Vector3 home;
 
     private Stopwatch actionStopwatch;
     private int currentActionLengh;
     private GameController gameController;
 
-    // before the first frame update
     void Start() { 
         agent.speed = 6f; // test
         health = 100;
@@ -35,6 +35,16 @@ public class PlayerController : MonoBehaviour
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
     }
 
+    public void setId()
+    {
+        id = gameController.players.Count - 1;
+    }
+
+    public void setHomeLocalization(Vector3 homePosition)
+    {
+        home = homePosition;
+    }
+
     public bool IsAlive()
     {
         return health > 0;
@@ -47,6 +57,20 @@ public class PlayerController : MonoBehaviour
         Text value = GameObject.Find("HealthValue").GetComponent<Text>();
         value.text = health.ToString() + "/" + maxHealth.ToString();
         //if lower than... do...
+    }
+
+    public void ActualizeTimeBar()
+    {
+        float timeUsed = (float)gameController.actionList.ActionsLengthsSum() / 1000;
+        float timeLeft = (float)gameController.dayLength / 1000 - timeUsed;
+        float totalTime = (float)gameController.dayLength / 1000;
+
+        Image bar = GameObject.Find("TimeBar" + id).GetComponent<Image>();
+        bar.rectTransform.localScale = new Vector2(timeLeft / totalTime, 1f);
+        Text value = GameObject.Find("TimeValue" + id).GetComponent<Text>();
+        // Label off/on
+        //value.text = "";
+        value.text = timeLeft.ToString() + "/" + totalTime.ToString() + "h";
     }
 
     public bool IsHungry()

@@ -46,7 +46,7 @@ public class ActionList
         gameController.inventory.RemoveItem(required);
         quequeCurrentPosition += queueInterspace / 2 + (int)queueElementSize.x;
         count++;
-        gameController.ActualizeTimeBar();
+        gameController.players[gameController.activePlayer].ActualizeTimeBar();
     }
 
     public Button Remove(int i, bool notUsed = false)
@@ -69,7 +69,7 @@ public class ActionList
         }
         count--;
         quequeCurrentPosition -= queueInterspace / 2 + (int)queueElementSize.x;
-        gameController.ActualizeTimeBar();
+        gameController.players[gameController.activePlayer].ActualizeTimeBar();
         return buttonToBeDestroyed;
     }
 
