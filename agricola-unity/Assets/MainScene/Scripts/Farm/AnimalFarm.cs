@@ -295,7 +295,7 @@ public class AnimalFarm
         {
             GameObject[] eggs = GameObject.FindGameObjectsWithTag("Egg");
             gameController.inventory.AddItem(ItemType.egg, eggs.Length);
-            milksList.Clear();
+            eggsList.Clear();
             foreach (var egg in eggs)
             {
                 GameController.RemoveGameObject(egg);

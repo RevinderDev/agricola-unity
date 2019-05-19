@@ -23,8 +23,24 @@ public class QuestionWindow
         answered = false;
         wasAnswerChecked = false;
         wasQuestionAsked = true;
-        buttonYes.onClick.AddListener(delegate { answer = true; answered = true; Hide(); });
-        buttonNo.onClick.AddListener(delegate { answer = false; answered = true; Hide(); });
+        buttonYes.onClick.AddListener(delegate {
+            answer = true;
+            answered = true;
+            Hide();
+        });
+        buttonNo.onClick.AddListener(delegate {
+            answer = false;
+            answered = true;
+            switch (questionTag)
+            {
+                case "Game Over":
+                    Application.Quit();
+                    break;
+                default:
+                    break;
+            }
+            Hide();
+        });
     }
 
     public void DisplayQuestion(string questionText, string questionTag)

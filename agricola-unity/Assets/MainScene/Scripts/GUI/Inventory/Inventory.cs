@@ -107,4 +107,21 @@ public class Inventory : MonoBehaviour
         }
         return false;
     }
+
+
+    public int GetInventoryValue()
+    {
+        int value = 0;
+        for(int i = 0; i<items.Length; i++)
+        {
+            if(items[i] != null)
+            {
+                int itemQuantity = items[i].quantity;
+                int itemPrice = types[i].priceSell;
+                value += itemPrice * itemQuantity;
+            }
+        }
+
+        return value;
+    }
 }

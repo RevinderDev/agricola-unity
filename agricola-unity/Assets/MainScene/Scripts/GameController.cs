@@ -34,7 +34,7 @@ public class GameController : MonoBehaviour
         animalFoodWindow = FindObjectOfType<AnimalFoodWindow>();
         animalFoodWindow.Hide();
         actionList = new ActionList();
-        player = SceneManager.Instance.player;
+        player = FindObjectOfType<PlayerController>();
         isPlayButtonPressed = false;
         playButton = GameObject.Find("PlayButton").GetComponent<Button>();
         inventory = FindObjectOfType<Inventory>();
@@ -106,6 +106,7 @@ public class GameController : MonoBehaviour
     // once per frame
     void Update()
     {
+        // TODO: null tutaj?
         if (questionWindow.WasQuestionAsked() && questionWindow.GetQuestionTag() == "Play")
         {
             if (questionWindow.WasQuestionAnswered())
@@ -267,7 +268,10 @@ public class GameController : MonoBehaviour
                 //player.gameObject.SetActive(false);
                 if (true) //we do not have more players
                 {
-                    questionWindow.DisplayQuestion("All yours subordinates died. The game is over. Do you want to play again?", "Game over");
+                    //todo save Score to file?
+                    int inventoryValue = inventory.GetInventoryValue() + money;
+                    questionWindow.DisplayQuestion("All yours subordinates died. The game is over. Do you want to play again? \nScore: " + inventoryValue + 
+                        "\nDay: " + currentDay, "Game over");
                 }
             }
 
@@ -284,7 +288,7 @@ public class GameController : MonoBehaviour
         dayLabel.text = "Day " + (currentDay++).ToString();
         if(!player.IsHungry())
             player.ChangeHalth(+5);
-        player.ChangeHunger(-10);
+        player.ChangeHunger(-50); // FIX
         animalFarm.spoilFood();
         animalFarm.generateFoodProducts();
         animalFarm.ageAnimals();
