@@ -84,7 +84,7 @@ public class ActionController : MonoBehaviour
                 gameController.AddAction(gameObject, ActionType.collectPlant);
                 break;
             case "CowSlots":
-                gameController.AddAction(gameObject, ActionType.buyCow);
+                gameController.AddAction(gameObject, ActionType.placeCow);
                 break;
             case "Market":
                 gameController.AddAction(gameObject, ActionType.market);
@@ -161,8 +161,8 @@ public class ActionController : MonoBehaviour
             }
             else if (tag == "CowSlots")
                 EditorGUI.TextField(new Rect(x -50, y + 20, 110, 35),
-                        "Action: " + ActionType.buyCow.name + 
-                        "\nTime: " + (double)ActionType.buyCow.length / 1000 + " h");
+                        "Action: " + ActionType.placeCow.name + 
+                        "\nTime: " + (double)ActionType.placeCow.length / 1000 + " h");
             else if (tag == "Market")
                 EditorGUI.TextField(new Rect(x -50, y + 20, 100, 35),
                         "Action: " + ActionType.market.name + 

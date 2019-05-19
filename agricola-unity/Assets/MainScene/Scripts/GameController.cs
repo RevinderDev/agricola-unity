@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System;
 
 public class GameController : MonoBehaviour
 {
@@ -22,6 +23,8 @@ public class GameController : MonoBehaviour
     private Vector3 homePosition = new Vector3(-5.3f, 1, 17);
     private Vector3 marketPosition = new Vector3(27f, 1, -48);
     private List<ActionController> controlledObjects = new List<ActionController>();
+    private System.Random r = new System.Random();
+    private string eventsCommunicate = ""; 
 
     private bool isPlayButtonPressed;
     Button playButton;
@@ -38,9 +41,12 @@ public class GameController : MonoBehaviour
         isPlayButtonPressed = false;
         playButton = GameObject.Find("PlayButton").GetComponent<Button>();
         inventory = FindObjectOfType<Inventory>();
+
         inventory.AddItem(ItemType.tomatoSeeds, 5);
         inventory.AddItem(ItemType.carrotSeeds, 5);
         inventory.AddItem(ItemType.pumpkinSeeds, 1);
+        inventory.AddItem(ItemType.chicken, 5);
+
         info = new Information(GameObject.Find("InformationObject"),
             GameObject.Find("InformationText").GetComponent<Text>());
         info.Hide();
@@ -156,7 +162,7 @@ public class GameController : MonoBehaviour
             }
         else if (actionList.GetAction() == ActionType.collectPlant)
             farmland.CollectPlant(actionList.GetGameObject());
-        else if (actionList.GetAction() == ActionType.buyCow)
+        else if (actionList.GetAction() == ActionType.placeCow)
             animalFarm.addCow(actionList.GetGameObject());
         else if (actionList.GetAction() == ActionType.gatherMilk)
             animalFarm.gatherMilk();
@@ -180,24 +186,55 @@ public class GameController : MonoBehaviour
             itemSelection.animalName = "cows";
             itemSelection.Display();
         }
-        else if(actionList.GetAction() == ActionType.placeChicken)
+        else if (actionList.GetAction() == ActionType.placeChicken)
         {
             animalFarm.addChicken(actionList.GetGameObject());
         }
-        else if(actionList.GetAction() == ActionType.feedChicken)
+        else if (actionList.GetAction() == ActionType.feedChicken)
         {
             itemSelection.SetMode(ItemSelection.Mode.animalEating);
             itemSelection.Initialize();
             itemSelection.animalName = "chickens";
             itemSelection.Display();
         }
-        else if(actionList.GetAction() == ActionType.gatherEgg)
+        else if (actionList.GetAction() == ActionType.gatherEgg)
         {
             animalFarm.gatherEgg();
         }
-
+        //Random events
+        RandomEvents(actionList.GetAction().associatedEvents);
         // Delete action from queque
         RemoveGameObject(actionList.Remove(0).gameObject);
+    }
+
+    public void RandomEvents(IReadOnlyCollection<ActionEvent> eventsCollection)
+    {
+        foreach (ActionEvent actionEvent in eventsCollection)
+        {
+            int rInt = r.Next(0, 100);
+            // Perform event
+            if (100 - actionEvent.probability * 100 <= rInt)
+            {
+                eventsCommunicate += actionEvent.description + "\n\n";
+                PerformEventAction(actionEvent);
+                break;
+            }
+        }
+    }
+
+    private void PerformEventAction(ActionEvent actionEvent)
+    {
+        player.ChangeHalth(actionEvent.healthChange);
+        player.ChangeHunger(actionEvent.hungerChange);
+        foreach (ItemType itemType in actionEvent.itemsChange.Keys)
+        {
+            int value = actionEvent.itemsChange[itemType];
+            if (value > 0)
+                inventory.AddItem(itemType, value);
+            else if (value < 0)
+                inventory.RemoveItem(itemType, -value);
+        }
+        
     }
 
     public void StartActionQueue()
@@ -292,9 +329,14 @@ public class GameController : MonoBehaviour
         animalFarm.spoilFood();
         animalFarm.generateFoodProducts();
         animalFarm.ageAnimals();
-        animalFarm.animalsEat();
+        animalFarm.animalsEat();    
         foreach (ActionController actionController in controlledObjects)
             actionController.age += 1;
+        if (eventsCommunicate != "")
+        {
+            questionWindow.DisplayQuestion(eventsCommunicate, "Action event", true);
+            eventsCommunicate = "";
+        }
         KillPlayers();
     }
 
@@ -321,7 +363,7 @@ public class GameController : MonoBehaviour
         if (type == ActionType.collectPlant)
             if (!farmland.CanPlantBeCollected(gameObject))
                 return "Plant can not be collected.";
-        if (type == ActionType.buyCow)
+        if (type == ActionType.placeCow)
             if (!animalFarm.isSlotAvailable(gameObject))
                 return "Slots taken by another cow.";
             else if (!inventory.DoesContain(ItemType.cow))
@@ -377,7 +419,7 @@ public class GameController : MonoBehaviour
                         break;
                 }
             }
-            else if (type == ActionType.buyCow)
+            else if (type == ActionType.placeCow)
                 actionList.Add(gameObject, type, ItemType.cow);
             else if (type == ActionType.placeChicken)
                 actionList.Add(gameObject, type, ItemType.chicken);
@@ -397,7 +439,7 @@ public class GameController : MonoBehaviour
     }
 
     // Providing Instantiate method for other classes (context problem)
-    public GameObject InstantiatePrefab(Object prefab, Vector3 vector, Quaternion identity)
+    public GameObject InstantiatePrefab(UnityEngine.Object prefab, Vector3 vector, Quaternion identity)
     {
         return Instantiate(prefab, Vector3.zero, Quaternion.identity) as GameObject;
     }
