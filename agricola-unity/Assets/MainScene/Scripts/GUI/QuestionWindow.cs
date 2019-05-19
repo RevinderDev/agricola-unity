@@ -27,7 +27,7 @@ public class QuestionWindow
         buttonNo.onClick.AddListener(delegate { answer = false; answered = true; Hide(); });
     }
 
-    public void DisplayQuestion(string questionText, string questionTag)
+    public void DisplayQuestion(string questionText, string questionTag, bool acceptButtonOnly = false)
     {
         windowObject.SetActive(true);
         answered = false;
@@ -36,6 +36,16 @@ public class QuestionWindow
         ActionController.isActive = false;
         this.questionTag = questionTag;
         windowText.text = questionText;
+        if (acceptButtonOnly)
+        {
+            buttonYes.gameObject.SetActive(false);
+            buttonNo.gameObject.transform.GetChild(0).GetComponent<Text>().text = "OK";
+        }
+        else
+        {
+            buttonYes.gameObject.SetActive(true);
+            buttonNo.gameObject.transform.GetChild(0).GetComponent<Text>().text = "No";
+        }
     }
 
     public void Hide()

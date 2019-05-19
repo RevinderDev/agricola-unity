@@ -50,6 +50,7 @@ public class Farmland
         GameObject clone = gameController.InstantiatePrefab(prefab, Vector3.zero, Quaternion.identity) as GameObject;
         if(type != PlantType.pumpkin)
             clone.transform.localScale = new Vector3(10, 10, 10);
+        gameController.RandomEvents(type.associatedEventsPlant);
         clone.transform.position = new Vector3(areaObject.transform.position.x, type.startPosision, areaObject.transform.position.z);
         clone.AddComponent<ActionController>();
         clone.AddComponent<BoxCollider>();
@@ -92,6 +93,7 @@ public class Farmland
                         gameController.inventory.AddItem(plants[i].GetPlantType().itemType, 16);
                     else if (plants[i].GetPlantType() == PlantType.pumpkin)
                         gameController.inventory.AddItem(plants[i].GetPlantType().itemType, 5);
+                    gameController.RandomEvents(plants[i].GetPlantType().associatedEventsPlant);
                 }
                     
                 else
