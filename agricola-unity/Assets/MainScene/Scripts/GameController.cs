@@ -6,7 +6,10 @@ using System;
 
 public class GameController : MonoBehaviour
 {
-    public PlayerController player;
+    public List<PlayerController> players;
+    public int activePlayer = 0;
+    public List<GameObject> timeBarObjects;
+    public int maxNumberOfPlayers = 4;
     private Information info;
     private QuestionWindow questionWindow;
     private ItemSelection itemSelection;
@@ -18,9 +21,9 @@ public class GameController : MonoBehaviour
     public DropdownSelect dropdown;
     public int money;
     private readonly int lifeLength = 10;
-    private readonly int dayLength = 12000;
+    public readonly int dayLength = 12000;
     private int currentDay = 0;
-    private Vector3 homePosition = new Vector3(-5.3f, 1, 17);
+    //private Vector3 homePosition = new Vector3(-5.3f, 1, 17);
     private Vector3 marketPosition = new Vector3(27f, 1, -48);
     private List<ActionController> controlledObjects = new List<ActionController>();
     private System.Random r = new System.Random();
@@ -34,10 +37,18 @@ public class GameController : MonoBehaviour
     {
         farmland = new Farmland();
         animalFarm = new AnimalFarm();
-        animalFoodWindow = FindObjectOfType<AnimalFoodWindow>();
-        animalFoodWindow.Hide();
         actionList = new ActionList();
-        player = FindObjectOfType<PlayerController>();
+
+        players = new List<PlayerController>();
+        timeBarObjects = new List<GameObject>();
+        for (int i = 0; i < maxNumberOfPlayers; i++)
+        {
+            timeBarObjects.Add(GameObject.Find("TimeBarObject" + i));
+            timeBarObjects[i].SetActive(false);
+        }
+        AddNewPlayer();
+        AddNewPlayer();
+
         isPlayButtonPressed = false;
         playButton = GameObject.Find("PlayButton").GetComponent<Button>();
         inventory = FindObjectOfType<Inventory>();
@@ -50,23 +61,38 @@ public class GameController : MonoBehaviour
         info = new Information(GameObject.Find("InformationObject"),
             GameObject.Find("InformationText").GetComponent<Text>());
         info.Hide();
+
         questionWindow = new QuestionWindow(GameObject.Find("WindowObject"), 
             GameObject.Find("WindowQuestion").GetComponent<Text>(),
             GameObject.Find("ButtonYes").GetComponent<Button>(), 
             GameObject.Find("ButtonNo").GetComponent<Button>());
         questionWindow.Hide();
+
         ItemType.Initialize();
         itemSelection = FindObjectOfType<ItemSelection>();
         itemSelection.SetMarket();
         itemSelection.Hide();
+
         money = 1000;
         MoneyTransaction(0);
-        ActualizeTimeBar();
+       
         Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
         dayLabel.text = "Day " + (currentDay++).ToString();
         dropdown = FindObjectOfType<DropdownSelect>();
         dropdown.Hide();
     }
+
+    public void AddNewPlayer()
+    {
+        timeBarObjects[players.Count].SetActive(true);
+        players.Add(GameObject.Find("Player" + players.Count).GetComponent<PlayerController>());
+        players[players.Count-1].setId();
+        players[players.Count - 1].setHomeLocalization(new Vector3(-4 + players.Count - 1, 1, 17));
+        players[players.Count-1].ActualizeTimeBar();
+        GameObject.Find("BarValue" + (players.Count - 1)).GetComponent<Image>().color 
+            = GameObject.Find("Player" + (players.Count - 1)).GetComponent<MeshRenderer>().material.color;
+    }
+
 
     public void AddControlledObject(ActionController actionController)
     {
@@ -224,8 +250,8 @@ public class GameController : MonoBehaviour
 
     private void PerformEventAction(ActionEvent actionEvent)
     {
-        player.ChangeHalth(actionEvent.healthChange);
-        player.ChangeHunger(actionEvent.hungerChange);
+        players[activePlayer].ChangeHalth(actionEvent.healthChange);
+        players[activePlayer].ChangeHunger(actionEvent.hungerChange);
         foreach (ItemType itemType in actionEvent.itemsChange.Keys)
         {
             int value = actionEvent.itemsChange[itemType];
@@ -262,30 +288,30 @@ public class GameController : MonoBehaviour
     // Manages the execution of the action queue. 
     public void DoAction()
     {
-        if (player.IsActionFinished())
+        if (players[activePlayer].IsActionFinished())
         {
             //action finished, check for next
             if (actionList.Count() > 0)
             {
                 if (actionList.GetGameObject() == null)
                     if (actionList.Count() == 1)        // Last action, just walk home
-                        player.SetDestination(homePosition);
+                        players[activePlayer].SetDestination(players[activePlayer].home);
                     else                                // Market action, walk somewhere
-                        player.SetDestination(marketPosition);
+                        players[activePlayer].SetDestination(marketPosition);
 
                 else
-                    player.SetDestination(actionList.GetDestination());
+                    players[activePlayer].SetDestination(actionList.GetDestination());
             }
             else
             {
                 NextDay();
             }
-            if (player.IsPathFinished())
+            if (players[activePlayer].IsPathFinished())
             {
                 if (actionList.Count() > 0)
                 {
                     //at the destination, perform actions
-                    player.SetAction(actionList.GetAction());
+                    players[activePlayer].SetAction(actionList.GetAction());
                 }
             }
         }
@@ -298,8 +324,8 @@ public class GameController : MonoBehaviour
 
     private void KillPlayers()
     {
-        for (int i = 0; i < 1; i++) //foreach player
-            if (player.GetComponent<ActionController>().age > lifeLength || !player.IsAlive())
+        for (int i = 0; i < players.Count; i++) //foreach player
+            if (players[activePlayer].GetComponent<ActionController>().age > lifeLength || !players[i].IsAlive())
             {
                 //Remove player (add grave? xD)
                 //player.gameObject.SetActive(false);
@@ -319,24 +345,40 @@ public class GameController : MonoBehaviour
     {
         isPlayButtonPressed = false;
         playButton.interactable = true;
+        if (eventsCommunicate != "")
+        {
+            questionWindow.DisplayQuestion(eventsCommunicate, "Action event", true);
+            eventsCommunicate = "";
+        }
+        if (activePlayer < players.Count - 1)
+        {
+            activePlayer++;
+            players[activePlayer].ActualizeHealthBar();
+            players[activePlayer].ActualizeHungerBar();
+            return;
+        }
+        else
+            activePlayer = 0;
+       
         farmland.GrowPlants();
-        ActualizeTimeBar();
+        for(int i = 0; i<players.Count; i++)
+            players[i].ActualizeTimeBar();
         Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
         dayLabel.text = "Day " + (currentDay++).ToString();
-        if(!player.IsHungry())
-            player.ChangeHalth(+5);
-        player.ChangeHunger(-50); // FIX
         animalFarm.spoilFood();
         animalFarm.generateFoodProducts();
         animalFarm.ageAnimals();
         animalFarm.animalsEat();    
         foreach (ActionController actionController in controlledObjects)
             actionController.age += 1;
-        if (eventsCommunicate != "")
+
+        for (int i = 0; i < players.Count; i++)
         {
-            questionWindow.DisplayQuestion(eventsCommunicate, "Action event", true);
-            eventsCommunicate = "";
+            if (!players[i].IsHungry())
+                players[i].ChangeHalth(+5);
+            players[i].ChangeHunger(-50); // TODO FIX
         }
+
         KillPlayers();
     }
 
@@ -382,20 +424,6 @@ public class GameController : MonoBehaviour
             if (animalFarm.getEggCount() <= 0)
                 return "No eggs to gather.";
         return null;
-    }
-
-    public void ActualizeTimeBar()
-    {
-        float timeUsed = (float)actionList.ActionsLengthsSum()/1000;
-        float timeLeft = (float)dayLength/1000 - timeUsed;
-        float totalTime = (float)dayLength / 1000;
-
-        Image bar = GameObject.Find("TimeBar").GetComponent<Image>();
-        bar.rectTransform.localScale = new Vector2(timeLeft / totalTime, 1f);
-        Text value = GameObject.Find("TimeValue").GetComponent<Text>();
-        // Label off/on
-        //value.text = "";
-        value.text = timeLeft.ToString() + "/" + totalTime.ToString() + "h";
     }
 
     // Add action only if animation is NOT in progress
