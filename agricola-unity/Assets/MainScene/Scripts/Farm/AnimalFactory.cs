@@ -24,16 +24,16 @@ public class AnimalFactory
     public Animal buildCow(GameObject gameObject)
     {
         int milkDaysToCollect = 5;
-        int milkDaysToSpoil = 1;
+        int milkDaysToSpoil = 2;
         string productName = "Milk";
         string milkPrefab = "Assets/01_3D/ETC/3D Bakery Object/Prefab/Milk.prefab";
         int milkNutritionValue = 10;
         GeneratedFoodProduct milk = new GeneratedFoodProduct(milkDaysToCollect, milkDaysToSpoil, milkPrefab, productName, milkNutritionValue);
 
  
-        int dayOfCowDeath = 10;
+        int dayOfCowDeath = 15;
         int cowDailyHungerLoss = 10;
-        int cowMaxHungerLevel = 60;
+        int cowMaxHungerLevel = 80;
         AnimalType cowType = new AnimalType("Cow", cowPrefab, dayOfCowDeath, milk, cowDailyHungerLoss, cowMaxHungerLevel);
 
         return new Animal(gameObject, cowType);
@@ -63,10 +63,10 @@ public class AnimalFactory
 
         AnimalType chickenType = new AnimalType(name: "Chicken",
             prefabDirectory: chickenPrefab,
-            dayOfDeath: 6,
+            dayOfDeath: 10,
             generatedResource: egg,
             dailyHungerLoss: 10,
-            maxHungerLevel: 40);
+            maxHungerLevel: 50);
 
         return new Animal(gameObject, chickenType);
     }

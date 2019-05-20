@@ -220,7 +220,7 @@ public class AnimalFarm
                 milkClone.tag = "Milk";
                 recalculateMilkPosition();
                 if(milkDaysSpoilage <= 0)
-                    milkDaysSpoilage = 1;
+                    milkDaysSpoilage = milk.daysToBeSpoiled;
             }
         }
 
@@ -237,7 +237,7 @@ public class AnimalFarm
                 eggClone.transform.localScale = EggScale;
                 recalculateEggPosition();
                 if (eggDaysSpoilage <= 0)
-                    eggDaysSpoilage = 1;
+                    eggDaysSpoilage = egg.daysToBeSpoiled;
             }
         }
     }

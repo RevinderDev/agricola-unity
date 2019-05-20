@@ -88,9 +88,9 @@ public class Farmland
                 if (!plants[i].IsSpoiled())
                 {
                     if(plants[i].GetPlantType() == PlantType.carrot)
-                        gameController.inventory.AddItem(plants[i].GetPlantType().itemType, 4);
-                    else if (plants[i].GetPlantType() == PlantType.tomato)
                         gameController.inventory.AddItem(plants[i].GetPlantType().itemType, 6);
+                    else if (plants[i].GetPlantType() == PlantType.tomato)
+                        gameController.inventory.AddItem(plants[i].GetPlantType().itemType, 8);
                     else if (plants[i].GetPlantType() == PlantType.pumpkin)
                         gameController.inventory.AddItem(plants[i].GetPlantType().itemType, 5);
                     gameController.RandomEvents(plants[i].GetPlantType().associatedEventsPlant);

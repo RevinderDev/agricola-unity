@@ -22,15 +22,15 @@ public class ActionType : Type
         new List<ActionEvent>() { ActionEvent.chickenPeck });
     public static readonly ActionType market = new ActionType("market", "Sprites/market", 12000, 
         new List<ActionEvent>());
-    public static readonly ActionType gatherMilk = new ActionType("get milk", "Sprites/milk", 4000, 
+    public static readonly ActionType gatherMilk = new ActionType("get milk", "Sprites/milk", 3000, 
         new List<ActionEvent>() { ActionEvent.cowKick });
-    public static readonly ActionType gatherEgg = new ActionType("get egg", "Sprites/egg", 4000, 
+    public static readonly ActionType gatherEgg = new ActionType("get egg", "Sprites/egg", 3000, 
         new List<ActionEvent>() { ActionEvent.eggHatch });
     public static readonly ActionType feedCow = new ActionType("feed cow", "Sprites/animalFood", 8000, 
         new List<ActionEvent>() { ActionEvent.cowKick });
     public static readonly ActionType feedChicken = new ActionType("feed chicken", "Sprites/animalFood", 8000, 
         new List<ActionEvent>() { ActionEvent.chickenPeck });
-    public static readonly ActionType eat = new ActionType("eat", "Sprites/eat", 8000, 
+    public static readonly ActionType eat = new ActionType("eat", "Sprites/eat", 3000, 
         new List<ActionEvent>());
     public static readonly ActionType checkCowStatus = new ActionType("-", null, 0, 
         new List<ActionEvent>());
