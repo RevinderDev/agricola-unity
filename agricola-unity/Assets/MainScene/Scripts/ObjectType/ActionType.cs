@@ -12,25 +12,25 @@ public class ActionType : Type
     **/
     public static readonly ActionType walk = new ActionType("walk", null, 0, 
         new List<ActionEvent>());
-    public static readonly ActionType plant = new ActionType("plant", "Sprites/planting", 500, 
+    public static readonly ActionType plant = new ActionType("plant", "Sprites/planting", 6000, 
         new List<ActionEvent>() { ActionEvent.pumpkinFound, ActionEvent.tomatoFound, ActionEvent.carrotFound });
-    public static readonly ActionType collectPlant = new ActionType("collect plant", "Sprites/plants", 1000, 
+    public static readonly ActionType collectPlant = new ActionType("collect plant", "Sprites/plants", 6000, 
         new List<ActionEvent>());
-    public static readonly ActionType placeCow = new ActionType("place cow", "Sprites/cow", 1000, 
+    public static readonly ActionType placeCow = new ActionType("place cow", "Sprites/cow", 6000, 
         new List<ActionEvent>() { ActionEvent.cowKick });
-    public static readonly ActionType placeChicken = new ActionType("place chicken", "Sprites/chicken", 1000, 
+    public static readonly ActionType placeChicken = new ActionType("place chicken", "Sprites/chicken", 6000, 
         new List<ActionEvent>() { ActionEvent.chickenPeck });
     public static readonly ActionType market = new ActionType("market", "Sprites/market", 12000, 
         new List<ActionEvent>());
-    public static readonly ActionType gatherMilk = new ActionType("get milk", "Sprites/milk", 500, 
+    public static readonly ActionType gatherMilk = new ActionType("get milk", "Sprites/milk", 4000, 
         new List<ActionEvent>() { ActionEvent.cowKick });
-    public static readonly ActionType gatherEgg = new ActionType("get egg", "Sprites/egg", 500, 
+    public static readonly ActionType gatherEgg = new ActionType("get egg", "Sprites/egg", 4000, 
         new List<ActionEvent>() { ActionEvent.eggHatch });
-    public static readonly ActionType feedCow = new ActionType("feed cow", "Sprites/animalFood", 500, 
+    public static readonly ActionType feedCow = new ActionType("feed cow", "Sprites/animalFood", 8000, 
         new List<ActionEvent>() { ActionEvent.cowKick });
-    public static readonly ActionType feedChicken = new ActionType("feed chicken", "Sprites/animalFood", 500, 
+    public static readonly ActionType feedChicken = new ActionType("feed chicken", "Sprites/animalFood", 8000, 
         new List<ActionEvent>() { ActionEvent.chickenPeck });
-    public static readonly ActionType eat = new ActionType("eat", "Sprites/eat", 1000, 
+    public static readonly ActionType eat = new ActionType("eat", "Sprites/eat", 8000, 
         new List<ActionEvent>());
     public static readonly ActionType checkCowStatus = new ActionType("-", null, 0, 
         new List<ActionEvent>());

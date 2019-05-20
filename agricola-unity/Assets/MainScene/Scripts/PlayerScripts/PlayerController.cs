@@ -152,6 +152,8 @@ public class PlayerController : MonoBehaviour
             return false;
         if (!actionStopwatch.IsRunning)
             return true;
+        //TODO: DEBUG FIX
+        currentActionLengh = 1;
         if (actionStopwatch.ElapsedMilliseconds >= currentActionLengh)
         {
             actionStopwatch.Stop();
