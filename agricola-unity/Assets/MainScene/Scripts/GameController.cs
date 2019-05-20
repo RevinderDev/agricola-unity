@@ -353,27 +353,32 @@ public class GameController : MonoBehaviour
         if (activePlayer < players.Count - 1)
         {
             activePlayer++;
-            Debug.Log(activePlayer);
+            players[activePlayer].ActualizeHealthBar();
+            players[activePlayer].ActualizeHungerBar();
             return;
         }
         else
             activePlayer = 0;
        
-
         farmland.GrowPlants();
         for(int i = 0; i<players.Count; i++)
             players[i].ActualizeTimeBar();
         Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
         dayLabel.text = "Day " + (currentDay++).ToString();
-        if(!players[activePlayer].IsHungry())
-            players[activePlayer].ChangeHalth(+5);
-        players[activePlayer].ChangeHunger(-50); // FIX
         animalFarm.spoilFood();
         animalFarm.generateFoodProducts();
         animalFarm.ageAnimals();
         animalFarm.animalsEat();    
         foreach (ActionController actionController in controlledObjects)
             actionController.age += 1;
+
+        for (int i = 0; i < players.Count; i++)
+        {
+            if (!players[i].IsHungry())
+                players[i].ChangeHalth(+5);
+            players[i].ChangeHunger(-50); // TODO FIX
+        }
+
         KillPlayers();
     }
 

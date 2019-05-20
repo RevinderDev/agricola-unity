@@ -50,7 +50,7 @@ public class PlayerController : MonoBehaviour
         return health > 0;
     }
 
-    void ActualizeHealthBar()
+    public void ActualizeHealthBar()
     {
         Image bar = GameObject.Find("HealthBar").GetComponent<Image>();
         bar.rectTransform.localScale = new Vector2((float)health / maxHealth, 1f);
@@ -78,7 +78,7 @@ public class PlayerController : MonoBehaviour
         return hunger != maxHunger;
     }
 
-    void ActualizeHungerBar()
+    public void ActualizeHungerBar()
     {
         Image bar = GameObject.Find("HungerBar").GetComponent<Image>();
         bar.rectTransform.localScale = new Vector2((float)hunger / maxHunger, 1f);
