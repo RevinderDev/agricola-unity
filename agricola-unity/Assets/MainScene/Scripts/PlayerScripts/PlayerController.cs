@@ -39,8 +39,8 @@ public class PlayerController : MonoBehaviour
 
     public void Setup()
     {
-        actionController = GameObject.Find("Player" + id).GetComponent<ActionController>();
         id = gameController.players.Count - 1;
+        actionController = GameObject.Find("Player" + id).GetComponent<ActionController>();
         gameController.timeBarObjects[id].SetActive(false);
     }
 
@@ -94,10 +94,19 @@ public class PlayerController : MonoBehaviour
 
     public void ActualizeAgeBar()
     {
+        int age = actionController.age;
+        int lifeLength = gameController.lifeLength;
+        if (age > lifeLength)
+            return;
+        if (age < 0)
+        {
+            lifeLength -= age;
+            age = 0;
+        }
         Image bar = GameObject.Find("AgeBar").GetComponent<Image>();
-        bar.rectTransform.localScale = new Vector2((float)actionController.age / gameController.lifeLength, 1f);
+        bar.rectTransform.localScale = new Vector2((float)age / lifeLength, 1f);
         Text value = GameObject.Find("AgeValue").GetComponent<Text>();
-        value.text = actionController.age.ToString() + "/" + gameController.lifeLength.ToString();
+        value.text = age.ToString() + "/" + lifeLength.ToString();
         //if lower than... do...
     }
 

@@ -6,13 +6,11 @@ using UnityEngine.UI;
 public class PlayerStatusDisplay : EventTrigger
 {
     GameController gameController;
-    static int id_c = 3;
-    int id;
+    public int id = 0;
 
     void Start()
     {
-        id = id_c;
-        id_c--;
+        id = System.Int32.Parse(gameObject.name[gameObject.name.Length - 1] + "");
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
     }
 

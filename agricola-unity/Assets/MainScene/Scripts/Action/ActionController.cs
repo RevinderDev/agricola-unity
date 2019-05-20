@@ -41,12 +41,12 @@ public class ActionController : MonoBehaviour
 
     void OnMouseEnter()
     {
+        lastColor = GetComponent<Renderer>().material.color;
         if (!isActive || tag == "Player")
             return;
         if (tag == "Pumpkin")
             for (int i = 0; i < 4; i++)
                 transform.GetChild(i).GetComponent<Renderer>().material.color = Color.gray;
-        lastColor = GetComponent<Renderer>().material.color;
         GetComponent<Renderer>().material.color = Color.gray;
         showTooltip = true;
     }
@@ -56,8 +56,8 @@ public class ActionController : MonoBehaviour
             return;
         if (tag == "Pumpkin")
             for (int i = 0; i < 4; i++)
-                transform.GetChild(i).GetComponent<Renderer>().material.color = lastColor;
-        GetComponent<Renderer>().material.color = lastColor;
+                transform.GetChild(i).GetComponent<Renderer>().material.color = materialBasicColor;
+        GetComponent<Renderer>().material.color = materialBasicColor;
         showTooltip = false;
         Tooltip.Hidetooltip_Static();
     }

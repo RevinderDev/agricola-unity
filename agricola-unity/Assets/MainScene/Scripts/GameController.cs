@@ -48,7 +48,7 @@ public class GameController : MonoBehaviour
         for(int i = 0; i<maxNumberOfPlayers; i++)
             AddNewPlayer();
         players[activePlayer].ActualizeAgeBar();
-        MakePlayerActive(10);
+        MakePlayerActive(-20);
 
         isPlayButtonPressed = false;
         playButton = GameObject.Find("PlayButton").GetComponent<Button>();
@@ -69,7 +69,7 @@ public class GameController : MonoBehaviour
         itemSelection.SetMarket();
         itemSelection.Hide();
 
-        money = 10;
+        money = 1000;
         MoneyTransaction(0);
 
         //inventory.AddItem(ItemType.tomatoSeeds, 5);
@@ -86,7 +86,6 @@ public class GameController : MonoBehaviour
 
     public void MakePlayerActive(int age)
     {
-        
         for(int i = 0; i<players.Count; i++)
         {
             if (!players[i].isActive)
@@ -94,6 +93,8 @@ public class GameController : MonoBehaviour
                 players[i].actionController.age = age;
                 players[i].SetActive();
                 playersAlive++;
+                if(activePlayer != 0)
+                    activePlayer++;
                 return;
             }
         }
@@ -179,7 +180,7 @@ public class GameController : MonoBehaviour
                         if (money >= 200)
                         {
                             MoneyTransaction(-newPlayerCost);
-                            MakePlayerActive(players.Count == 2 ? 0 : 10);
+                            MakePlayerActive(playersAlive == 2 ? 0 : 10);
                         }
                         else
                         {
@@ -396,7 +397,7 @@ public class GameController : MonoBehaviour
                         //todo save Score to file?
                         int inventoryValue = inventory.GetInventoryValue() + money;
                         questionWindow.DisplayQuestion("All yours subordinates died. The game is over. Do you want to play again? \nScore: " + inventoryValue +
-                            "\nDay: " + currentDay, "Game over");
+                            "\nDay: " + (currentDay - 1), "Game over");
                     }
                 }
             }
