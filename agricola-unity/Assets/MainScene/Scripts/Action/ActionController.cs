@@ -39,7 +39,7 @@ public class ActionController : MonoBehaviour
         gameController.RemoveControlledObject(this);
     }
 
-    void OnMouseEnter()
+    public void OnMouseEnter()
     {
         lastColor = GetComponent<Renderer>().material.color;
         if (!isActive || tag == "Player")
@@ -50,7 +50,7 @@ public class ActionController : MonoBehaviour
         GetComponent<Renderer>().material.color = Color.gray;
         showTooltip = true;
     }
-    void OnMouseExit()
+    public void OnMouseExit()
     {
         if (!isActive || tag == "Player")
             return;

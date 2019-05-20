@@ -176,6 +176,7 @@ public class ItemSelection : MonoBehaviour
 
     public void Display()
     {
+        gameController.PerformMouseExit();
         isVisible = true;
         windowObject.SetActive(true);
         ActionController.isActive = false;

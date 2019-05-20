@@ -45,6 +45,7 @@ public class QuestionWindow
 
     public void DisplayQuestion(string questionText, string questionTag, bool acceptButtonOnly = false)
     {
+        GameObject.Find("GameController").GetComponent<GameController>().PerformMouseExit();
         windowObject.SetActive(true);
         answered = false;
         wasAnswerChecked = false;

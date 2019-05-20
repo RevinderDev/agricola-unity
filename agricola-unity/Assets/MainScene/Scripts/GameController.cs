@@ -404,6 +404,12 @@ public class GameController : MonoBehaviour
         }
     }
 
+    public void PerformMouseExit()
+    {
+        foreach (ActionController actionController in controlledObjects)
+            actionController.OnMouseExit();
+    }
+
     // Applies some changes to the game view
     public void NextDay()
     {
