@@ -19,7 +19,7 @@ public class ActionType : Type
     public static readonly ActionType placeCow = new ActionType("place cow", "Sprites/cow", 1000, 
         new List<ActionEvent>() { ActionEvent.cowKick });
     public static readonly ActionType placeChicken = new ActionType("place chicken", "Sprites/chicken", 1000, 
-        new List<ActionEvent>() { ActionEvent.chickenPeack });
+        new List<ActionEvent>() { ActionEvent.chickenPeck });
     public static readonly ActionType market = new ActionType("market", "Sprites/market", 12000, 
         new List<ActionEvent>());
     public static readonly ActionType gatherMilk = new ActionType("get milk", "Sprites/milk", 500, 
@@ -29,7 +29,7 @@ public class ActionType : Type
     public static readonly ActionType feedCow = new ActionType("feed cow", "Sprites/animalFood", 500, 
         new List<ActionEvent>() { ActionEvent.cowKick });
     public static readonly ActionType feedChicken = new ActionType("feed chicken", "Sprites/animalFood", 500, 
-        new List<ActionEvent>() { ActionEvent.chickenPeack });
+        new List<ActionEvent>() { ActionEvent.chickenPeck });
     public static readonly ActionType eat = new ActionType("eat", "Sprites/eat", 1000, 
         new List<ActionEvent>());
     public static readonly ActionType checkCowStatus = new ActionType("-", null, 0, 
