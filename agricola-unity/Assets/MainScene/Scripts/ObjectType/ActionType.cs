@@ -18,7 +18,7 @@ public class ActionType : Type
         new List<ActionEvent>());
     public static readonly ActionType placeCow = new ActionType("place cow", "Sprites/cow", 6000, 
         new List<ActionEvent>() { ActionEvent.cowKick });
-    public static readonly ActionType placeChicken = new ActionType("place chicken", "Sprites/chicken", 6000, 
+    public static readonly ActionType placeChicken = new ActionType("add chicken", "Sprites/chicken", 6000, 
         new List<ActionEvent>() { ActionEvent.chickenPeck });
     public static readonly ActionType market = new ActionType("market", "Sprites/market", 12000, 
         new List<ActionEvent>());
