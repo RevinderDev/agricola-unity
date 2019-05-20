@@ -54,8 +54,6 @@ public class GameController : MonoBehaviour
         playButton = GameObject.Find("PlayButton").GetComponent<Button>();
         inventory = FindObjectOfType<Inventory>();
 
-
-
         info = new Information(GameObject.Find("InformationObject"),
             GameObject.Find("InformationText").GetComponent<Text>());
         info.Hide();
@@ -78,7 +76,6 @@ public class GameController : MonoBehaviour
         inventory.AddItem(ItemType.carrotSeeds, 4);
        // inventory.AddItem(ItemType.pumpkinSeeds, 1);
         //inventory.AddItem(ItemType.chicken, 5);
-
 
 
         Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
@@ -179,8 +176,29 @@ public class GameController : MonoBehaviour
                 {
                     if (questionWindow.GetAnswer() == true)
                     {
-                        MoneyTransaction(-newPlayerCost);
-                        MakePlayerActive(players.Count==2 ? 0:10);
+                        if (money >= 200)
+                        {
+                            MoneyTransaction(-newPlayerCost);
+                            MakePlayerActive(players.Count == 2 ? 0 : 10);
+                        }
+                        else
+                        {
+                            info.Display("You do not have enough money.");
+                        }
+                    }
+                }
+            }
+            else if(questionWindow.GetQuestionTag() == "Game over")
+            {
+                if (questionWindow.WasQuestionAnswered())
+                {
+                    if (questionWindow.GetAnswer() == true)
+                    {
+                        Reset();
+                    }
+                    else
+                    {
+                        Application.Quit();
                     }
                 }
             }
@@ -195,6 +213,17 @@ public class GameController : MonoBehaviour
         {
             info.Hide();
         }
+    }
+
+    private void Reset()
+    {
+        inventory.Clear();
+        MakePlayerActive(10);
+        GameObject.Find("Player" + activePlayer).GetComponent<Transform>().position = players[activePlayer].homePosition;
+        money = 10;
+        MoneyTransaction(0);
+        inventory.AddItem(ItemType.carrotSeeds, 4);
+        currentDay = 0;
     }
 
     // Specifies actions related to the execution of a given action 

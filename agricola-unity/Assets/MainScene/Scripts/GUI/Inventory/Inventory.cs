@@ -85,6 +85,25 @@ public class Inventory : MonoBehaviour
             }
         }
     }
+
+    public void Clear()
+    {
+        for (int i = 0; i < items.Length; i++)
+        {
+            if (items[i] != null)
+            {
+                items[i].quantity = 0;
+                types[i] = null;
+                items[i] = null;
+                itemImages[i].sprite = null;
+                itemImages[i].enabled = false;
+                quantityBackgrounds[i].enabled = false;
+                quantities[i].text = "";
+                return;
+            }
+        }
+    }
+
     public bool DoesContain(ItemType type)
     {
         for (int i = 0; i < items.Length; i++)
