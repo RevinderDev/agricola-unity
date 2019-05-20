@@ -15,7 +15,9 @@ public class PlayerController : MonoBehaviour
     private int maxHealth;
     private int hunger;
     private int maxHunger;
-    public Vector3 home;
+    public Vector3 homePosition;
+    public Vector3 deadPosition;
+    public ActionController actionController;
 
     private Stopwatch actionStopwatch;
     private int currentActionLengh;
@@ -36,14 +38,24 @@ public class PlayerController : MonoBehaviour
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
     }
 
-    public void setId()
+    public void SetId()
     {
         id = gameController.players.Count - 1;
     }
 
-    public void setHomeLocalization(Vector3 homePosition)
+    public void SetActionController(ActionController actionController)
     {
-        home = homePosition;
+        this.actionController = actionController;
+    }
+
+    public void SetHomeLocalization(Vector3 homePosition)
+    {
+        this.homePosition = homePosition;
+    }
+
+    public void SetDeadLocalization(Vector3 deadPosition)
+    {
+        this.deadPosition = deadPosition;
     }
 
     public bool IsAlive()
@@ -57,6 +69,15 @@ public class PlayerController : MonoBehaviour
         bar.rectTransform.localScale = new Vector2((float)health / maxHealth, 1f);
         Text value = GameObject.Find("HealthValue").GetComponent<Text>();
         value.text = health.ToString() + "/" + maxHealth.ToString();
+        //if lower than... do...
+    }
+
+    public void ActualizeAgeBar()
+    {
+        Image bar = GameObject.Find("AgeBar").GetComponent<Image>();
+        bar.rectTransform.localScale = new Vector2((float)actionController.age / gameController.lifeLength, 1f);
+        Text value = GameObject.Find("AgeValue").GetComponent<Text>();
+        value.text = actionController.age.ToString() + "/" + gameController.lifeLength.ToString();
         //if lower than... do...
     }
 

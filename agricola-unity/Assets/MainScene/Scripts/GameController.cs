@@ -11,7 +11,7 @@ public class GameController : MonoBehaviour
     public List<GameObject> timeBarObjects;
     public int maxNumberOfPlayers = 4;
     private Information info;
-    private QuestionWindow questionWindow;
+    public QuestionWindow questionWindow;
     private ItemSelection itemSelection;
     private AnimalFoodWindow animalFoodWindow;
     private Farmland farmland;
@@ -20,14 +20,15 @@ public class GameController : MonoBehaviour
     public Inventory inventory;
     public DropdownSelect dropdown;
     public int money;
-    private readonly int lifeLength = 10;
+    public readonly int lifeLength = 20;
     public readonly int dayLength = 12000;
     private int currentDay = 0;
     //private Vector3 homePosition = new Vector3(-5.3f, 1, 17);
     private Vector3 marketPosition = new Vector3(27f, 1, -48);
     private List<ActionController> controlledObjects = new List<ActionController>();
     private System.Random r = new System.Random();
-    private string eventsCommunicate = ""; 
+    private string eventsCommunicate = "";
+    public readonly int newPlayerCost = 200;
 
     private bool isPlayButtonPressed;
     Button playButton;
@@ -46,8 +47,8 @@ public class GameController : MonoBehaviour
             timeBarObjects.Add(GameObject.Find("TimeBarObject" + i));
             timeBarObjects[i].SetActive(false);
         }
-        AddNewPlayer();
-        AddNewPlayer();
+        AddNewPlayer(10);
+        players[activePlayer].ActualizeAgeBar();
 
         isPlayButtonPressed = false;
         playButton = GameObject.Find("PlayButton").GetComponent<Button>();
@@ -82,17 +83,21 @@ public class GameController : MonoBehaviour
         dropdown.Hide();
     }
 
-    public void AddNewPlayer()
+    public void AddNewPlayer(int age)
     {
         timeBarObjects[players.Count].SetActive(true);
         players.Add(GameObject.Find("Player" + players.Count).GetComponent<PlayerController>());
-        players[players.Count-1].setId();
-        players[players.Count - 1].setHomeLocalization(new Vector3(-4 + players.Count - 1, 1, 17));
+        players[players.Count - 1].SetActionController(GameObject.Find("Player" + players.Count).GetComponent<ActionController>());
+        players[players.Count - 1].SetId();
+        players[players.Count - 1].SetHomeLocalization(new Vector3(-5.2f , 1, 17 + (players.Count - 1)*0.8f));
+        players[players.Count - 1].SetDeadLocalization(new Vector3(10f, 1, -25 + (players.Count - 1) * 0.8f));
+
         players[players.Count-1].ActualizeTimeBar();
         GameObject.Find("BarValue" + (players.Count - 1)).GetComponent<Image>().color 
             = GameObject.Find("Player" + (players.Count - 1)).GetComponent<MeshRenderer>().material.color;
+        
+        players[players.Count - 1].actionController.age = age;
     }
-
 
     public void AddControlledObject(ActionController actionController)
     {
@@ -139,19 +144,34 @@ public class GameController : MonoBehaviour
     void Update()
     {
         // TODO: null tutaj?
-        if (questionWindow.WasQuestionAsked() && questionWindow.GetQuestionTag() == "Play")
+        if (questionWindow!= null && questionWindow.WasQuestionAsked())
         {
-            if (questionWindow.WasQuestionAnswered())
+            if (questionWindow.GetQuestionTag() == "Play")
             {
-                if (questionWindow.GetAnswer() == true)
+                if (questionWindow.WasQuestionAnswered())
                 {
-                     isPlayButtonPressed = true;
-                    // Add final action (walk back home) - transparent
-                    actionList.Add(null, ActionType.walk);
+                    if (questionWindow.GetAnswer() == true)
+                    {
+                        isPlayButtonPressed = true;
+                        // Add final action (walk back home) - transparent
+                        actionList.Add(null, ActionType.walk);
+                    }
+                    else
+                    {
+                        playButton.interactable = true;
+                    }
                 }
-                else
+            }
+            else if (questionWindow.GetQuestionTag() == "Family member")
+            {
+                if (questionWindow.WasQuestionAnswered())
                 {
-                    playButton.interactable = true;
+                    if (questionWindow.GetAnswer() == true)
+                    {
+                        MoneyTransaction(-newPlayerCost);
+                        AddNewPlayer(players.Count==2 ? 0:10);
+                        players[players.Count - 1].SetDestination(players[players.Count - 1].homePosition);
+                    }
                 }
             }
         }
@@ -295,7 +315,7 @@ public class GameController : MonoBehaviour
             {
                 if (actionList.GetGameObject() == null)
                     if (actionList.Count() == 1)        // Last action, just walk home
-                        players[activePlayer].SetDestination(players[activePlayer].home);
+                        players[activePlayer].SetDestination(players[activePlayer].homePosition);
                     else                                // Market action, walk somewhere
                         players[activePlayer].SetDestination(marketPosition);
 
@@ -356,6 +376,7 @@ public class GameController : MonoBehaviour
             players[activePlayer].ActualizeHealthBar();
             players[activePlayer].ActualizeHungerBar();
             players[activePlayer].ActualizeIcon();
+            players[activePlayer].ActualizeAgeBar();
             return;
         }
         else
@@ -378,6 +399,7 @@ public class GameController : MonoBehaviour
             if (!players[i].IsHungry())
                 players[i].ChangeHalth(+5);
             players[i].ChangeHunger(-50); // TODO FIX
+            players[i].ActualizeAgeBar();
         }
 
         KillPlayers();

@@ -43,6 +43,7 @@ public class ItemSelection : MonoBehaviour
     public static readonly int itemWidth = 130;
     public string animalName { set; get; }
 
+
     public void SetMode(Mode mode)
     {
         if (this.mode != mode)
@@ -140,7 +141,12 @@ public class ItemSelection : MonoBehaviour
         transactionType = GameObject.Find("TransactionType");
         slider = GameObject.Find("Slider").GetComponent<Slider>();
         slider.onValueChanged.AddListener(delegate { Initialize(); });
-        buttonFinish.onClick.AddListener(delegate { Hide(); totalPriceText.text = "0"; });
+        buttonFinish.onClick.AddListener(delegate {
+            Hide();
+            totalPriceText.text = "0";
+            if (mode == Mode.market)
+                SetNewPlayerQuestion();
+        });
         buttonAccept.onClick.AddListener(delegate 
         {
             if (mode == Mode.market)
@@ -160,6 +166,12 @@ public class ItemSelection : MonoBehaviour
         gameObjects.Add(Tag.itemQuantity, GameObject.FindGameObjectsWithTag(Tag.itemQuantity));
       
         Initialize();
+    }
+
+    public void SetNewPlayerQuestion()
+    {
+        gameController.questionWindow.DisplayQuestion("You can have new family member, but it will cost " 
+            + gameController.newPlayerCost +" gold. Do you accept?", "Family member");
     }
 
     public void Display()

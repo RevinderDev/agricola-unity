@@ -21,6 +21,7 @@ public class PlayerStatusDisplay : EventTrigger
         gameController.players[gameController.activePlayer].ActualizeHealthBar();
         gameController.players[gameController.activePlayer].ActualizeHungerBar();
         gameController.players[gameController.activePlayer].ActualizeIcon();
+        gameController.players[gameController.activePlayer].ActualizeAgeBar();
     }
 
     override public void OnPointerEnter(PointerEventData data)
@@ -28,6 +29,7 @@ public class PlayerStatusDisplay : EventTrigger
         gameController.players[id].ActualizeHealthBar();
         gameController.players[id].ActualizeHungerBar();
         gameController.players[id].ActualizeIcon();
+        gameController.players[id].ActualizeAgeBar();
     }
 
 }
