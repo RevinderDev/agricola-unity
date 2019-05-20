@@ -18,7 +18,7 @@ public class Farmland
     public Farmland()
     {
         scale = new Vector3(2f, 0.25f, 2f);
-        position = new Vector3(-14f, 0.5f, 2f);
+        position = new Vector3(-10f, 0.5f, 5f);
         interspace = 2.3f;
         count = 20;
         plantsToAreaMap = new Dictionary<GameObject, GameObject>();
