@@ -54,10 +54,7 @@ public class GameController : MonoBehaviour
         playButton = GameObject.Find("PlayButton").GetComponent<Button>();
         inventory = FindObjectOfType<Inventory>();
 
-        inventory.AddItem(ItemType.tomatoSeeds, 5);
-        inventory.AddItem(ItemType.carrotSeeds, 5);
-        inventory.AddItem(ItemType.pumpkinSeeds, 1);
-        inventory.AddItem(ItemType.chicken, 5);
+
 
         info = new Information(GameObject.Find("InformationObject"),
             GameObject.Find("InformationText").GetComponent<Text>());
@@ -74,9 +71,16 @@ public class GameController : MonoBehaviour
         itemSelection.SetMarket();
         itemSelection.Hide();
 
-        money = 1000;
+        money = 10;
         MoneyTransaction(0);
-       
+
+        //inventory.AddItem(ItemType.tomatoSeeds, 5);
+        inventory.AddItem(ItemType.carrotSeeds, 4);
+       // inventory.AddItem(ItemType.pumpkinSeeds, 1);
+        //inventory.AddItem(ItemType.chicken, 5);
+
+
+
         Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
         dayLabel.text = "Day " + (currentDay++).ToString();
         dropdown = FindObjectOfType<DropdownSelect>();
@@ -416,7 +420,7 @@ public class GameController : MonoBehaviour
                     players[i].ChangeHalth(+5);
                 if(players[i].IsStarving())
                     players[i].ChangeHalth(-10);
-                players[i].ChangeHunger(-50);
+                players[i].ChangeHunger(-10);
                 players[i].ActualizeAgeBar();
             }
         }
