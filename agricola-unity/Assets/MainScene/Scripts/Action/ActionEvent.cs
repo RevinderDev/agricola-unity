@@ -18,7 +18,7 @@ public class ActionEvent
     // Health loose (animals)
     public static readonly ActionEvent cowKick = new ActionEvent("Cow kick", 0.1f, "Cow kicked you. You lost 5 hp.",
         -5, 0, new Dictionary<ItemType, int> {});
-    public static readonly ActionEvent chickenPeack = new ActionEvent("Chicken peck", 0.2f, "Chicken pecked you. You lost 1 hp.",
+    public static readonly ActionEvent chickenPeck = new ActionEvent("Chicken peck", 0.2f, "Chicken pecked you. You lost 1 hp.",
         -1, 0, new Dictionary<ItemType, int> {});
 
     // Additionary plants
