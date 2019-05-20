@@ -29,6 +29,7 @@ public class GameController : MonoBehaviour
     private System.Random r = new System.Random();
     private string eventsCommunicate = "";
     public readonly int newPlayerCost = 200;
+    private int playersAlive = 0;
 
     private bool isPlayButtonPressed;
     Button playButton;
@@ -43,12 +44,11 @@ public class GameController : MonoBehaviour
         players = new List<PlayerController>();
         timeBarObjects = new List<GameObject>();
         for (int i = 0; i < maxNumberOfPlayers; i++)
-        {
             timeBarObjects.Add(GameObject.Find("TimeBarObject" + i));
-            timeBarObjects[i].SetActive(false);
-        }
-        AddNewPlayer(10);
+        for(int i = 0; i<maxNumberOfPlayers; i++)
+            AddNewPlayer();
         players[activePlayer].ActualizeAgeBar();
+        MakePlayerActive(10);
 
         isPlayButtonPressed = false;
         playButton = GameObject.Find("PlayButton").GetComponent<Button>();
@@ -87,20 +87,27 @@ public class GameController : MonoBehaviour
         dropdown.Hide();
     }
 
-    public void AddNewPlayer(int age)
+    public void MakePlayerActive(int age)
     {
-        timeBarObjects[players.Count].SetActive(true);
-        players.Add(GameObject.Find("Player" + players.Count).GetComponent<PlayerController>());
-        players[players.Count - 1].SetActionController(GameObject.Find("Player" + players.Count).GetComponent<ActionController>());
-        players[players.Count - 1].SetId();
-        players[players.Count - 1].SetHomeLocalization(new Vector3(-5.2f , 1, 17 + (players.Count - 1)*0.8f));
-        players[players.Count - 1].SetDeadLocalization(new Vector3(10f, 1, -25 + (players.Count - 1) * 0.8f));
-
-        players[players.Count-1].ActualizeTimeBar();
-        GameObject.Find("BarValue" + (players.Count - 1)).GetComponent<Image>().color 
-            = GameObject.Find("Player" + (players.Count - 1)).GetComponent<MeshRenderer>().material.color;
         
-        players[players.Count - 1].actionController.age = age;
+        for(int i = 0; i<players.Count; i++)
+        {
+            if (!players[i].isActive)
+            {
+                players[i].actionController.age = age;
+                players[i].SetActive();
+                playersAlive++;
+                return;
+            }
+        }
+    }
+
+    public void AddNewPlayer()
+    {
+        players.Add(GameObject.Find("Player" + players.Count).GetComponent<PlayerController>());
+        players[players.Count - 1].Setup();
+        players[players.Count - 1].SetHomeLocalization(new Vector3(-5.2f , 1, 17 + (players.Count - 1) * 0.8f));
+        players[players.Count - 1].SetDeadLocalization(new Vector3(10f + (players.Count - 1), 1, -25));
     }
 
     public void AddControlledObject(ActionController actionController)
@@ -173,8 +180,7 @@ public class GameController : MonoBehaviour
                     if (questionWindow.GetAnswer() == true)
                     {
                         MoneyTransaction(-newPlayerCost);
-                        AddNewPlayer(players.Count==2 ? 0:10);
-                        players[players.Count - 1].SetDestination(players[players.Count - 1].homePosition);
+                        MakePlayerActive(players.Count==2 ? 0:10);
                     }
                 }
             }
@@ -349,19 +355,23 @@ public class GameController : MonoBehaviour
     private void KillPlayers()
     {
         for (int i = 0; i < players.Count; i++) //foreach player
-            if (players[activePlayer].GetComponent<ActionController>().age > lifeLength || !players[i].IsAlive())
+        { 
+            if (players[i].isActive)
             {
-                //Remove player (add grave? xD)
-                //player.gameObject.SetActive(false);
-                if (true) //we do not have more players
+                if (players[i].GetComponent<ActionController>().age > lifeLength || !players[i].IsAlive())
                 {
-                    //todo save Score to file?
-                    int inventoryValue = inventory.GetInventoryValue() + money;
-                    questionWindow.DisplayQuestion("All yours subordinates died. The game is over. Do you want to play again? \nScore: " + inventoryValue + 
-                        "\nDay: " + currentDay, "Game over");
+                    playersAlive--;
+                    players[i].SetInactive();
+                    if (playersAlive == 0) //we do not have more players
+                    {
+                        //todo save Score to file?
+                        int inventoryValue = inventory.GetInventoryValue() + money;
+                        questionWindow.DisplayQuestion("All yours subordinates died. The game is over. Do you want to play again? \nScore: " + inventoryValue +
+                            "\nDay: " + currentDay, "Game over");
+                    }
                 }
             }
-
+        }
     }
 
     // Applies some changes to the game view
@@ -374,21 +384,25 @@ public class GameController : MonoBehaviour
             questionWindow.DisplayQuestion(eventsCommunicate, "Action event", true);
             eventsCommunicate = "";
         }
-        if (activePlayer < players.Count - 1)
-        {
-            activePlayer++;
-            players[activePlayer].ActualizeHealthBar();
-            players[activePlayer].ActualizeHungerBar();
-            players[activePlayer].ActualizeIcon();
-            players[activePlayer].ActualizeAgeBar();
-            return;
-        }
-        else
+        if(activePlayer == maxNumberOfPlayers - 1)
             activePlayer = 0;
+        for(int i = activePlayer; i < maxNumberOfPlayers; i++)
+        {
+            if (players[i].isActive && activePlayer != i)
+            {
+                players[i].ActualizeHealthBar();
+                players[i].ActualizeHungerBar();
+                players[i].ActualizeIcon();
+                players[i].ActualizeAgeBar();
+                activePlayer = i;
+                return;
+            }
+        } 
        
         farmland.GrowPlants();
         for(int i = 0; i<players.Count; i++)
-            players[i].ActualizeTimeBar();
+            if(players[i].isActive)
+                players[i].ActualizeTimeBar();
         Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
         dayLabel.text = "Day " + (currentDay++).ToString();
         animalFarm.spoilFood();
@@ -400,10 +414,15 @@ public class GameController : MonoBehaviour
 
         for (int i = 0; i < players.Count; i++)
         {
-            if (!players[i].IsHungry())
-                players[i].ChangeHalth(+5);
-            players[i].ChangeHunger(-10);
-            players[i].ActualizeAgeBar();
+            if (players[i].isActive)
+            {
+                if (!players[i].IsHungry())
+                    players[i].ChangeHalth(+5);
+                if(players[i].IsStarving())
+                    players[i].ChangeHalth(-10);
+                players[i].ChangeHunger(-10);
+                players[i].ActualizeAgeBar();
+            }
         }
 
         KillPlayers();

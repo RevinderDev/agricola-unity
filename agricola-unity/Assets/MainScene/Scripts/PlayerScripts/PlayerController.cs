@@ -17,11 +17,12 @@ public class PlayerController : MonoBehaviour
     private int maxHunger;
     public Vector3 homePosition;
     public Vector3 deadPosition;
-    public ActionController actionController;
+    public bool isActive = false;
 
     private Stopwatch actionStopwatch;
     private int currentActionLengh;
-    private GameController gameController;
+    public ActionController actionController;
+    private static GameController gameController;
 
     void Start() { 
         agent.speed = 6f; // test
@@ -29,23 +30,18 @@ public class PlayerController : MonoBehaviour
         maxHealth = 100;
         hunger = 50;
         maxHunger = 50;
-        ActualizeHealthBar();
-        ActualizeHungerBar();
-        ActualizeIcon();
         currentActionLengh = 0;
         actionStopwatch = Stopwatch.StartNew();
         actionStopwatch.Stop();
-        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        if(gameController == null)
+            gameController = GameObject.Find("GameController").GetComponent<GameController>();
     }
 
-    public void SetId()
+    public void Setup()
     {
+        actionController = GameObject.Find("Player" + id).GetComponent<ActionController>();
         id = gameController.players.Count - 1;
-    }
-
-    public void SetActionController(ActionController actionController)
-    {
-        this.actionController = actionController;
+        gameController.timeBarObjects[id].SetActive(false);
     }
 
     public void SetHomeLocalization(Vector3 homePosition)
@@ -61,6 +57,30 @@ public class PlayerController : MonoBehaviour
     public bool IsAlive()
     {
         return health > 0;
+    }
+
+    public void SetActive()
+    {
+        isActive = true;
+        health = maxHealth;
+        hunger = maxHunger;
+        gameController.timeBarObjects[id].SetActive(true);
+        ActualizeHealthBar();
+        ActualizeHungerBar();
+        ActualizeTimeBar();
+        ActualizeAgeBar();
+        ActualizeIcon();
+        GameObject.Find("BarValue" + (id)).GetComponent<Image>().color
+                    = GameObject.Find("Player" + (id)).GetComponent<MeshRenderer>().material.color;
+        SetDestination(homePosition);
+    }
+
+    public void SetInactive()
+    {
+        isActive = false;
+        gameController.timeBarObjects[id].SetActive(false);
+        GameObject.Find("Player" + id).GetComponent<Transform>().position = deadPosition;
+        SetDestination(deadPosition);
     }
 
     public void ActualizeHealthBar()
@@ -89,9 +109,9 @@ public class PlayerController : MonoBehaviour
 
         Image bar = GameObject.Find("TimeBar" + id).GetComponent<Image>();
         bar.rectTransform.localScale = new Vector2(timeLeft / totalTime, 1f);
-        Text value = GameObject.Find("TimeValue" + id).GetComponent<Text>();
         // Label off/on
         //value.text = "";
+        Text value = GameObject.Find("TimeValue" + id).GetComponent<Text>();
         value.text = timeLeft.ToString() + "/" + totalTime.ToString() + "h";
     }
 
@@ -100,16 +120,17 @@ public class PlayerController : MonoBehaviour
         return hunger != maxHunger;
     }
 
+    public bool IsStarving()
+    {
+        return hunger == 0;
+    }
+
     public void ActualizeHungerBar()
     {
         Image bar = GameObject.Find("HungerBar").GetComponent<Image>();
         bar.rectTransform.localScale = new Vector2((float)hunger / maxHunger, 1f);
         Text value = GameObject.Find("HungerValue").GetComponent<Text>();
         value.text = hunger.ToString() + "/" + maxHunger.ToString();
-        if (hunger == 0)
-        {
-            ChangeHalth(-10);
-        }
     }
 
     public void ActualizeIcon()
