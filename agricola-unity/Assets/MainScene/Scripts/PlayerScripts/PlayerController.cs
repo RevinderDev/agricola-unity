@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
         maxHunger = 50;
         ActualizeHealthBar();
         ActualizeHungerBar();
+        ActualizeIcon();
         currentActionLengh = 0;
         actionStopwatch = Stopwatch.StartNew();
         actionStopwatch.Stop();
@@ -88,6 +89,12 @@ public class PlayerController : MonoBehaviour
         {
             ChangeHalth(-10);
         }
+    }
+
+    public void ActualizeIcon()
+    {
+        GameObject.Find("PlayerImage").GetComponent<Image>().color
+            = GameObject.Find("Player" + (id)).GetComponent<MeshRenderer>().material.color;
     }
 
     public void ChangeHunger(int value)

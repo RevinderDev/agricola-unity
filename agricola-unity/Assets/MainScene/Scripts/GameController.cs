@@ -355,6 +355,7 @@ public class GameController : MonoBehaviour
             activePlayer++;
             players[activePlayer].ActualizeHealthBar();
             players[activePlayer].ActualizeHungerBar();
+            players[activePlayer].ActualizeIcon();
             return;
         }
         else

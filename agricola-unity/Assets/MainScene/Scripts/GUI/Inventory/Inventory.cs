@@ -8,7 +8,7 @@ public class Inventory : MonoBehaviour
     public Text[] quantities = new Text[numItemSlots];
     public ItemType[] types = new ItemType[numItemSlots];
 
-    public const int numItemSlots = 6;
+    public const int numItemSlots = 14;
 
     public void AddItem(ItemType type, int quantityToAdd = 1)
     {
