@@ -12,7 +12,8 @@ public class Inventory : MonoBehaviour
 
     public void AddItem(ItemType type, int quantityToAdd = 1)
     {
-        for (int i = 0; i < items.Length; i++)
+        int i = 0;
+        for (; i < items.Length; i++)
         {
             if (items[i] != null)
             {
@@ -23,17 +24,14 @@ public class Inventory : MonoBehaviour
                     return;
                 }
             }
-            else
-            {
-                types[i] = type;
-                items[i] = new Item(type, quantityToAdd);
-                itemImages[i].sprite = Resources.Load<Sprite>(type.directory);
-                itemImages[i].enabled = true;
-                quantityBackgrounds[i].enabled = true;
-                quantities[i].text = items[i].quantity.ToString();
-                return;
-            }
         }
+        types[i] = type;
+        items[i] = new Item(type, quantityToAdd);
+        itemImages[i].sprite = Resources.Load<Sprite>(type.directory);
+        itemImages[i].enabled = true;
+        quantityBackgrounds[i].enabled = true;
+        quantities[i].text = items[i].quantity.ToString();
+        return; 
     }
     public void RemoveItem(ItemType type, int quantityToRemove = 1)
     {
