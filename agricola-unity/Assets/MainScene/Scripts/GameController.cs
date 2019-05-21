@@ -25,7 +25,7 @@ public class GameController : MonoBehaviour
     private List<ActionController> controlledObjects = new List<ActionController>();
     private System.Random r = new System.Random();
     private string eventsCommunicate = "";
-    public readonly int newPlayerCost = 200;
+    public readonly int newPlayerCost = 100;
     private int playersAlive = 0;
 
     private bool isPlayButtonPressed;
@@ -66,7 +66,7 @@ public class GameController : MonoBehaviour
         itemSelection.SetMarket();
         itemSelection.Hide();
 
-        money = 1000;
+        money = 10;
         MoneyTransaction(0);
 
         //inventory.AddItem(ItemType.tomatoSeeds, 5);
@@ -186,7 +186,7 @@ public class GameController : MonoBehaviour
                 {
                     if (questionWindow.GetAnswer() == true)
                     {
-                        if (money >= 200)
+                        if (money >= newPlayerCost)
                         {
                             MoneyTransaction(-newPlayerCost);
                             MakePlayerActive(playersAlive == 2 ? 0 : 10, 20);

@@ -18,9 +18,9 @@ public class ItemType : Type
     //plants
     public static readonly ItemType carrot = new ItemType("carrot", "Sprites/carrot", 3, 5, true, false, 10, 2);
     public static readonly ItemType tomato = new ItemType("tomato", "Sprites/tomato", 8, 7, true, false, 15, 4);
-    public static readonly ItemType pumpkin = new ItemType("pumpkin", "Sprites/pumpkin", 5, 10, true, false, 25, 10);
+    public static readonly ItemType pumpkin = new ItemType("pumpkin", "Sprites/pumpkin", 15, 10, true, false, 25, 10);
     //animals
-    public static readonly ItemType cow = new ItemType("cow", "Sprites/cow", 20, 60, true, true);
+    public static readonly ItemType cow = new ItemType("cow", "Sprites/cow", 30, 60, true, true);
     public static readonly ItemType chicken = new ItemType("chicken", "Sprites/chicken", priceSell: 20, priceBuy: 30, canBeSold: true, canBeBought: true);
     //public static readonly ItemType michal = new ItemType("Michal", "Sprites/michal", 100, 200, false, false, 50);
     public static readonly ItemType milk = new ItemType("milk", "Sprites/milk", 12, 6, true, false, 35);
