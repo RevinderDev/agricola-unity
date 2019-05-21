@@ -37,6 +37,8 @@ public class ItemSelection : MonoBehaviour
     private Slider slider;
     public const int numItemSlots = 14;
     public Dictionary<string, GameObject[]> gameObjects = new Dictionary<string, GameObject[]>();
+    //TODO create public arrays and inicialize in unity
+    public GameObject[] images;
     public ItemType[] itemTypes = new ItemType[numItemSlots];
     public Image totalValueImage;
     public int totalValue = 0;
@@ -127,8 +129,9 @@ public class ItemSelection : MonoBehaviour
                 }
             }
         }
-        for (int j = i; j < numItemSlots; j++)
-            gameObjects[Tag.item][j].SetActive(false);
+        // TODO uncomment
+        //for (int j = i; j < numItemSlots; j++)
+        //    gameObjects[Tag.item][j].SetActive(false);
     }
 
     public void SetMarket()
@@ -159,13 +162,21 @@ public class ItemSelection : MonoBehaviour
 
         gameObjects.Add(Tag.item, GameObject.FindGameObjectsWithTag(Tag.item));
         gameObjects.Add(Tag.itemName, GameObject.FindGameObjectsWithTag(Tag.itemName));
-        gameObjects.Add(Tag.itemImage, GameObject.FindGameObjectsWithTag(Tag.itemImage));
+
+        //TODO Remove dynamic adding for all arrays (like below)
+        gameObjects.Add(Tag.itemImage, images);
+
         gameObjects.Add(Tag.itemValue, GameObject.FindGameObjectsWithTag(Tag.itemValue));
         gameObjects.Add(Tag.itemValueLabel, GameObject.FindGameObjectsWithTag(Tag.itemValueLabel));
         gameObjects.Add(Tag.itemValueImage, GameObject.FindGameObjectsWithTag(Tag.itemValueImage));
         gameObjects.Add(Tag.itemQuantity, GameObject.FindGameObjectsWithTag(Tag.itemQuantity));
       
         Initialize();
+    }
+
+    int CompareObNames(GameObject x, GameObject y)
+    {
+        return x.name.CompareTo(y.name);
     }
 
     public void SetNewPlayerQuestion()
