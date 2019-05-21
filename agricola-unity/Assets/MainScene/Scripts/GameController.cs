@@ -20,7 +20,6 @@ public class GameController : MonoBehaviour
     public Inventory inventory;
     public DropdownSelect dropdown;
     public int money;
-    public readonly int lifeLength = 20;
     public readonly int dayLength = 12000;
     private int currentDay = 0;
     //private Vector3 homePosition = new Vector3(-5.3f, 1, 17);
@@ -48,7 +47,7 @@ public class GameController : MonoBehaviour
         for(int i = 0; i<maxNumberOfPlayers; i++)
             AddNewPlayer();
         players[activePlayer].ActualizeAgeBar();
-        MakePlayerActive(-20);
+        MakePlayerActive(10, 30);
 
         isPlayButtonPressed = false;
         playButton = GameObject.Find("PlayButton").GetComponent<Button>();
@@ -69,7 +68,7 @@ public class GameController : MonoBehaviour
         itemSelection.SetMarket();
         itemSelection.Hide();
 
-        money = 1000;
+        money = 10;
         MoneyTransaction(0);
 
         //inventory.AddItem(ItemType.tomatoSeeds, 5);
@@ -84,12 +83,24 @@ public class GameController : MonoBehaviour
         dropdown.Hide();
     }
 
-    public void MakePlayerActive(int age)
+    private void Reset()
+    {
+        inventory.Clear();
+        MakePlayerActive(10, 30);
+        GameObject.Find("Player" + activePlayer).GetComponent<Transform>().position = players[activePlayer].homePosition;
+        money = 10;
+        MoneyTransaction(0);
+        inventory.AddItem(ItemType.carrotSeeds, 4);
+        currentDay = 0;
+    }
+
+    public void MakePlayerActive(int age, int lifeLength)
     {
         for(int i = 0; i<players.Count; i++)
         {
             if (!players[i].isActive)
             {
+                players[activePlayer].lifeLength = lifeLength;
                 players[i].actionController.age = age;
                 players[i].SetActive();
                 playersAlive++;
@@ -180,7 +191,7 @@ public class GameController : MonoBehaviour
                         if (money >= 200)
                         {
                             MoneyTransaction(-newPlayerCost);
-                            MakePlayerActive(playersAlive == 2 ? 0 : 10);
+                            MakePlayerActive(playersAlive == 2 ? 0 : 10, 20);
                         }
                         else
                         {
@@ -214,17 +225,6 @@ public class GameController : MonoBehaviour
         {
             info.Hide();
         }
-    }
-
-    private void Reset()
-    {
-        inventory.Clear();
-        MakePlayerActive(10);
-        GameObject.Find("Player" + activePlayer).GetComponent<Transform>().position = players[activePlayer].homePosition;
-        money = 10;
-        MoneyTransaction(0);
-        inventory.AddItem(ItemType.carrotSeeds, 4);
-        currentDay = 0;
     }
 
     // Specifies actions related to the execution of a given action 
@@ -388,7 +388,7 @@ public class GameController : MonoBehaviour
         { 
             if (players[i].isActive)
             {
-                if (players[i].GetComponent<ActionController>().age > lifeLength || !players[i].IsAlive())
+                if (players[i].GetComponent<ActionController>().age > players[i].lifeLength || !players[i].IsAlive())
                 {
                     playersAlive--;
                     players[i].SetInactive();

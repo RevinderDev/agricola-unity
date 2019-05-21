@@ -18,13 +18,15 @@ public class PlayerController : MonoBehaviour
     public Vector3 homePosition;
     public Vector3 deadPosition;
     public bool isActive = false;
+    public int lifeLength;
 
     private Stopwatch actionStopwatch;
     private int currentActionLengh;
     public ActionController actionController;
     private static GameController gameController;
 
-    void Start() { 
+    void Start() {
+        lifeLength = 20;
         agent.speed = 6f; // test
         health = 100;
         maxHealth = 100;
@@ -42,6 +44,7 @@ public class PlayerController : MonoBehaviour
         id = gameController.players.Count - 1;
         actionController = GameObject.Find("Player" + id).GetComponent<ActionController>();
         gameController.timeBarObjects[id].SetActive(false);
+
     }
 
     public void SetHomeLocalization(Vector3 homePosition)
@@ -95,18 +98,18 @@ public class PlayerController : MonoBehaviour
     public void ActualizeAgeBar()
     {
         int age = actionController.age;
-        int lifeLength = gameController.lifeLength;
-        if (age > lifeLength)
+        int life = lifeLength;
+        if (age > life)
             return;
         if (age < 0)
         {
-            lifeLength -= age;
+            life -= age;
             age = 0;
         }
         Image bar = GameObject.Find("AgeBar").GetComponent<Image>();
-        bar.rectTransform.localScale = new Vector2((float)age / lifeLength, 1f);
+        bar.rectTransform.localScale = new Vector2((float)age / life, 1f);
         Text value = GameObject.Find("AgeValue").GetComponent<Text>();
-        value.text = age.ToString() + "/" + lifeLength.ToString();
+        value.text = age.ToString() + "/" + life.ToString();
         //if lower than... do...
     }
 
