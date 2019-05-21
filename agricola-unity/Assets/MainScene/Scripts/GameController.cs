@@ -22,8 +22,6 @@ public class GameController : MonoBehaviour
     public int money;
     public readonly int dayLength = 12000;
     private int currentDay = 0;
-    //private Vector3 homePosition = new Vector3(-5.3f, 1, 17);
-    private Vector3 marketPosition = new Vector3(27f, 1, -48);
     private List<ActionController> controlledObjects = new List<ActionController>();
     private System.Random r = new System.Random();
     private string eventsCommunicate = "";
@@ -357,7 +355,7 @@ public class GameController : MonoBehaviour
                     if (actionList.Count() == 1)        // Last action, just walk home
                         players[activePlayer].SetDestination(players[activePlayer].homePosition);
                     else                                // Market action, walk somewhere
-                        players[activePlayer].SetDestination(marketPosition);
+                        players[activePlayer].SetDestination(players[activePlayer].deadPosition);
 
                 else
                     players[activePlayer].SetDestination(actionList.GetDestination());

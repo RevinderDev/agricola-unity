@@ -450,6 +450,7 @@ MonoBehaviour:
   homePosition: {x: 0, y: 0, z: 0}
   deadPosition: {x: 0, y: 0, z: 0}
   isActive: 0
+  lifeLength: 0
   actionController: {fileID: 0}
 --- !u!195 &67531894
 NavMeshAgent:
@@ -7682,6 +7683,7 @@ MonoBehaviour:
   homePosition: {x: 0, y: 0, z: 0}
   deadPosition: {x: 0, y: 0, z: 0}
   isActive: 0
+  lifeLength: 0
   actionController: {fileID: 0}
 --- !u!195 &1112826214
 NavMeshAgent:
@@ -8208,6 +8210,7 @@ MonoBehaviour:
   homePosition: {x: 0, y: 0, z: 0}
   deadPosition: {x: 0, y: 0, z: 0}
   isActive: 0
+  lifeLength: 0
   actionController: {fileID: 0}
 --- !u!195 &1174824574
 NavMeshAgent:
@@ -10383,6 +10386,7 @@ MonoBehaviour:
   homePosition: {x: 0, y: 0, z: 0}
   deadPosition: {x: 0, y: 0, z: 0}
   isActive: 0
+  lifeLength: 0
   actionController: {fileID: 0}
 --- !u!195 &1460191586
 NavMeshAgent:
