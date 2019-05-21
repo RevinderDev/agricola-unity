@@ -68,7 +68,7 @@ public class GameController : MonoBehaviour
         itemSelection.SetMarket();
         itemSelection.Hide();
 
-        money = 10;
+        money = 1000;
         MoneyTransaction(0);
 
         //inventory.AddItem(ItemType.tomatoSeeds, 5);
@@ -420,8 +420,6 @@ public class GameController : MonoBehaviour
             questionWindow.DisplayQuestion(eventsCommunicate, "Action event", true);
             eventsCommunicate = "";
         }
-        if(activePlayer == maxNumberOfPlayers - 1)
-            activePlayer = 0;
         for(int i = activePlayer; i < maxNumberOfPlayers; i++)
         {
             if (players[i].isActive && activePlayer != i)
@@ -433,8 +431,14 @@ public class GameController : MonoBehaviour
                 activePlayer = i;
                 return;
             }
-        } 
-       
+        }
+
+        activePlayer = 0;
+        players[activePlayer].ActualizeHealthBar();
+        players[activePlayer].ActualizeHungerBar();
+        players[activePlayer].ActualizeIcon();
+        players[activePlayer].ActualizeAgeBar();
+
         farmland.GrowPlants();
         for(int i = 0; i<players.Count; i++)
             if(players[i].isActive)
