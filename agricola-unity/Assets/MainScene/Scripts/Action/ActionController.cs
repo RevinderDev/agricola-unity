@@ -67,6 +67,7 @@ public class ActionController : MonoBehaviour
         if (!isActive)
             return;
         showTooltip = false;
+        Tooltip.Hidetooltip_Static();
         GetComponent<Renderer>().material.color = lastColor;
 
         switch (tag)
