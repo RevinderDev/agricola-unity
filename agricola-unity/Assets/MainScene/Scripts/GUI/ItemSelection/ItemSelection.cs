@@ -39,6 +39,12 @@ public class ItemSelection : MonoBehaviour
     public Dictionary<string, GameObject[]> gameObjects = new Dictionary<string, GameObject[]>();
     //TODO create public arrays and inicialize in unity
     public GameObject[] images;
+    public GameObject[] items;
+    public GameObject[] names;
+    public GameObject[] itemValues;
+    public GameObject[] itemValueLabels;
+    public GameObject[] itemValueImages;
+    public GameObject[] itemQuantities;
     public ItemType[] itemTypes = new ItemType[numItemSlots];
     public Image totalValueImage;
     public int totalValue = 0;
@@ -129,9 +135,9 @@ public class ItemSelection : MonoBehaviour
                 }
             }
         }
-        // TODO uncomment
-        //for (int j = i; j < numItemSlots; j++)
-        //    gameObjects[Tag.item][j].SetActive(false);
+
+        for (int j = i; j < numItemSlots; j++)
+            gameObjects[Tag.item][j].SetActive(false);
     }
 
     public void SetMarket()
@@ -160,16 +166,24 @@ public class ItemSelection : MonoBehaviour
         totalValueImage = GameObject.Find("CoinImageTotal").GetComponent<Image>();
         totalPriceText = GameObject.Find("TotalPrice").GetComponent<Text>();
 
-        gameObjects.Add(Tag.item, GameObject.FindGameObjectsWithTag(Tag.item));
-        gameObjects.Add(Tag.itemName, GameObject.FindGameObjectsWithTag(Tag.itemName));
+
 
         //TODO Remove dynamic adding for all arrays (like below)
-        gameObjects.Add(Tag.itemImage, images);
 
-        gameObjects.Add(Tag.itemValue, GameObject.FindGameObjectsWithTag(Tag.itemValue));
-        gameObjects.Add(Tag.itemValueLabel, GameObject.FindGameObjectsWithTag(Tag.itemValueLabel));
-        gameObjects.Add(Tag.itemValueImage, GameObject.FindGameObjectsWithTag(Tag.itemValueImage));
-        gameObjects.Add(Tag.itemQuantity, GameObject.FindGameObjectsWithTag(Tag.itemQuantity));
+
+        gameObjects.Add(Tag.item, items);
+        gameObjects.Add(Tag.itemImage, images);
+        gameObjects.Add(Tag.itemName, names);
+        gameObjects.Add(Tag.itemValue, itemValues);
+        gameObjects.Add(Tag.itemValueLabel, itemValueLabels);
+        gameObjects.Add(Tag.itemValueImage, itemValueImages);
+        gameObjects.Add(Tag.itemQuantity, itemQuantities);
+        //gameObjects.Add(Tag.item, GameObject.FindGameObjectsWithTag(Tag.item));
+        //gameObjects.Add(Tag.itemName, GameObject.FindGameObjectsWithTag(Tag.itemName));
+        //gameObjects.Add(Tag.itemValue, GameObject.FindGameObjectsWithTag(Tag.itemValue));
+        //gameObjects.Add(Tag.itemValueLabel, GameObject.FindGameObjectsWithTag(Tag.itemValueLabel));
+        //gameObjects.Add(Tag.itemValueImage, GameObject.FindGameObjectsWithTag(Tag.itemValueImage));
+        //gameObjects.Add(Tag.itemQuantity, GameObject.FindGameObjectsWithTag(Tag.itemQuantity)); //TUTAJ DODAC INPUT
       
         Initialize();
     }

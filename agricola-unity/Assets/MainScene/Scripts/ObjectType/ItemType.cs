@@ -22,7 +22,7 @@ public class ItemType : Type
     //animals
     public static readonly ItemType cow = new ItemType("cow", "Sprites/cow", 20, 60, true, true);
     public static readonly ItemType chicken = new ItemType("chicken", "Sprites/chicken", priceSell: 20, priceBuy: 30, canBeSold: true, canBeBought: true);
-    public static readonly ItemType michal = new ItemType("Michal", "Sprites/michal", 100, 200, false, false, 50);
+    //public static readonly ItemType michal = new ItemType("Michal", "Sprites/michal", 100, 200, false, false, 50);
     public static readonly ItemType milk = new ItemType("milk", "Sprites/milk", 12, 6, true, false, 35);
     public static readonly ItemType egg = new ItemType("egg", "Sprites/egg", priceSell: 10, priceBuy: 5, canBeSold: true, canBeBought: false, nutritionValue:10);
 
@@ -49,7 +49,7 @@ public class ItemType : Type
                 tomato,
                 pumpkin,
                 cow,
-                michal,
+                //michal,
                 milk,
                 chicken,
                 egg
