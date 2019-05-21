@@ -46,8 +46,7 @@ public class Farmland
 
     public void AddPlant(GameObject areaObject, PlantType type)
     {
-        Object prefab = AssetDatabase.LoadAssetAtPath(type.directory, typeof(GameObject));
-        GameObject clone = gameController.InstantiatePrefab(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+        GameObject clone = gameController.InstantiatePrefab(Resources.Load(type.directory), Vector3.zero, Quaternion.identity) as GameObject;
         if(type != PlantType.pumpkin)
             clone.transform.localScale = new Vector3(10, 10, 10);
         gameController.RandomEvents(type.associatedEventsPlant);

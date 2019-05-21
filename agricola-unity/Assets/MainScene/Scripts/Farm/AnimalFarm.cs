@@ -213,8 +213,7 @@ public class AnimalFarm
             {
                 GeneratedFoodProduct milk = cowSlot.animal.getAnimalType().generatedResource;
                 milksList.Add(milk);
-                Object prefab = AssetDatabase.LoadAssetAtPath(milk.prefabDirectory, typeof(GameObject));
-                GameObject milkClone = gameController.InstantiatePrefab(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+                GameObject milkClone = gameController.InstantiatePrefab(Resources.Load(milk.prefabDirectory), Vector3.zero, Quaternion.identity) as GameObject;
                 milkClone.transform.position = newestMilkPosition;
                 milkClone.transform.localScale = MilkScale;
                 milkClone.tag = "Milk";
@@ -230,8 +229,7 @@ public class AnimalFarm
             {
                 GeneratedFoodProduct egg = chickenSlot.animal.getAnimalType().generatedResource;
                 eggsList.Add(egg);
-                Object prefab = AssetDatabase.LoadAssetAtPath(egg.prefabDirectory, typeof(GameObject));
-                GameObject eggClone = gameController.InstantiatePrefab(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+                GameObject eggClone = gameController.InstantiatePrefab(Resources.Load(egg.prefabDirectory), Vector3.zero, Quaternion.identity) as GameObject;
                 eggClone.tag = "Egg";
                 eggClone.transform.position = newestEggPosition;
                 eggClone.transform.localScale = EggScale;
@@ -434,8 +432,7 @@ public class AnimalFarm
 
     public void addChicken(GameObject slotGameObject)
     {
-        Object prefab = AssetDatabase.LoadAssetAtPath(animalFactory.getChickenPrefab(), typeof(GameObject));
-        GameObject chickenCloneObject = gameController.InstantiatePrefab(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+        GameObject chickenCloneObject = gameController.InstantiatePrefab(Resources.Load(animalFactory.getChickenPrefab()), Vector3.zero, Quaternion.identity) as GameObject;
         Animal newChicken = animalFactory.buildChicken(chickenCloneObject);
 
         int slotIndex = getSlotIndex(slotGameObject, chickenSlotsList);
@@ -457,8 +454,7 @@ public class AnimalFarm
 
     public void addCow(GameObject slotGameObject)
     {
-        Object prefab = AssetDatabase.LoadAssetAtPath(animalFactory.getCowPrefab(), typeof(GameObject));
-        GameObject cloneCowGameObject = gameController.InstantiatePrefab(prefab, Vector3.zero, Quaternion.identity) as GameObject;
+        GameObject cloneCowGameObject = gameController.InstantiatePrefab(Resources.Load(animalFactory.getCowPrefab()), Vector3.zero, Quaternion.identity) as GameObject;
         Animal newCow = animalFactory.buildCow(cloneCowGameObject);
 
         int slotIndex = getSlotIndex(slotGameObject, cowSlotsList);

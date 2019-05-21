@@ -14,11 +14,11 @@ public class PlantType : Type
     public readonly IReadOnlyCollection<ActionEvent> associatedEventsCollect;
 
     // Name of PlantType must exist in project tags!
-    public static readonly PlantType carrot = new PlantType("Carrot", 0.1f, 0.1f, 2, 4,"Assets/simple_low_poly_village_buildings/models/carrot2.prefab", 
+    public static readonly PlantType carrot = new PlantType("Carrot", 0.1f, 0.1f, 2, 4,"Prefab/carrot2", 
         ItemType.carrot, new List<ActionEvent>() { ActionEvent.carrotFound }, new List<ActionEvent>() { ActionEvent.carrotSeedsFound });
-    public static readonly PlantType tomato = new PlantType("Tomato", 0.08f, 0.3f, 4, 4, "Assets/simple_low_poly_village_buildings/models/tomato2.prefab", 
+    public static readonly PlantType tomato = new PlantType("Tomato", 0.08f, 0.3f, 4, 4, "Prefab/tomato2", 
         ItemType.tomato, new List<ActionEvent>() { ActionEvent.tomatoFound }, new List<ActionEvent>() { ActionEvent.tomatoSeedsFound });
-    public static readonly PlantType pumpkin = new PlantType("Pumpkin", 0.05f, 0.5f, 6, 10, "Assets/FoodIcons/pumpkin2.prefab", 
+    public static readonly PlantType pumpkin = new PlantType("Pumpkin", 0.05f, 0.5f, 6, 10, "Prefab/pumpkin2", 
         ItemType.pumpkin, new List<ActionEvent>() { ActionEvent.pumpkinFound }, new List<ActionEvent>() { ActionEvent.pumpkinSeedsFound});
 
     public PlantType(string name, float growthPerDay, float startPosision, int daysToCollect, int daysToBeSpoiled, string directory, 

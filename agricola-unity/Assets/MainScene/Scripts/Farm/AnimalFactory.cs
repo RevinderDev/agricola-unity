@@ -6,8 +6,8 @@ public class AnimalFactory
 {
 
     private static AnimalFactory animalFactoryInstance = new AnimalFactory();
-    private readonly string cowPrefab = "Assets/VertexColorFarmAnimals/Prefabs/CowBlW.prefab";
-    private readonly string chickenPrefab = "Assets/VertexColorFarmAnimals/Prefabs/ChickenBrown.prefab";
+    private readonly string cowPrefab = "Prefab/CowBlW";
+    private readonly string chickenPrefab = "Prefab/ChickenBrown";
 
     private AnimalFactory()
     {
@@ -26,7 +26,7 @@ public class AnimalFactory
         int milkDaysToCollect = 5;
         int milkDaysToSpoil = 2;
         string productName = "Milk";
-        string milkPrefab = "Assets/01_3D/ETC/3D Bakery Object/Prefab/Milk.prefab";
+        string milkPrefab = "Prefab/Milk";
         int milkNutritionValue = 10;
         GeneratedFoodProduct milk = new GeneratedFoodProduct(milkDaysToCollect, milkDaysToSpoil, milkPrefab, productName, milkNutritionValue);
 
@@ -52,7 +52,7 @@ public class AnimalFactory
     public Animal buildChicken(GameObject gameObject)
     {
 
-        string eggPrefab = "Assets/FoodIcons/egg.FBX";
+        string eggPrefab = "Prefab/egg";
 
         GeneratedFoodProduct egg = new GeneratedFoodProduct(daysToCollect: 3,
             daysToBeSpoiled: 1, 

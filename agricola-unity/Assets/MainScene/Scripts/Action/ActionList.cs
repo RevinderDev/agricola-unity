@@ -115,7 +115,7 @@ public class ActionList
         gameObjectBackground.AddComponent<RectTransform>();
         gameObjectBackground.transform.SetParent(gameObject.transform);
         Image imageBackground = gameObjectBackground.AddComponent<Image>();
-        imageBackground.sprite = UnityEditor.AssetDatabase.GetBuiltinExtraResource<Sprite>("UI/Skin/UISprite.psd");
+        imageBackground.sprite = Resources.GetBuiltinResource(typeof(Sprite), "UI/Skin/UISprite") as Sprite; //TODO fix
         gameObjectBackground.GetComponent<RectTransform>().sizeDelta = queueElementSize;
         //Icon
         GameObject gameObjectIcon = new GameObject();
