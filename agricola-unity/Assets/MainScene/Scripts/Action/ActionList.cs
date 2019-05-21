@@ -114,9 +114,9 @@ public class ActionList
         gameObjectBackground.AddComponent<CanvasRenderer>();
         gameObjectBackground.AddComponent<RectTransform>();
         gameObjectBackground.transform.SetParent(gameObject.transform);
-        Image imageBackground = gameObjectBackground.AddComponent<Image>();
-        imageBackground.sprite = Resources.GetBuiltinResource(typeof(Sprite), "UI/Skin/UISprite") as Sprite; //TODO fix
-        gameObjectBackground.GetComponent<RectTransform>().sizeDelta = queueElementSize;
+        GameObject imageBackground = gameController.InstantiatePrefab(Resources.Load("Prefab/Image"), Vector3.zero, Quaternion.identity) as GameObject;
+        imageBackground.transform.SetParent(gameObject.transform);
+        imageBackground.GetComponent<RectTransform>().sizeDelta = queueElementSize;
         //Icon
         GameObject gameObjectIcon = new GameObject();
         gameObjectIcon.AddComponent<CanvasRenderer>();
