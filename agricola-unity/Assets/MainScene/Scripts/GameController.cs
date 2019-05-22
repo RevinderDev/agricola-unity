@@ -8,7 +8,7 @@ public class GameController : MonoBehaviour
 {
     public List<PlayerController> players;
     public int activePlayer = 0;
-    public List<GameObject> timeBarObjects;
+    //public List<GameObject> timeBarObjects;
     public int maxNumberOfPlayers = 4;
     private Information info;
     public QuestionWindow questionWindow;
@@ -31,6 +31,11 @@ public class GameController : MonoBehaviour
     private bool isPlayButtonPressed;
     Button playButton;
 
+    public void doExitGame()
+    {
+        Application.Quit();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -39,13 +44,12 @@ public class GameController : MonoBehaviour
         actionList = new ActionList();
 
         players = new List<PlayerController>();
-        timeBarObjects = new List<GameObject>();
-        for (int i = 0; i < maxNumberOfPlayers; i++)
-            timeBarObjects.Add(GameObject.Find("TimeBarObject" + i));
+        //timeBarObjects = new List<GameObject>();
+        //for (int i = 0; i < maxNumberOfPlayers; i++)
+            //timeBarObjects.Add(GameObject.Find("TimeBarObject" + i));
         for(int i = 0; i<maxNumberOfPlayers; i++)
             AddNewPlayer();
         players[activePlayer].ActualizeAgeBar();
-        MakePlayerActive(10, 30);
 
         isPlayButtonPressed = false;
         playButton = GameObject.Find("PlayButton").GetComponent<Button>();
@@ -66,27 +70,22 @@ public class GameController : MonoBehaviour
         itemSelection.SetMarket();
         itemSelection.Hide();
 
-        money = 10;
         MoneyTransaction(0);
-
-        //inventory.AddItem(ItemType.tomatoSeeds, 5);
-        inventory.AddItem(ItemType.carrotSeeds, 4);
-       // inventory.AddItem(ItemType.pumpkinSeeds, 1);
-        //inventory.AddItem(ItemType.chicken, 5);
-
 
         Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
         dayLabel.text = "Day " + (currentDay++).ToString();
         dropdown = FindObjectOfType<DropdownSelect>();
         dropdown.Hide();
+
+        Reset();
     }
 
-    private void Reset()
+    public void Reset()
     {
         inventory.Clear();
-        MakePlayerActive(10, 30);
+        MakePlayerActive(29, 30);
         GameObject.Find("Player" + activePlayer).GetComponent<Transform>().position = players[activePlayer].homePosition;
-        money = 10;
+        money = 1000;
         MoneyTransaction(0);
         inventory.AddItem(ItemType.carrotSeeds, 4);
         currentDay = 0;
@@ -98,7 +97,7 @@ public class GameController : MonoBehaviour
         {
             if (!players[i].isActive)
             {
-                players[activePlayer].lifeLength = lifeLength;
+                players[i].lifeLength = lifeLength;
                 players[i].actionController.age = age;
                 players[i].SetActive();
                 playersAlive++;
@@ -161,7 +160,6 @@ public class GameController : MonoBehaviour
     // once per frame
     void Update()
     {
-        // TODO: null tutaj?
         if (questionWindow!= null && questionWindow.WasQuestionAsked())
         {
             if (questionWindow.GetQuestionTag() == "Play")
@@ -380,6 +378,25 @@ public class GameController : MonoBehaviour
         StartActionQueue();
     }
 
+    private void PlayerToListEnd(int id)
+    {
+        PlayerController playerToMove = players[id];
+        //GameObject timeBarObject = timeBarObjects[id];
+
+        for(int i = id; i<maxNumberOfPlayers-1; i++)
+        {
+            players[i] = players[i+1];
+            //players[i].id = players.IndexOf(players[i]);
+
+            //timeBarObjects[i] = timeBarObjects[i + 1];
+        }
+        players[maxNumberOfPlayers - 1] = playerToMove;
+        //players[maxNumberOfPlayers - 1].id = maxNumberOfPlayers - 1;
+        //players[maxNumberOfPlayers - 1].id = players.IndexOf(players[maxNumberOfPlayers - 1]);
+
+        //timeBarObjects[maxNumberOfPlayers - 1] = timeBarObject;
+    }
+
     private void KillPlayers()
     {
         for (int i = 0; i < players.Count; i++) //foreach player
@@ -390,12 +407,21 @@ public class GameController : MonoBehaviour
                 {
                     playersAlive--;
                     players[i].SetInactive();
+                    PlayerToListEnd(i);
+
                     if (playersAlive == 0) //we do not have more players
                     {
                         //todo save Score to file?
                         int inventoryValue = inventory.GetInventoryValue() + money;
                         questionWindow.DisplayQuestion("All yours subordinates died. The game is over. Do you want to play again? \nScore: " + inventoryValue +
                             "\nDay: " + (currentDay - 1), "Game over");
+                    }
+                    else
+                    {
+                        // Set to first ACTIVE
+                        for (int j = 0; j < maxNumberOfPlayers; j++)
+                            if (players[j].isActive)
+                                activePlayer = j;
                     }
                 }
             }
@@ -418,6 +444,7 @@ public class GameController : MonoBehaviour
             questionWindow.DisplayQuestion(eventsCommunicate, "Action event", true);
             eventsCommunicate = "";
         }
+        // Set to NEXT active
         for(int i = activePlayer; i < maxNumberOfPlayers; i++)
         {
             if (players[i].isActive && activePlayer != i)
@@ -430,8 +457,11 @@ public class GameController : MonoBehaviour
                 return;
             }
         }
+        // Set to first ACTIVE and finish day
+        for(int i = 0; i<maxNumberOfPlayers; i++)
+            if(players[i].isActive)
+                activePlayer = i;
 
-        activePlayer = 0;
         players[activePlayer].ActualizeHealthBar();
         players[activePlayer].ActualizeHungerBar();
         players[activePlayer].ActualizeIcon();

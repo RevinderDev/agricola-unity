@@ -6,12 +6,12 @@ using UnityEngine.UI;
 public class PlayerStatusDisplay : EventTrigger
 {
     GameController gameController;
-    public int id = 0;
+    public PlayerController player;
 
     void Start()
     {
-        id = System.Int32.Parse(gameObject.name[gameObject.name.Length - 1] + "");
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        player = GameObject.Find("Player" + System.Int32.Parse(gameObject.name[gameObject.name.Length - 1] + "")).GetComponent<PlayerController>();
     }
 
     override public void OnPointerExit(PointerEventData data)
@@ -24,10 +24,10 @@ public class PlayerStatusDisplay : EventTrigger
 
     override public void OnPointerEnter(PointerEventData data)
     {
-        gameController.players[id].ActualizeHealthBar();
-        gameController.players[id].ActualizeHungerBar();
-        gameController.players[id].ActualizeIcon();
-        gameController.players[id].ActualizeAgeBar();
+        player.ActualizeHealthBar();
+        player.ActualizeHungerBar();
+        player.ActualizeIcon();
+        player.ActualizeAgeBar();
     }
 
 }

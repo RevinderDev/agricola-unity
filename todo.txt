@@ -3,18 +3,18 @@
 + zbieranie/usuwanie zepsutych warzyw
 + ró¿ne ilosci zbieranych warzyw
 - ³adniejsze (indywidualne) "roœniêcie" warzyw
-- inne zwierzêta
-- poprawne stawianie krowy (z ekwipunku)
-- karmienie zwierz¹t
-- umieranie zwierz¹t
-+/- umieranie ludzi
-- liczenie punktów
++ inne zwierzêta
++ poprawne stawianie krowy (z ekwipunku)
++ karmienie zwierz¹t
++ umieranie zwierz¹t
++ umieranie ludzi
++/- liczenie punktów
 
 PóŸniej
-- wiêcej ludzików
-- zdarzenia losowe 
++ wiêcej ludzików
++ zdarzenia losowe 
 - kupowanie/ulepszanie budynków
-- menu (start, opis, wczytaj, poziom trudnoœci, ranking itp.)
++/- menu (start, opis, wczytaj, poziom trudnoœci, ranking itp.)
 
 Czy i jeœli to co z tym zrobiæ
 + regeneracja hp (ka¿dego dnia?)

@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     private int currentActionLengh;
     public ActionController actionController;
     private static GameController gameController;
+    private GameObject timeBarObject;
 
     void Start() {
         lifeLength = 20;
@@ -43,8 +44,8 @@ public class PlayerController : MonoBehaviour
     {
         id = gameController.players.Count - 1;
         actionController = GameObject.Find("Player" + id).GetComponent<ActionController>();
-        gameController.timeBarObjects[id].SetActive(false);
-
+        timeBarObject = GameObject.Find("TimeBarObject" + id);
+        timeBarObject.SetActive(false);
     }
 
     public void SetHomeLocalization(Vector3 homePosition)
@@ -67,7 +68,7 @@ public class PlayerController : MonoBehaviour
         isActive = true;
         health = maxHealth;
         hunger = maxHunger;
-        gameController.timeBarObjects[id].SetActive(true);
+        timeBarObject.SetActive(true);
         ActualizeHealthBar();
         ActualizeHungerBar();
         ActualizeTimeBar();
@@ -81,7 +82,7 @@ public class PlayerController : MonoBehaviour
     public void SetInactive()
     {
         isActive = false;
-        gameController.timeBarObjects[id].SetActive(false);
+        timeBarObject.SetActive(false);
         GameObject.Find("Player" + id).GetComponent<Transform>().position = deadPosition;
         SetDestination(deadPosition);
     }
@@ -97,19 +98,11 @@ public class PlayerController : MonoBehaviour
 
     public void ActualizeAgeBar()
     {
-        int age = actionController.age;
-        int life = lifeLength;
-        if (age > life)
-            return;
-        if (age < 0)
-        {
-            life -= age;
-            age = 0;
-        }
+
         Image bar = GameObject.Find("AgeBar").GetComponent<Image>();
-        bar.rectTransform.localScale = new Vector2((float)age / life, 1f);
+        bar.rectTransform.localScale = new Vector2((float)actionController.age / lifeLength, 1f);
         Text value = GameObject.Find("AgeValue").GetComponent<Text>();
-        value.text = age.ToString() + "/" + life.ToString();
+        value.text = actionController.age.ToString() + "/" + lifeLength.ToString();
         //if lower than... do...
     }
 
@@ -119,12 +112,19 @@ public class PlayerController : MonoBehaviour
         float timeLeft = (float)gameController.dayLength / 1000 - timeUsed;
         float totalTime = (float)gameController.dayLength / 1000;
 
-        Image bar = GameObject.Find("TimeBar" + id).GetComponent<Image>();
-        bar.rectTransform.localScale = new Vector2(timeLeft / totalTime, 1f);
-        // Label off/on
-        //value.text = "";
-        Text value = GameObject.Find("TimeValue" + id).GetComponent<Text>();
-        value.text = timeLeft.ToString() + "/" + totalTime.ToString() + "h";
+        try
+        {
+            Image bar = GameObject.Find("TimeBar" + id).GetComponent<Image>();
+            bar.rectTransform.localScale = new Vector2(timeLeft / totalTime, 1f);
+            // Label off/on
+            //value.text = "";
+            Text value = GameObject.Find("TimeValue" + id).GetComponent<Text>();
+            value.text = timeLeft.ToString() + "/" + totalTime.ToString() + "h";
+            GameObject.Find("BarValue" + (id)).GetComponent<Image>().color
+            = GameObject.Find("Player" + (id)).GetComponent<MeshRenderer>().material.color;
+        }
+        catch(Exception e) { }
+
     }
 
     public bool IsHungry()
