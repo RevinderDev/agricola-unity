@@ -8409,7 +8409,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1112826208}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5.2, y: 1, z: 17}
+  m_LocalPosition: {x: 10, y: 1, z: -25}
   m_LocalScale: {x: 0.6, y: 0.8, z: 0.6}
   m_Children: []
   m_Father: {fileID: 0}
@@ -11123,6 +11123,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   players: []
   activePlayer: 0
+  timeBarObjects: []
   maxNumberOfPlayers: 4
   inventory: {fileID: 0}
   dropdown: {fileID: 0}

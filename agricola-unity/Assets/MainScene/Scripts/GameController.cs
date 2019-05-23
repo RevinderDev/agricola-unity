@@ -8,7 +8,7 @@ public class GameController : MonoBehaviour
 {
     public List<PlayerController> players;
     public int activePlayer = 0;
-    //public List<GameObject> timeBarObjects;
+    public List<GameObject> timeBarObjects;
     public int maxNumberOfPlayers = 4;
     private Information info;
     public QuestionWindow questionWindow;
@@ -83,15 +83,17 @@ public class GameController : MonoBehaviour
     public void Reset()
     {
         inventory.Clear();
-        MakePlayerActive(29, 30);
-        GameObject.Find("Player" + activePlayer).GetComponent<Transform>().position = players[activePlayer].homePosition;
-        money = 1000;
+        KillPlayers(true);
+        MakePlayerActive(10, 30, true);
+        money = 10;
         MoneyTransaction(0);
         inventory.AddItem(ItemType.carrotSeeds, 4);
         currentDay = 0;
+        playButton.interactable = false;
+        isPlayButtonPressed = true;
     }
 
-    public void MakePlayerActive(int age, int lifeLength)
+    public void MakePlayerActive(int age, int lifeLength, bool start = false)
     {
         for(int i = 0; i<players.Count; i++)
         {
@@ -99,10 +101,10 @@ public class GameController : MonoBehaviour
             {
                 players[i].lifeLength = lifeLength;
                 players[i].actionController.age = age;
-                players[i].SetActive();
+                players[i].SetActive(start);
                 playersAlive++;
-                if(activePlayer != 0)
-                    activePlayer++;
+                if (activePlayer == -1)
+                    activePlayer = 0;
                 return;
             }
         }
@@ -112,8 +114,8 @@ public class GameController : MonoBehaviour
     {
         players.Add(GameObject.Find("Player" + players.Count).GetComponent<PlayerController>());
         players[players.Count - 1].Setup();
-        players[players.Count - 1].SetHomeLocalization(new Vector3(-5.2f , 1, 17 + (players.Count - 1) * 0.8f));
-        players[players.Count - 1].SetDeadLocalization(new Vector3(10f + (players.Count - 1), 1, -25));
+        players[players.Count - 1].SetHomeLocalization(new Vector3(-5.2f , 1.325f, 17f + (players.Count - 1) * 0.8f));
+        players[players.Count - 1].SetDeadLocalization(new Vector3(10f + (players.Count - 1), 1.325f, -25f));
     }
 
     public void AddControlledObject(ActionController actionController)
@@ -160,6 +162,9 @@ public class GameController : MonoBehaviour
     // once per frame
     void Update()
     {
+        for (int i = 0; i < players.Count; i++)
+            if (!players[i].isActive)
+                players[i].agent.transform.position = players[i].deadPosition;
         if (questionWindow!= null && questionWindow.WasQuestionAsked())
         {
             if (questionWindow.GetQuestionTag() == "Play")
@@ -397,31 +402,40 @@ public class GameController : MonoBehaviour
         //timeBarObjects[maxNumberOfPlayers - 1] = timeBarObject;
     }
 
-    private void KillPlayers()
+    private void KillPlayers(bool forced = false)
     {
         for (int i = 0; i < players.Count; i++) //foreach player
         { 
             if (players[i].isActive)
             {
-                if (players[i].GetComponent<ActionController>().age > players[i].lifeLength || !players[i].IsAlive())
+                if (forced || players[i].GetComponent<ActionController>().age > players[i].lifeLength || !players[i].IsAlive())
                 {
                     playersAlive--;
                     players[i].SetInactive();
                     PlayerToListEnd(i);
-
-                    if (playersAlive == 0) //we do not have more players
+                    if (!forced)
+                    {
+                        eventsCommunicate += "One of your subordinates died." + "\n";
+                        questionWindow.DisplayQuestion(eventsCommunicate, "Action event", true);
+                        eventsCommunicate = "";
+                    }
+                    if (!forced && playersAlive == 0) //we do not have more players
                     {
                         //todo save Score to file?
                         int inventoryValue = inventory.GetInventoryValue() + money;
                         questionWindow.DisplayQuestion("All yours subordinates died. The game is over. Do you want to play again? \nScore: " + inventoryValue +
                             "\nDay: " + (currentDay - 1), "Game over");
                     }
-                    else
+                    else if (!forced)
                     {
                         // Set to first ACTIVE
                         for (int j = 0; j < maxNumberOfPlayers; j++)
                             if (players[j].isActive)
                                 activePlayer = j;
+                    }
+                    else
+                    {
+                        activePlayer = 0;
                     }
                 }
             }
@@ -457,10 +471,7 @@ public class GameController : MonoBehaviour
                 return;
             }
         }
-        // Set to first ACTIVE and finish day
-        for(int i = 0; i<maxNumberOfPlayers; i++)
-            if(players[i].isActive)
-                activePlayer = i;
+        activePlayer = 0;
 
         players[activePlayer].ActualizeHealthBar();
         players[activePlayer].ActualizeHungerBar();

@@ -63,9 +63,12 @@ public class PlayerController : MonoBehaviour
         return health > 0;
     }
 
-    public void SetActive()
+    public void SetActive(bool start = false)
     {
         isActive = true;
+        if(start)
+            agent.transform.position = homePosition;
+        agent.enabled = true;
         health = maxHealth;
         hunger = maxHunger;
         timeBarObject.SetActive(true);
@@ -83,8 +86,7 @@ public class PlayerController : MonoBehaviour
     {
         isActive = false;
         timeBarObject.SetActive(false);
-        GameObject.Find("Player" + id).GetComponent<Transform>().position = deadPosition;
-        SetDestination(deadPosition);
+        agent.enabled = false;
     }
 
     public void ActualizeHealthBar()
