@@ -177,6 +177,7 @@ public class GameController : MonoBehaviour
                         isPlayButtonPressed = true;
                         // Add final action (walk back home) - transparent
                         actionList.Add(null, ActionType.walk);
+                        players[activePlayer].ActualizeTimeBar(true);
                     }
                     else
                     {
@@ -386,7 +387,6 @@ public class GameController : MonoBehaviour
     public void OnClickPlayButton()
     {
         players[activePlayer].lastDayPerformed = currentDay;
-        players[activePlayer].ActualizeTimeBar(true);
         StartActionQueue();
     }
 
