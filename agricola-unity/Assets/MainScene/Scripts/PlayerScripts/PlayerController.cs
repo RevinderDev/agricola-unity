@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
     public Vector3 deadPosition;
     public bool isActive = false;
     public int lifeLength;
+    public int lastDayPerformed = -1;
 
     private Stopwatch actionStopwatch;
     private int currentActionLengh;
@@ -66,6 +67,7 @@ public class PlayerController : MonoBehaviour
     public void SetActive(bool start = false)
     {
         isActive = true;
+        lastDayPerformed = -1;
         if(start)
             agent.transform.position = homePosition;
         agent.enabled = true;
@@ -108,11 +110,14 @@ public class PlayerController : MonoBehaviour
         //if lower than... do...
     }
 
-    public void ActualizeTimeBar()
+    public void ActualizeTimeBar(bool zero = false)
     {
         float timeUsed = (float)gameController.actionList.ActionsLengthsSum() / 1000;
         float timeLeft = (float)gameController.dayLength / 1000 - timeUsed;
         float totalTime = (float)gameController.dayLength / 1000;
+
+        if (zero)
+            timeLeft = 0;
 
         try
         {
@@ -211,8 +216,6 @@ public class PlayerController : MonoBehaviour
     // Checks if player spend enough time performing action
     public bool IsActionFinished()
     {
-        if (ItemSelection.isVisible == true)
-            return false;
         if (!actionStopwatch.IsRunning)
             return true;
         //TODO: DEBUG FIX

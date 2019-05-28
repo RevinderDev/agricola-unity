@@ -22,9 +22,9 @@ public class ActionEvent
         -1, 0, new Dictionary<ItemType, int> {});
 
     // Additionary plants
-    public static readonly ActionEvent carrotFound = new ActionEvent("Carrot found", 0.2f, "Poking in the ground you found a carrot.",
+    public static readonly ActionEvent carrotFound = new ActionEvent("Carrot found", 0.05f, "Poking in the ground you found a carrot.",
         0, 0, new Dictionary<ItemType, int> { { ItemType.carrot, 1 } });
-    public static readonly ActionEvent tomatoFound = new ActionEvent("Tomato found", 0.05f, "Poking in the ground you found a tomato.",
+    public static readonly ActionEvent tomatoFound = new ActionEvent("Tomato found", 0.03f, "Poking in the ground you found a tomato.",
         0, 0, new Dictionary<ItemType, int> { { ItemType.tomato, 1 } });
     public static readonly ActionEvent pumpkinFound = new ActionEvent("Pumpkin found", 0.01f, "Poking in the ground you found a pumpkin.",
         0, 0, new Dictionary<ItemType, int> { { ItemType.pumpkin, 1 } });
@@ -32,9 +32,9 @@ public class ActionEvent
     // Additionary seeds
     public static readonly ActionEvent carrotSeedsFound = new ActionEvent("Carrot seeds found", 0.2f, "Collecting carrot you found some carrot seeds.",
         0, 0, new Dictionary<ItemType, int> { { ItemType.carrotSeeds, 1 } });
-    public static readonly ActionEvent tomatoSeedsFound = new ActionEvent("Tomato seeds found", 0.05f, "Collecting tomato you found some tomato seeds.",
+    public static readonly ActionEvent tomatoSeedsFound = new ActionEvent("Tomato seeds found", 0.1f, "Collecting tomato you found some tomato seeds.",
         0, 0, new Dictionary<ItemType, int> { { ItemType.tomatoSeeds, 1 } });
-    public static readonly ActionEvent pumpkinSeedsFound = new ActionEvent("Pumpkin seeds found", 0.01f, "Collecting pumpkin you found some pumpkin seeds.",
+    public static readonly ActionEvent pumpkinSeedsFound = new ActionEvent("Pumpkin seeds found", 0.05f, "Collecting pumpkin you found some pumpkin seeds.",
         0, 0, new Dictionary<ItemType, int> { { ItemType.pumpkinSeeds, 1 } });
 
     public ActionEvent(string name, float probability, string description, int healthChange, int hungerChange, 

@@ -7,7 +7,7 @@ using System;
 public class GameController : MonoBehaviour
 {
     public List<PlayerController> players;
-    public int activePlayer = 0;
+    public int activePlayer = -1;
     public List<GameObject> timeBarObjects;
     public int maxNumberOfPlayers = 4;
     private Information info;
@@ -21,7 +21,7 @@ public class GameController : MonoBehaviour
     public DropdownSelect dropdown;
     public int money;
     public readonly int dayLength = 12000;
-    private int currentDay = 0;
+    private int currentDay;
     private List<ActionController> controlledObjects = new List<ActionController>();
     private System.Random r = new System.Random();
     private string eventsCommunicate = "";
@@ -31,7 +31,7 @@ public class GameController : MonoBehaviour
     private bool isPlayButtonPressed;
     Button playButton;
 
-    public void doExitGame()
+    public void DoExitGame()
     {
         Application.Quit();
     }
@@ -89,8 +89,9 @@ public class GameController : MonoBehaviour
         MoneyTransaction(0);
         inventory.AddItem(ItemType.carrotSeeds, 4);
         currentDay = 0;
-        playButton.interactable = false;
-        isPlayButtonPressed = true;
+        playButton.interactable = true;
+        isPlayButtonPressed = false;
+        actionList.Clear();
     }
 
     public void MakePlayerActive(int age, int lifeLength, bool start = false)
@@ -103,8 +104,8 @@ public class GameController : MonoBehaviour
                 players[i].actionController.age = age;
                 players[i].SetActive(start);
                 playersAlive++;
-                if (activePlayer == -1)
-                    activePlayer = 0;
+                if(activePlayer == -1)
+                    SetActivePlayer(i);
                 return;
             }
         }
@@ -354,32 +355,38 @@ public class GameController : MonoBehaviour
             //action finished, check for next
             if (actionList.Count() > 0)
             {
-                if (actionList.GetGameObject() == null)
-                    if (actionList.Count() == 1)        // Last action, just walk home
-                        players[activePlayer].SetDestination(players[activePlayer].homePosition);
-                    else                                // Market action, walk somewhere
-                        players[activePlayer].SetDestination(players[activePlayer].deadPosition);
+                if (!itemSelection.isVisible || itemSelection.mode == ItemSelection.Mode.market)
+                {
+                    if (actionList.GetGameObject() == null)
+                        if (actionList.Count() == 1)        // Last action, just walk home
+                            players[activePlayer].SetDestination(players[activePlayer].homePosition);
+                        else                                // Market action, walk somewhere
+                            players[activePlayer].SetDestination(players[activePlayer].deadPosition);
 
-                else
-                    players[activePlayer].SetDestination(actionList.GetDestination());
+                    else
+                        players[activePlayer].SetDestination(actionList.GetDestination());
+
+                    if (players[activePlayer].IsPathFinished())
+                    {
+                        if (actionList.Count() > 0)
+                        {
+                            //at the destination, perform actions
+                            players[activePlayer].SetAction(actionList.GetAction());
+                        }
+                    }
+                }
             }
             else
             {
                 NextDay();
-            }
-            if (players[activePlayer].IsPathFinished())
-            {
-                if (actionList.Count() > 0)
-                {
-                    //at the destination, perform actions
-                    players[activePlayer].SetAction(actionList.GetAction());
-                }
             }
         }
     }
 
     public void OnClickPlayButton()
     {
+        players[activePlayer].lastDayPerformed = currentDay;
+        players[activePlayer].ActualizeTimeBar(true);
         StartActionQueue();
     }
 
@@ -425,21 +432,33 @@ public class GameController : MonoBehaviour
                         int inventoryValue = inventory.GetInventoryValue() + money;
                         questionWindow.DisplayQuestion("All yours subordinates died. The game is over. Do you want to play again? \nScore: " + inventoryValue +
                             "\nDay: " + (currentDay - 1), "Game over");
+                        activePlayer = -1;
                     }
                     else if (!forced)
                     {
                         // Set to first ACTIVE
                         for (int j = 0; j < maxNumberOfPlayers; j++)
                             if (players[j].isActive)
-                                activePlayer = j;
+                            {
+                                SetActivePlayer(j);
+                            }
                     }
                     else
                     {
-                        activePlayer = 0;
+                        SetActivePlayer(0);
                     }
                 }
             }
         }
+    }
+
+    public void SetActivePlayer(int i)
+    {
+        activePlayer = i;
+        players[activePlayer].ActualizeHealthBar();
+        players[activePlayer].ActualizeHungerBar();
+        players[activePlayer].ActualizeAgeBar();
+        players[activePlayer].ActualizeIcon();
     }
 
     public void PerformMouseExit()
@@ -458,32 +477,26 @@ public class GameController : MonoBehaviour
             questionWindow.DisplayQuestion(eventsCommunicate, "Action event", true);
             eventsCommunicate = "";
         }
-        // Set to NEXT active
-        for(int i = activePlayer; i < maxNumberOfPlayers; i++)
-        {
-            if (players[i].isActive && activePlayer != i)
+        // If current player performed this day, SET to NEXT active
+        if(players[activePlayer].lastDayPerformed == currentDay)
+            for(int i = 0; i < maxNumberOfPlayers; i++)
             {
-                players[i].ActualizeHealthBar();
-                players[i].ActualizeHungerBar();
-                players[i].ActualizeIcon();
-                players[i].ActualizeAgeBar();
-                activePlayer = i;
-                return;
+                if (players[i].isActive && players[i].lastDayPerformed != currentDay)
+                {
+                    SetActivePlayer(i);
+                    return;
+                }
             }
-        }
-        activePlayer = 0;
-
-        players[activePlayer].ActualizeHealthBar();
-        players[activePlayer].ActualizeHungerBar();
-        players[activePlayer].ActualizeIcon();
-        players[activePlayer].ActualizeAgeBar();
+        // All players performed this day
+        
+        SetActivePlayer(0);
 
         farmland.GrowPlants();
         for(int i = 0; i<players.Count; i++)
             if(players[i].isActive)
                 players[i].ActualizeTimeBar();
         Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
-        dayLabel.text = "Day " + (currentDay++).ToString();
+        dayLabel.text = "Day " + (++currentDay).ToString();
         animalFarm.spoilFood();
         animalFarm.generateFoodProducts();
         animalFarm.ageAnimals();

@@ -37,6 +37,16 @@ public class ActionList
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
     }
 
+    public void Clear()
+    {
+        int c = Count();
+        for (int i = 0; i < c; i++)
+        {
+            GameController.RemoveGameObject(Remove(i, true).gameObject);
+            gameController.players[gameController.activePlayer].ActualizeTimeBar();
+        }
+    }
+
     public void Add(GameObject gameObject, ActionType type, ItemType required = null)
     {
         gameObjects.Add(gameObject);
@@ -46,7 +56,8 @@ public class ActionList
         gameController.inventory.RemoveItem(required);
         quequeCurrentPosition += queueInterspace / 2 + (int)queueElementSize.x;
         count++;
-        gameController.players[gameController.activePlayer].ActualizeTimeBar();
+        if(type.length != 0)
+            gameController.players[gameController.activePlayer].ActualizeTimeBar();
     }
 
     public Button Remove(int i, bool notUsed = false)
@@ -69,7 +80,6 @@ public class ActionList
         }
         count--;
         quequeCurrentPosition -= queueInterspace / 2 + (int)queueElementSize.x;
-        gameController.players[gameController.activePlayer].ActualizeTimeBar();
         return buttonToBeDestroyed;
     }
 
@@ -138,6 +148,7 @@ public class ActionList
         button.targetGraphic = image;
         button.onClick.AddListener(delegate {
             Remove(button);
+            gameController.players[gameController.activePlayer].ActualizeTimeBar();
             GameController.RemoveGameObject(button.gameObject);
         });
         if (spriteDirectory == null)

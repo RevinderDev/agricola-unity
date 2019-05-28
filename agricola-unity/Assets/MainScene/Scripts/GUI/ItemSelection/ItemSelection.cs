@@ -25,8 +25,8 @@ public class ItemSelection : MonoBehaviour
         public static readonly string itemValueImage = "ItemValueImage";
     }
 
-    private Mode mode = Mode.market;
-    public static bool isVisible;
+    public Mode mode = Mode.market;
+    public bool isVisible;
     private GameController gameController;
     private GameObject windowObject;
     private Text title;
