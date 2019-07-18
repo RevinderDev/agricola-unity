@@ -70,6 +70,7 @@ public class GameController : MonoBehaviour
         itemSelection.SetMarket();
         itemSelection.Hide();
 
+
         MoneyTransaction(0);
 
         Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
@@ -82,6 +83,7 @@ public class GameController : MonoBehaviour
 
     public void Reset()
     {
+        animalFarm.reset();
         inventory.Clear();
         KillPlayers(true);
         MakePlayerActive(10, 30, true);

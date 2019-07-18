@@ -99,7 +99,6 @@ public class Inventory : MonoBehaviour
                 itemImages[i].enabled = false;
                 quantityBackgrounds[i].enabled = false;
                 quantities[i].text = "";
-                return;
             }
         }
     }
