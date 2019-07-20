@@ -13,6 +13,7 @@ public class QuestionWindow
     private bool wasAnswerChecked;
     private string questionTag;
     private bool wasQuestionAsked;
+    public bool isVisible = false;
 
     public QuestionWindow(GameObject windowObject, Text windowText, Button buttonYes, Button buttonNo)
     {
@@ -63,12 +64,14 @@ public class QuestionWindow
             buttonYes.gameObject.SetActive(true);
             buttonNo.gameObject.transform.GetChild(0).GetComponent<Text>().text = "No";
         }
+        isVisible = true;
     }
 
     public void Hide()
     {
         windowObject.SetActive(false);
         ActionController.isActive = true;
+        isVisible = false;
     }
 
     public bool GetAnswer()

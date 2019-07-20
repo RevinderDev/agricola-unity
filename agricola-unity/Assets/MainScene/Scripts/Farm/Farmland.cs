@@ -108,6 +108,17 @@ public class Farmland
         plantsToAreaMap.Remove(plantObject);
     }
 
+    public void Clear()
+    {
+        int c = plants.Count;
+        for (int i = c - 1; i >= 0; i--)
+        {
+            GameController.RemoveGameObject(plants[i].GetGameObject());
+            plantsToAreaMap.Remove(plants[i].GetGameObject());
+            plants.RemoveAt(i);
+        }     
+    }
+
     public void GrowPlants()
     {
         for (int i = 0; i<plants.Count; i++)
