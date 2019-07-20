@@ -35,6 +35,30 @@ public class AnimalFarm
 
     private AnimalFactory animalFactory = AnimalFactory.getInstance();
 
+    public void reset()
+    {
+        foreach(var cowSlot in cowSlotsList)
+            cowSlot.removeAnimal();
+
+        foreach (var chickenSlot in chickenSlotsList)
+            chickenSlot.removeAnimal();
+
+        removeEggs();
+        removeMilks();
+        milkArea.transform.position = milkAreaInitPosition;
+        eggArea.transform.position = eggAreaInitPosition;
+        newestEggPosition = eggAreaInitPosition;
+        newestMilkPosition = milkAreaInitPosition;
+        milkDaysSpoilage = -1;
+        cowFood = 0;
+        eggDaysSpoilage = -1;
+        chickenFood = 0;
+        eggArea.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
+        milkArea.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
+
+    }
+
+
     public AnimalFarm()
     {
         AnimalScale = new Vector3(0.8f, 0.8f, 0.8f);
@@ -287,28 +311,51 @@ public class AnimalFarm
         return GameObject.FindGameObjectsWithTag("Egg").Length;
     }
 
+    public void removeEggs()
+    {
+        GameObject[] eggs = GameObject.FindGameObjectsWithTag("Egg");
+        eggsList.Clear();
+        foreach (var egg in eggs)
+        {
+            GameController.RemoveGameObject(egg);
+        }
+
+        GameObject[] spoiledEggs = GameObject.FindGameObjectsWithTag("SpoiledEgg");
+        foreach (var egg in spoiledEggs)
+        {
+            GameController.RemoveGameObject(egg);
+        }
+    }
+
     public void gatherEgg()
     {
         if (eggsList.Count > 0)
         {
             GameObject[] eggs = GameObject.FindGameObjectsWithTag("Egg");
             gameController.inventory.AddItem(ItemType.egg, eggs.Length);
-            eggsList.Clear();
-            foreach (var egg in eggs)
-            {
-                GameController.RemoveGameObject(egg);
-            }
-
-            GameObject[] spoiledEggs = GameObject.FindGameObjectsWithTag("SpoiledEgg");
-            foreach (var egg in spoiledEggs)
-            {
-                GameController.RemoveGameObject(egg);
-            }
+            removeEggs();
 
             newestEggPosition = eggAreaInitPosition;
             eggArea.transform.position = eggAreaInitPosition;
             eggArea.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
             eggDaysSpoilage = 1;
+        }
+    }
+
+
+    public void removeMilks()
+    {
+        milksList.Clear();
+        GameObject[] milks = GameObject.FindGameObjectsWithTag("Milk");
+        foreach (var milk in milks)
+        {
+            GameController.RemoveGameObject(milk);
+        }
+
+        GameObject[] spoiledMilks = GameObject.FindGameObjectsWithTag("SpoiledMilk");
+        foreach (var milk in spoiledMilks)
+        {
+            GameController.RemoveGameObject(milk);
         }
     }
 
@@ -318,17 +365,7 @@ public class AnimalFarm
         {
             GameObject[] milks = GameObject.FindGameObjectsWithTag("Milk");
             gameController.inventory.AddItem(ItemType.milk, milks.Length);
-            milksList.Clear();
-            foreach (var milk in milks)
-            {
-                GameController.RemoveGameObject(milk);
-            }
-
-            GameObject[] spoiledMilks = GameObject.FindGameObjectsWithTag("SpoiledMilk");
-            foreach(var milk in spoiledMilks)
-            {
-                GameController.RemoveGameObject(milk);
-            }
+            removeMilks();
 
             newestMilkPosition = milkAreaInitPosition;
             milkArea.transform.position = milkAreaInitPosition;
