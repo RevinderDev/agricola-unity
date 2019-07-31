@@ -6,7 +6,7 @@ Survival game! How many days you can survive on the farm?
 
 ## Download
 
-https://drive.google.com/open?id=1IQ_fMZ5PTSX7ZJ9-bv35j3t9HK8V3upM
+https://drive.google.com/file/d/1Rd0S5ozrGuQLqb9hnBUREt4ioetdbB_W/view
 
 Or you can just clone repo and open it in your Unity.
 
