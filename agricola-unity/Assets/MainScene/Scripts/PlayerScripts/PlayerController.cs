@@ -74,11 +74,11 @@ public class PlayerController : MonoBehaviour
         health = maxHealth;
         hunger = maxHunger;
         timeBarObject.SetActive(true);
-        ActualizeHealthBar();
-        ActualizeHungerBar();
+        //ActualizeHealthBar();
+        //ActualizeHungerBar();
         ActualizeTimeBar();
-        ActualizeAgeBar();
-        ActualizeIcon();
+        //ActualizeAgeBar();
+        //ActualizeIcon();
         GameObject.Find("BarValue" + (id)).GetComponent<Image>().color
                     = GameObject.Find("Player" + (id)).GetComponent<MeshRenderer>().material.color;
         SetDestination(homePosition);

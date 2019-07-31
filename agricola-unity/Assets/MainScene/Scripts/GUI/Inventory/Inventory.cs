@@ -88,9 +88,12 @@ public class Inventory : MonoBehaviour
 
     public void Clear()
     {
-        for (int i = 0; i < items.Length; i++)
+        //Debug.Log(items.Length);
+        int c = items.Length;
+        for (int i = 0; i < c; i++)
         {
-            if (items[i] != null)
+             //Debug.Log(i);
+           if (items[i] != null)
             {
                 items[i].quantity = 0;
                 types[i] = null;

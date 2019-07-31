@@ -23,13 +23,13 @@ public class ActionType : Type
     public static readonly ActionType market = new ActionType("market", "Sprites/market", 12000, 
         new List<ActionEvent>());
     public static readonly ActionType gatherMilk = new ActionType("get milk", "Sprites/milk", 4000, 
-        new List<ActionEvent>() { ActionEvent.cowKick });
+        new List<ActionEvent>() { });
     public static readonly ActionType gatherEgg = new ActionType("get egg", "Sprites/egg", 4000, 
         new List<ActionEvent>() { ActionEvent.eggHatch });
     public static readonly ActionType feedCow = new ActionType("feed cow", "Sprites/animalFood", 8000, 
-        new List<ActionEvent>() { ActionEvent.cowKick });
+        new List<ActionEvent>() { });
     public static readonly ActionType feedChicken = new ActionType("feed chicken", "Sprites/animalFood", 8000, 
-        new List<ActionEvent>() { ActionEvent.chickenPeck });
+        new List<ActionEvent>() { });
     public static readonly ActionType eat = new ActionType("eat", "Sprites/eat", 4000, 
         new List<ActionEvent>());
     public static readonly ActionType checkCowStatus = new ActionType("-", null, 0, 

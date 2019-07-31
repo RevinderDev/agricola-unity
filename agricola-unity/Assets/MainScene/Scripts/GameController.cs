@@ -85,14 +85,18 @@ public class GameController : MonoBehaviour
     {
         animalFarm.reset();
         inventory.Clear();
+        farmland.Clear();
         KillPlayers(true);
         MakePlayerActive(10, 30, true);
+        SetActivePlayer(0);
         money = 10;
         MoneyTransaction(0);
         inventory.AddItem(ItemType.carrotSeeds, 4);
         inventory.AddItem(ItemType.cow, 5);
         inventory.AddItem(ItemType.chicken, 5);
         currentDay = 0;
+        Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
+        dayLabel.text = "Day " + (++currentDay).ToString();
         playButton.interactable = true;
         isPlayButtonPressed = false;
         actionList.Clear();
@@ -363,15 +367,15 @@ public class GameController : MonoBehaviour
                 if (!itemSelection.isVisible || itemSelection.mode == ItemSelection.Mode.market)
                 {
                     if (actionList.GetGameObject() == null)
-                        if (actionList.Count() == 1)        // Last action, just walk home
+                        if (actionList.Count() == 1 && !itemSelection.isVisible && !questionWindow.isVisible)        // Last action, just walk home
                             players[activePlayer].SetDestination(players[activePlayer].homePosition);
                         else                                // Market action, walk somewhere
                             players[activePlayer].SetDestination(players[activePlayer].deadPosition);
 
-                    else
+                    else if(!itemSelection.isVisible && !questionWindow.isVisible)
                         players[activePlayer].SetDestination(actionList.GetDestination());
 
-                    if (players[activePlayer].IsPathFinished())
+                    if (players[activePlayer].IsPathFinished() && !itemSelection.isVisible && !questionWindow.isVisible)
                     {
                         if (actionList.Count() > 0)
                         {
@@ -424,6 +428,7 @@ public class GameController : MonoBehaviour
                     playersAlive--;
                     players[i].SetInactive();
                     PlayerToListEnd(i);
+                    i--;
                     if (!forced)
                     {
                         eventsCommunicate += "One of your subordinates died." + "\n";
@@ -516,14 +521,18 @@ public class GameController : MonoBehaviour
                 if (!players[i].IsHungry())
                     players[i].ChangeHalth(+5);
                 if(players[i].IsStarving())
-                    players[i].ChangeHalth(-10);
-                players[i].ChangeHunger(-10);
+                    players[i].ChangeHalth(-20);
+                players[i].ChangeHunger(-25);
                 players[i].ActualizeAgeBar();
             }
         }
 
         KillPlayers();
-        
+        if (eventsCommunicate != "")
+        {
+            questionWindow.DisplayQuestion(eventsCommunicate, "Action event", true);
+            eventsCommunicate = "";
+        }
     }
 
     /* Action is not allowed: 
