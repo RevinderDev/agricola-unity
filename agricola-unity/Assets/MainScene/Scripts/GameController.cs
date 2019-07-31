@@ -90,6 +90,8 @@ public class GameController : MonoBehaviour
         money = 10;
         MoneyTransaction(0);
         inventory.AddItem(ItemType.carrotSeeds, 4);
+        inventory.AddItem(ItemType.cow, 5);
+        inventory.AddItem(ItemType.chicken, 5);
         currentDay = 0;
         playButton.interactable = true;
         isPlayButtonPressed = false;
@@ -502,7 +504,8 @@ public class GameController : MonoBehaviour
         animalFarm.spoilFood();
         animalFarm.generateFoodProducts();
         animalFarm.ageAnimals();
-        animalFarm.animalsEat();    
+        animalFarm.animalsEat();
+        animalFarm.clearRottenOnlyFood();
         foreach (ActionController actionController in controlledObjects)
             actionController.age += 1;
 
@@ -520,6 +523,7 @@ public class GameController : MonoBehaviour
         }
 
         KillPlayers();
+        
     }
 
     /* Action is not allowed: 

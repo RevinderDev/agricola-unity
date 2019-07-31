@@ -47,7 +47,7 @@ public class AnimalFarm
         removeMilks();
         milkArea.transform.position = milkAreaInitPosition;
         eggArea.transform.position = eggAreaInitPosition;
-        newestEggPosition = eggAreaInitPosition;
+        newestEggPosition = eggAreaInitPosition + new Vector3(0f, 0.1f, 0); // Correction for eggs to be above ground
         newestMilkPosition = milkAreaInitPosition;
         milkDaysSpoilage = -1;
         cowFood = 0;
@@ -81,7 +81,7 @@ public class AnimalFarm
         eggArea = GameObject.FindGameObjectWithTag("EggArea");
         eggsList = new List<GeneratedFoodProduct>();
         newestEggPosition = eggArea.transform.position + new Vector3(0, 0.1f, 0); //Correction for egg to be above ground
-        eggAreaInitPosition = newestEggPosition;
+        eggAreaInitPosition = eggArea.transform.position;
         EggScale = new Vector3(0.75f, 0.75f, 0.75f);
         eggDaysSpoilage = -1;
         chickenFood = 0;
@@ -255,8 +255,8 @@ public class AnimalFarm
                 eggsList.Add(egg);
                 GameObject eggClone = gameController.InstantiatePrefab(Resources.Load(egg.prefabDirectory), Vector3.zero, Quaternion.identity) as GameObject;
                 eggClone.tag = "Egg";
-                eggClone.transform.position = newestEggPosition;
                 eggClone.transform.localScale = EggScale;
+                eggClone.transform.position = newestEggPosition;
                 recalculateEggPosition();
                 if (eggDaysSpoilage <= 0)
                     eggDaysSpoilage = egg.daysToBeSpoiled;
@@ -267,11 +267,11 @@ public class AnimalFarm
 
     public void recalculateEggPosition()
     {
-        if (newestEggPosition.z < eggAreaInitPosition.z + 4.0f)
+        if (newestEggPosition.z < eggAreaInitPosition.z + 3.0f)
         {
             newestEggPosition.z += 0.4f;
-            int MaxEggCapacity = 11;
-            if (eggsList.Count <= MaxEggCapacity)
+            int MaxEggCapacity = 10;
+            if (eggsList.Count < MaxEggCapacity)
             {
                 eggArea.transform.localScale = new Vector3(eggArea.transform.localScale.x, eggArea.transform.localScale.y, eggArea.transform.localScale.z + 0.05f);
                 eggArea.transform.position = new Vector3(eggArea.transform.position.x, eggArea.transform.position.y, eggArea.transform.position.z + 0.175f);
@@ -279,9 +279,9 @@ public class AnimalFarm
         }
         else
         {
-            newestEggPosition.z = 0.7f;
+            newestEggPosition.z = eggAreaInitPosition.z;
             newestEggPosition.x -= 0.4f;
-            eggArea.transform.localScale = new Vector3(eggArea.transform.localScale.x + 0.01f, eggArea.transform.localScale.y, eggArea.transform.localScale.z);
+            eggArea.transform.localScale = new Vector3(eggArea.transform.localScale.x + 0.02f, eggArea.transform.localScale.y, eggArea.transform.localScale.z);
         }
     }
 
@@ -325,6 +325,11 @@ public class AnimalFarm
         {
             GameController.RemoveGameObject(egg);
         }
+
+        newestEggPosition = eggAreaInitPosition;
+        eggArea.transform.position = eggAreaInitPosition;
+        eggArea.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
+        eggDaysSpoilage = 1;
     }
 
     public void gatherEgg()
@@ -334,11 +339,6 @@ public class AnimalFarm
             GameObject[] eggs = GameObject.FindGameObjectsWithTag("Egg");
             gameController.inventory.AddItem(ItemType.egg, eggs.Length);
             removeEggs();
-
-            newestEggPosition = eggAreaInitPosition;
-            eggArea.transform.position = eggAreaInitPosition;
-            eggArea.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
-            eggDaysSpoilage = 1;
         }
     }
 
@@ -357,6 +357,11 @@ public class AnimalFarm
         {
             GameController.RemoveGameObject(milk);
         }
+
+        newestMilkPosition = milkAreaInitPosition;
+        milkArea.transform.position = milkAreaInitPosition;
+        milkArea.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
+        milkDaysSpoilage = 1;
     }
 
     public void gatherMilk()
@@ -366,29 +371,24 @@ public class AnimalFarm
             GameObject[] milks = GameObject.FindGameObjectsWithTag("Milk");
             gameController.inventory.AddItem(ItemType.milk, milks.Length);
             removeMilks();
-
-            newestMilkPosition = milkAreaInitPosition;
-            milkArea.transform.position = milkAreaInitPosition;
-            milkArea.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
-            milkDaysSpoilage = 1;
         }
     }
 
 
     private void recalculateMilkPosition()
     {
-        if (newestMilkPosition.z < milkAreaInitPosition.z + 4.0f)
+        if (newestMilkPosition.z < milkAreaInitPosition.z + 3.0f)
         {
             newestMilkPosition.z += 0.4f;
-            int MaxMilkCapacity = 11;
-            if(milksList.Count <= MaxMilkCapacity) {
+            int MaxMilkCapacity = 10;
+            if(milksList.Count < MaxMilkCapacity) {
                 milkArea.transform.localScale = new Vector3(milkArea.transform.localScale.x, milkArea.transform.localScale.y, milkArea.transform.localScale.z + 0.05f);
                 milkArea.transform.position = new Vector3(milkArea.transform.position.x, milkArea.transform.position.y, milkArea.transform.position.z + 0.175f);
             }
         }
         else
         {
-            newestMilkPosition.z = 0.7f;
+            newestMilkPosition.z = milkAreaInitPosition.z;
             newestMilkPosition.x -= 0.4f;
             milkArea.transform.localScale = new Vector3(milkArea.transform.localScale.x + 0.01f, milkArea.transform.localScale.y, milkArea.transform.localScale.z);
         }
@@ -464,6 +464,26 @@ public class AnimalFarm
                     egg.GetComponent<Renderer>().material = Resources.Load("Milk_Spoiled_Test", typeof(Material)) as Material;
                 }
             }
+        }
+    }
+
+
+    public void clearRottenOnlyFood()
+    {
+        GameObject[] eggs = GameObject.FindGameObjectsWithTag("Egg");
+        GameObject[] spoiledEggs = GameObject.FindGameObjectsWithTag("SpoiledEgg");
+        if (eggs.Length == 0 && spoiledEggs.Length > 0)
+        {
+            removeEggs();
+            gameController.DisplayInfo("All eggs are spoiled. Area is cleared.");
+        }
+
+        GameObject[] milks = GameObject.FindGameObjectsWithTag("Milk");
+        GameObject[] spoiledMilks = GameObject.FindGameObjectsWithTag("SpoiledMilk");
+        if (milks.Length == 0 && spoiledMilks.Length > 0)
+        {
+            removeMilks();
+            gameController.DisplayInfo("All milk are spoiled. Area is cleared.");
         }
     }
 
