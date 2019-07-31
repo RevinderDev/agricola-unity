@@ -326,7 +326,7 @@ public class AnimalFarm
             GameController.RemoveGameObject(egg);
         }
 
-        newestEggPosition = eggAreaInitPosition;
+        newestEggPosition = eggAreaInitPosition + new Vector3(0f, 0.1f, 0f);
         eggArea.transform.position = eggAreaInitPosition;
         eggArea.transform.localScale = new Vector3(0.15f, 0.15f, 0.15f);
         eggDaysSpoilage = 1;

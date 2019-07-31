@@ -92,8 +92,6 @@ public class GameController : MonoBehaviour
         money = 10;
         MoneyTransaction(0);
         inventory.AddItem(ItemType.carrotSeeds, 4);
-        inventory.AddItem(ItemType.cow, 5);
-        inventory.AddItem(ItemType.chicken, 5);
         currentDay = 0;
         Text dayLabel = GameObject.Find("DayLabel").GetComponent<Text>();
         dayLabel.text = "Day " + (++currentDay).ToString();
